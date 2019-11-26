@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"path/filepath"
 
-	"github.com/gobuffalo/bufcli/plugins/plugdeps"
+	"github.com/gobuffalo/buffalo-cli/plugins/plugdeps"
 	"github.com/gobuffalo/genny"
 )
 

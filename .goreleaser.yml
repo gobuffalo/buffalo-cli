@@ -4,7 +4,7 @@ builds:
     env:
       - CGO_ENABLED=0
     ldflags:
-      - -s -w -X "github.com/gobuffalo/bufcli.Version={{.Tag}}"
+      - -s -w -X "github.com/gobuffalo/buffalo-cli.Version={{.Tag}}"
     goos:
       - darwin
       - linux
@@ -37,9 +37,9 @@ changelog:
       - '^test:'
 brews:
   -
-    name: 'bufcli'
+    name: 'buffalo-cli'
     github:
       owner: 'gobuffalo'
       name: 'homebrew-tap'
     install: |
-      bin.install "bufcli"
+      bin.install "buffalo-cli"

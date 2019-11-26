@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/gobuffalo/bufcli/cmd/buffalo/cmd"
+	"github.com/gobuffalo/buffalo-cli/cmd/buffalo/cmd"
 	"github.com/markbates/safe"
 )
 

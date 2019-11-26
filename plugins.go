@@ -7,8 +7,8 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/gobuffalo/bufcli/internal/consts"
-	"github.com/gobuffalo/bufcli/plugins"
+	"github.com/gobuffalo/buffalo-cli/internal/consts"
+	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/events"
 	"github.com/markbates/oncer"
 	"github.com/markbates/safe"

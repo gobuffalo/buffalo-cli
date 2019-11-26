@@ -8,8 +8,8 @@ import (
 	"path"
 	"strings"
 
-	"github.com/gobuffalo/bufcli/genny/plugins/install"
-	"github.com/gobuffalo/bufcli/plugins/plugdeps"
+	"github.com/gobuffalo/buffalo-cli/genny/plugins/install"
+	"github.com/gobuffalo/buffalo-cli/plugins/plugdeps"
 	"github.com/gobuffalo/genny"
 	"github.com/gobuffalo/logger"
 	"github.com/gobuffalo/meta"

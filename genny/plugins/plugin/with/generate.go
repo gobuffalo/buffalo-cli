@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/gobuffalo/bufcli/genny/plugins/plugin"
+	"github.com/gobuffalo/buffalo-cli/genny/plugins/plugin"
 	"github.com/gobuffalo/genny"
 	"github.com/gobuffalo/genny/genny/new"
 	"github.com/gobuffalo/genny/plushgen"

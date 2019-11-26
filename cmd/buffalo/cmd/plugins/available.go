@@ -1,7 +1,7 @@
 package plugins
 
 import (
-	"github.com/gobuffalo/bufcli/plugins/plugcmds"
+	"github.com/gobuffalo/buffalo-cli/plugins/plugcmds"
 	"github.com/spf13/cobra"
 )
 

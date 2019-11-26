@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/gobuffalo/bufcli/cmd/buffalo/cmd/destroy"
+	"github.com/gobuffalo/buffalo-cli/cmd/buffalo/cmd/destroy"
 	"github.com/spf13/cobra"
 )
 

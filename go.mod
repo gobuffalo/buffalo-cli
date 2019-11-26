@@ -1,4 +1,4 @@
-module github.com/gobuffalo/bufcli
+module github.com/gobuffalo/buffalo-cli
 
 go 1.13
 
@@ -6,6 +6,7 @@ require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/fatih/color v1.7.0
 	github.com/gobuffalo/attrs v0.1.0
+	github.com/gobuffalo/bufcli v0.0.0-20191126144939-463c03f5a92a
 	github.com/gobuffalo/buffalo-pop v1.23.1
 	github.com/gobuffalo/clara v0.9.1
 	github.com/gobuffalo/events v1.4.0

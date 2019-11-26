@@ -82,7 +82,7 @@ func Test_Webpack_New_WithYarn(t *testing.T) {
 const layout = `<!DOCTYPE html>
 <html>
   <head>
-    <title>Buffalo - Foo</title>
+    <title>bufFoo</title>
     <%= stylesheetTag("buffalo.css") %>
     <%= stylesheetTag("application.css") %>
   </head>

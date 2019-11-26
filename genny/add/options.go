@@ -3,7 +3,7 @@ package add
 import (
 	"os"
 
-	"github.com/gobuffalo/bufcli/plugins/plugdeps"
+	"github.com/gobuffalo/buffalo-cli/plugins/plugdeps"
 	"github.com/gobuffalo/meta"
 	"github.com/markbates/errx"
 )

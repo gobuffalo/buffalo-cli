@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/gobuffalo/bufcli/genny/plugins/install"
-	"github.com/gobuffalo/bufcli/plugins"
-	"github.com/gobuffalo/bufcli/plugins/plugdeps"
+	"github.com/gobuffalo/buffalo-cli/genny/plugins/install"
+	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/plugins/plugdeps"
 	"github.com/gobuffalo/genny"
 	"github.com/markbates/errx"
 )

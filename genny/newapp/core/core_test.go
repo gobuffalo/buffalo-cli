@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/gobuffalo/bufcli"
-	"github.com/gobuffalo/bufcli/genny/docker"
+	"github.com/gobuffalo/buffalo-cli/genny/docker"
 	"github.com/gobuffalo/genny/gentest"
 	"github.com/gobuffalo/meta"
 	"github.com/stretchr/testify/require"

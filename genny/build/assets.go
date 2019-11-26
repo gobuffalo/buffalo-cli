@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/gobuffalo/bufcli/genny/assets/webpack"
+	"github.com/gobuffalo/buffalo-cli/genny/assets/webpack"
 	"github.com/gobuffalo/genny"
 
 	"github.com/gobuffalo/packr/v2/jam"

@@ -6,8 +6,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/gobuffalo/bufcli/genny/plugins/plugin"
-	"github.com/gobuffalo/bufcli/genny/plugins/plugin/with"
+	"github.com/gobuffalo/buffalo-cli/genny/plugins/plugin"
+	"github.com/gobuffalo/buffalo-cli/genny/plugins/plugin/with"
 	"github.com/gobuffalo/genny"
 	"github.com/gobuffalo/genny/gogen"
 	"github.com/gobuffalo/licenser/genny/licenser"

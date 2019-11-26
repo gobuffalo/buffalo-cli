@@ -6,7 +6,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/gobuffalo/bufcli/plugins"
+	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/events"
 	"github.com/spf13/cobra"
 )

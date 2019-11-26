@@ -3,9 +3,9 @@ package web
 import (
 	"html/template"
 
-	"github.com/gobuffalo/bufcli/genny/assets/standard"
-	"github.com/gobuffalo/bufcli/genny/assets/webpack"
-	"github.com/gobuffalo/bufcli/genny/newapp/core"
+	"github.com/gobuffalo/buffalo-cli/genny/assets/standard"
+	"github.com/gobuffalo/buffalo-cli/genny/assets/webpack"
+	"github.com/gobuffalo/buffalo-cli/genny/newapp/core"
 	"github.com/gobuffalo/genny"
 	"github.com/gobuffalo/genny/gogen"
 	"github.com/gobuffalo/genny/gogen/gomods"

@@ -6,10 +6,10 @@ import (
 	"strings"
 
 	"github.com/gobuffalo/bufcli"
-	"github.com/gobuffalo/bufcli/genny/ci"
-	"github.com/gobuffalo/bufcli/genny/docker"
-	"github.com/gobuffalo/bufcli/genny/refresh"
-	"github.com/gobuffalo/bufcli/genny/vcs"
+	"github.com/gobuffalo/buffalo-cli/genny/ci"
+	"github.com/gobuffalo/buffalo-cli/genny/docker"
+	"github.com/gobuffalo/buffalo-cli/genny/refresh"
+	"github.com/gobuffalo/buffalo-cli/genny/vcs"
 	"github.com/gobuffalo/buffalo-pop/genny/newapp"
 	"github.com/gobuffalo/meta"
 )

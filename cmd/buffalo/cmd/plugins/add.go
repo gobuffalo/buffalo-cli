@@ -6,8 +6,8 @@ import (
 	"path"
 	"strings"
 
-	"github.com/gobuffalo/bufcli/genny/add"
-	"github.com/gobuffalo/bufcli/plugins/plugdeps"
+	"github.com/gobuffalo/buffalo-cli/genny/add"
+	"github.com/gobuffalo/buffalo-cli/plugins/plugdeps"
 	"github.com/gobuffalo/genny"
 	"github.com/gobuffalo/meta"
 	"github.com/markbates/errx"
