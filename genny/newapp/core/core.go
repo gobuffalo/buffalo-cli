@@ -1,8 +1,7 @@
 package core
 
 import (
-	"runtime"
-
+	"github.com/gobuffalo/bufcli"
 	"github.com/gobuffalo/bufcli/genny/ci"
 	"github.com/gobuffalo/bufcli/genny/docker"
 	"github.com/gobuffalo/bufcli/genny/plugins/install"
@@ -34,7 +33,7 @@ func New(opts *Options) (*genny.Group, error) {
 		if err != nil {
 			return gg, err
 		}
-		g.Command(gogen.Get("github.com/gobuffalo/buffalo@" + runtime.Version))
+		g.Command(gogen.Get("github.com/gobuffalo/buffalo@" + bufcli.Version))
 		g.Command(gogen.Get("./..."))
 
 		gg.Add(g)

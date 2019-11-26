@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/gobuffalo/bufcli/buffalo/cmd/buffalo/cmd/generate"
+	"github.com/gobuffalo/bufcli/cmd/buffalo/cmd/generate"
 	"github.com/spf13/cobra"
 )
 

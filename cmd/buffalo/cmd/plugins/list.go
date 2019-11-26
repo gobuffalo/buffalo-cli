@@ -8,6 +8,7 @@ import (
 	"sort"
 	"text/tabwriter"
 
+	"github.com/gobuffalo/bufcli/plugins"
 	"github.com/spf13/cobra"
 )
 
@@ -15,12 +16,12 @@ var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "a list of installed buffalo plugins",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		list, err := pluginsin.Available()
+		list, err := plugins.Available()
 		if err != nil {
 			return err
 		}
 
-		var cmds pluginsin.Commands
+		var cmds plugins.Commands
 
 		for _, l := range list {
 			for _, c := range l {

@@ -2,9 +2,9 @@ package core
 
 import (
 	"io/ioutil"
-	"runtime"
 	"testing"
 
+	"github.com/gobuffalo/bufcli"
 	"github.com/gobuffalo/bufcli/genny/docker"
 	"github.com/gobuffalo/genny/gentest"
 	"github.com/gobuffalo/meta"
@@ -84,7 +84,7 @@ func Test_New_Mods(t *testing.T) {
 
 	cmds := []string{
 		"go mod init coke",
-		"go get github.com/gobuffalo/buffalo@" + runtime.Version,
+		"go get github.com/gobuffalo/buffalo@" + bufcli.Version,
 		"go get ./...",
 		"go mod tidy",
 	}

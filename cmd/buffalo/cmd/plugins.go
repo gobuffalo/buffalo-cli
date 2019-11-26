@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	pluginscmd "github.com/gobuffalo/bufcli/cmd/buffalo/cmd/plugins"
 	"github.com/gobuffalo/bufcli/plugins"
 	"github.com/markbates/oncer"
 	"github.com/sirupsen/logrus"

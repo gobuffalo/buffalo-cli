@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/gobuffalo/bufcli"
 	"github.com/gobuffalo/genny"
 )
 

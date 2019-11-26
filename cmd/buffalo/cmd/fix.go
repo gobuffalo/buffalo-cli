@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gobuffalo/bufcli"
-	"github.com/gobuffalo/bufcli/buffalo/cmd/buffalo/cmd/fix"
+	"github.com/gobuffalo/bufcli/cmd/buffalo/cmd/fix"
 	"github.com/spf13/cobra"
 )
 

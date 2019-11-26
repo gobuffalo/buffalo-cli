@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 
+	"github.com/gobuffalo/bufcli"
 	"github.com/gobuffalo/meta"
 )
 
