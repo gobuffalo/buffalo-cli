@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gobuffalo/buffalo/genny/plugins/plugin"
+	"github.com/gobuffalo/bufcli/genny/plugins/plugin"
 	"github.com/gobuffalo/genny"
 	"github.com/gobuffalo/genny/gentest"
 	"github.com/gobuffalo/genny/gogen/gomods"
@@ -72,7 +72,7 @@ func Test_GenerateCmd(t *testing.T) {
 const availgo = `package cmd
 
 import (
-	"github.com/gobuffalo/buffalo/plugins/plugcmds"
+	"github.com/gobuffalo/bufcli/plugins/plugcmds"
 	"github.com/spf13/cobra"
 )
 

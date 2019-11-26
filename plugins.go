@@ -1,4 +1,4 @@
-package buffalo
+package bufcli
 
 import (
 	"encoding/json"
@@ -7,8 +7,8 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/gobuffalo/buffalo/internal/consts"
-	"github.com/gobuffalo/buffalo/plugins"
+	"github.com/gobuffalo/bufcli/internal/consts"
+	"github.com/gobuffalo/bufcli/plugins"
 	"github.com/gobuffalo/events"
 	"github.com/markbates/oncer"
 	"github.com/markbates/safe"
@@ -18,9 +18,9 @@ import (
 func LoadPlugins() error {
 	var err error
 	oncer.Do("events.LoadPlugins", func() {
-		env := Env(os.Getenv(consts.GO_ENV))
+		env := os.Getenv(consts.GO_ENV)
 		// don't send plugins events during testing
-		if env.Test() {
+		if env == "test" {
 			return
 		}
 		plugs, err := plugins.Available()

@@ -2,10 +2,10 @@ package core
 
 import (
 	"io/ioutil"
+	"runtime"
 	"testing"
 
-	"github.com/gobuffalo/buffalo/genny/docker"
-	"github.com/gobuffalo/buffalo/runtime"
+	"github.com/gobuffalo/bufcli/genny/docker"
 	"github.com/gobuffalo/genny/gentest"
 	"github.com/gobuffalo/meta"
 	"github.com/stretchr/testify/require"

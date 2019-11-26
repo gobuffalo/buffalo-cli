@@ -16,10 +16,7 @@ jobs:
         fetch-depth: 1
     - name: Test
       run: |
-        go mod tidy
-        go mod download
-        go test -tags "sqlite integration_test" -race ./...
-        cd ./buffalo
-        go mod tidy
-        go mod download
-        go test -tags "sqlite integration_test" -race ./...
+        go mod tidy -v
+        go test -race ./...
+
+

@@ -5,12 +5,12 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/gobuffalo/bufcli"
+	"github.com/gobuffalo/bufcli/genny/ci"
+	"github.com/gobuffalo/bufcli/genny/docker"
+	"github.com/gobuffalo/bufcli/genny/refresh"
+	"github.com/gobuffalo/bufcli/genny/vcs"
 	"github.com/gobuffalo/buffalo-pop/genny/newapp"
-	"github.com/gobuffalo/buffalo/genny/ci"
-	"github.com/gobuffalo/buffalo/genny/docker"
-	"github.com/gobuffalo/buffalo/genny/refresh"
-	"github.com/gobuffalo/buffalo/genny/vcs"
-	"github.com/gobuffalo/buffalo/runtime"
 	"github.com/gobuffalo/meta"
 )
 
@@ -33,7 +33,7 @@ func (opts *Options) Validate() error {
 	}
 
 	if len(opts.Version) == 0 {
-		opts.Version = runtime.Version
+		opts.Version = bufcli.Version
 	}
 
 	if opts.Pop != nil {

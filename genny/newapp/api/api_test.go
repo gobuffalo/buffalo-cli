@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gobuffalo/buffalo/genny/newapp/core"
+	"github.com/gobuffalo/bufcli/genny/newapp/core"
 	"github.com/gobuffalo/genny/gentest"
 	"github.com/gobuffalo/meta"
 	"github.com/stretchr/testify/require"

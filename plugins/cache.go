@@ -10,7 +10,7 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/gobuffalo/buffalo/internal/consts"
+	"github.com/gobuffalo/bufcli/internal/consts"
 )
 
 type cachedPlugin struct {

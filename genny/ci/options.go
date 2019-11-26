@@ -4,8 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/gobuffalo/buffalo/runtime"
-
+	"github.com/gobuffalo/bufcli"
 	"github.com/gobuffalo/meta"
 	"github.com/gobuffalo/pop"
 )
@@ -28,7 +27,7 @@ func (opts *Options) Validate() error {
 	}
 
 	if len(opts.Version) == 0 {
-		opts.Version = runtime.Version
+		opts.Version = bufcli.Version
 	}
 
 	if len(opts.Provider) == 0 {

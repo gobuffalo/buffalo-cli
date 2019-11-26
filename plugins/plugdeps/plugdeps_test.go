@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/gobuffalo/buffalo/internal/takeon/github.com/markbates/errx"
 	"github.com/gobuffalo/meta"
+	"github.com/markbates/errx"
 	"github.com/stretchr/testify/require"
 )
 

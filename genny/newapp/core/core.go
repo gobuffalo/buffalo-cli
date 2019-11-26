@@ -1,18 +1,19 @@
 package core
 
 import (
+	"runtime"
+
+	"github.com/gobuffalo/bufcli/genny/ci"
+	"github.com/gobuffalo/bufcli/genny/docker"
+	"github.com/gobuffalo/bufcli/genny/plugins/install"
+	"github.com/gobuffalo/bufcli/genny/refresh"
+	"github.com/gobuffalo/bufcli/plugins/plugdeps"
 	pop "github.com/gobuffalo/buffalo-pop/genny/newapp"
-	"github.com/gobuffalo/buffalo/genny/ci"
-	"github.com/gobuffalo/buffalo/genny/docker"
-	"github.com/gobuffalo/buffalo/genny/plugins/install"
-	"github.com/gobuffalo/buffalo/genny/refresh"
-	"github.com/gobuffalo/buffalo/internal/takeon/github.com/markbates/errx"
-	"github.com/gobuffalo/buffalo/plugins/plugdeps"
-	"github.com/gobuffalo/buffalo/runtime"
 	"github.com/gobuffalo/genny"
 	"github.com/gobuffalo/genny/gogen"
 	"github.com/gobuffalo/genny/gogen/gomods"
 	"github.com/gobuffalo/meta"
+	"github.com/markbates/errx"
 )
 
 // New generator for creating a Buffalo application

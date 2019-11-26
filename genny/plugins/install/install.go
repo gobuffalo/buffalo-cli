@@ -1,7 +1,7 @@
 package install
 
 import (
-	"github.com/gobuffalo/buffalo/genny/add"
+	"github.com/gobuffalo/bufcli/genny/add"
 	"github.com/gobuffalo/genny"
 	"github.com/gobuffalo/genny/gogen"
 )

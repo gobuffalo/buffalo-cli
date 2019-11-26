@@ -3,7 +3,7 @@ package docker
 import (
 	"fmt"
 
-	"github.com/gobuffalo/buffalo/runtime"
+	"github.com/gobuffalo/bufcli"
 	"github.com/gobuffalo/meta"
 )
 
@@ -19,7 +19,7 @@ func (opts *Options) Validate() error {
 		opts.App = meta.New(".")
 	}
 	if len(opts.Version) == 0 {
-		opts.Version = runtime.Version
+		opts.Version = bufcli.Version
 	}
 	if len(opts.Style) == 0 {
 		opts.Style = "multi"

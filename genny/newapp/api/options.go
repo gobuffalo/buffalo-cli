@@ -1,8 +1,6 @@
 package api
 
-import (
-	"github.com/gobuffalo/buffalo/genny/newapp/core"
-)
+import "github.com/gobuffalo/bufcli/genny/newapp/core"
 
 // Options for API applications
 type Options struct {

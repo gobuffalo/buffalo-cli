@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gobuffalo/buffalo/plugins/plugdeps"
+	"github.com/gobuffalo/bufcli/plugins/plugdeps"
 	"github.com/gobuffalo/genny"
 	"github.com/gobuffalo/genny/gentest"
 	"github.com/gobuffalo/meta"

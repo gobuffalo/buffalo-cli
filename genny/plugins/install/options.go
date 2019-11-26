@@ -3,9 +3,9 @@ package install
 import (
 	"os"
 
-	"github.com/gobuffalo/buffalo/internal/takeon/github.com/markbates/errx"
-	"github.com/gobuffalo/buffalo/plugins/plugdeps"
+	"github.com/gobuffalo/bufcli/plugins/plugdeps"
 	"github.com/gobuffalo/meta"
+	"github.com/markbates/errx"
 )
 
 // Options container for passing needed info for

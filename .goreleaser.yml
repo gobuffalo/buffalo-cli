@@ -1,10 +1,10 @@
 builds:
   -
-    main: ./buffalo/main.go
+    main: ./cmd/bufcli/main.go
     env:
       - CGO_ENABLED=0
     ldflags:
-      - -s -w -X "github.com/gobuffalo/buffalo/runtime.Version={{.Tag}}"
+      - -s -w -X "github.com/gobuffalo/bufcli.Version={{.Tag}}"
     goos:
       - darwin
       - linux
@@ -37,13 +37,9 @@ changelog:
       - '^test:'
 brews:
   -
-    name: 'buffalo'
+    name: 'bufcli'
     github:
       owner: 'gobuffalo'
       name: 'homebrew-tap'
-    description: A Go web development eco-system, designed to make your life easier.
     install: |
-      bin.install "buffalo"
-    test: |
-      system "#{bin}/buffalo", "version"
-
+      bin.install "bufcli"
