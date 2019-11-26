@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/gobuffalo/bufcli"
+	bufcli "github.com/gobuffalo/buffalo-cli"
 	"github.com/gobuffalo/meta"
 	"github.com/gobuffalo/pop"
 )

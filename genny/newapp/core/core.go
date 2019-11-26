@@ -1,7 +1,7 @@
 package core
 
 import (
-	"github.com/gobuffalo/bufcli"
+	bufcli "github.com/gobuffalo/buffalo-cli"
 	"github.com/gobuffalo/buffalo-cli/genny/ci"
 	"github.com/gobuffalo/buffalo-cli/genny/docker"
 	"github.com/gobuffalo/buffalo-cli/genny/plugins/install"

@@ -3,7 +3,7 @@ package build
 import (
 	"time"
 
-	"github.com/gobuffalo/bufcli"
+	bufcli "github.com/gobuffalo/buffalo-cli"
 	"github.com/gobuffalo/events"
 	"github.com/gobuffalo/genny"
 	"github.com/gobuffalo/genny/plushgen"

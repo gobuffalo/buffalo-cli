@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/gobuffalo/bufcli"
+	bufcli "github.com/gobuffalo/buffalo-cli"
 	"github.com/gobuffalo/buffalo-cli/cmd/buffalo/cmd/fix"
 	"github.com/spf13/cobra"
 )

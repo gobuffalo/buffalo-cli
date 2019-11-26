@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/gobuffalo/bufcli"
+	bufcli "github.com/gobuffalo/buffalo-cli"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )

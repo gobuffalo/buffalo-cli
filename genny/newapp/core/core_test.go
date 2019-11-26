@@ -4,7 +4,7 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"github.com/gobuffalo/bufcli"
+	bufcli "github.com/gobuffalo/buffalo-cli"
 	"github.com/gobuffalo/buffalo-cli/genny/docker"
 	"github.com/gobuffalo/genny/gentest"
 	"github.com/gobuffalo/meta"

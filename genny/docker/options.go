@@ -3,7 +3,7 @@ package docker
 import (
 	"fmt"
 
-	"github.com/gobuffalo/bufcli"
+	bufcli "github.com/gobuffalo/buffalo-cli"
 	"github.com/gobuffalo/meta"
 )
 
