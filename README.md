@@ -1,7 +1,7 @@
-# bufcli
+# buffalo-cli
 
-[![](https://github.com/gobuffalo/bufcli/workflows/Tests/badge.svg)](https://github.com/gobuffalo/bufcli/actions)
-[![GoDoc](https://godoc.org/github.com/gobuffalo/bufcli?status.svg)](https://godoc.org/github.com/gobuffalo/bufcli)
+[![](https://github.com/gobuffalo/buffalo-cli/workflows/Tests/badge.svg)](https://github.com/gobuffalo/buffalo-cli/actions)
+[![GoDoc](https://godoc.org/github.com/gobuffalo/buffalo-cli?status.svg)](https://godoc.org/github.com/gobuffalo/buffalo-cli)
 
 ### Requirements
 
@@ -11,7 +11,7 @@
 ### Installation
 
 ```bash
-$ go get github.com/gobuffalo/bufcli/cmd/bufcli
+$ go get github.com/gobuffalo/buffalo-cli/cmd/buffalo
 ```
 
 ---
