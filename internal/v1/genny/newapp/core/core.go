@@ -1,7 +1,6 @@
 package core
 
 import (
-	bufcli "github.com/gobuffalo/buffalo-cli"
 	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/ci"
 	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/docker"
 	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/plugins/install"
@@ -9,7 +8,6 @@ import (
 	"github.com/gobuffalo/buffalo-cli/internal/v1/plugins/plugdeps"
 	pop "github.com/gobuffalo/buffalo-pop/genny/newapp"
 	"github.com/gobuffalo/genny"
-	"github.com/gobuffalo/genny/gogen"
 	"github.com/gobuffalo/genny/gogen/gomods"
 	"github.com/gobuffalo/meta"
 	"github.com/markbates/errx"
@@ -28,16 +26,11 @@ func New(opts *Options) (*genny.Group, error) {
 
 	app := opts.App
 
-	if app.WithModules {
-		g, err := gomods.Init(app.PackagePkg, app.Root)
-		if err != nil {
-			return gg, err
-		}
-		g.Command(gogen.Get("github.com/gobuffalo/buffalo@" + bufcli.Version))
-		g.Command(gogen.Get("./..."))
-
-		gg.Add(g)
+	g, err = gomods.Init(app.PackagePkg, app.Root)
+	if err != nil {
+		return gg, err
 	}
+	gg.Add(g)
 
 	plugs, err := plugdeps.List(app)
 	if err != nil && (errx.Unwrap(err) != plugdeps.ErrMissingConfig) {
@@ -102,19 +95,11 @@ func New(opts *Options) (*genny.Group, error) {
 	}
 	gg.Merge(ig)
 
-	if !app.WithModules {
-		g := genny.New()
-		g.Command(gogen.Get("./...", "-t"))
-		gg.Add(g)
+	g, err = gomods.Tidy(app.Root, false)
+	if err != nil {
+		return gg, err
 	}
-
-	if app.WithModules {
-		g, err := gomods.Tidy(app.Root, false)
-		if err != nil {
-			return gg, err
-		}
-		gg.Add(g)
-	}
+	gg.Add(g)
 
 	return gg, nil
 }

@@ -275,7 +275,6 @@ github.com/gobuffalo/helpers v0.2.4/go.mod h1:NX7v27yxPDOPTgUFYmJ5ow37EbxdoLrauc
 github.com/gobuffalo/helpers v0.4.0 h1:DR/iYihrVCXv1cYeIGSK3EZz2CljO+DqDLQPWZAod9c=
 github.com/gobuffalo/helpers v0.4.0/go.mod h1:2q/ZnVxCehM4/y1bNz3+wXsvWvWUY+iTUr7mPC6QqGQ=
 github.com/gobuffalo/here v0.2.3/go.mod h1:2a6G14FaAKOGJMK/5UNa4Og/+iyFS5cq3MnlvFR7YDk=
-github.com/gobuffalo/here v0.4.0 h1:TD+FD+jQkp5iNPYEAxT6E+4O8u/pOQJyDjmZNC0+/80=
 github.com/gobuffalo/here v0.4.0/go.mod h1:bTNk/uKZgycuB358iR0D32dI9kHBClBGpXjW2HVHkNo=
 github.com/gobuffalo/here v0.4.3 h1:SfGtsa52WdHC4pP7FzWyPIZXdx3m/D3Pwe39QLPq/24=
 github.com/gobuffalo/here v0.4.3/go.mod h1:HLATYJxpkktFu8ZWog+wsu/MpaTIu82PRzW7J9Ylk6k=

@@ -14,7 +14,6 @@ func Test_New(t *testing.T) {
 	r := require.New(t)
 
 	app := meta.New(".")
-	app.WithModules = false
 	app.AsAPI = true
 	app.AsWeb = false
 
@@ -33,8 +32,8 @@ func Test_New(t *testing.T) {
 	res := run.Results()
 
 	cmds := []string{
-		"go get -t ./...",
-		"go get -t ./...",
+		"go mod init api",
+		"go mod tidy",
 	}
 	r.Len(res.Commands, len(cmds))
 
