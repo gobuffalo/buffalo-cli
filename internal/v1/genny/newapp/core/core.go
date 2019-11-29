@@ -95,11 +95,5 @@ func New(opts *Options) (*genny.Group, error) {
 	}
 	gg.Merge(ig)
 
-	g, err = gomods.Tidy(app.Root, false)
-	if err != nil {
-		return gg, err
-	}
-	gg.Add(g)
-
 	return gg, nil
 }

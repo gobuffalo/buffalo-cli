@@ -28,7 +28,6 @@ func Test_New(t *testing.T) {
 
 	cmds := []string{
 		"go mod init coke",
-		"go mod tidy",
 	}
 	r.NoError(gentest.CompareCommands(cmds, res.Commands))
 

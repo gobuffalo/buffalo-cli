@@ -33,7 +33,6 @@ func Test_New(t *testing.T) {
 
 	cmds := []string{
 		"go mod init api",
-		"go mod tidy",
 	}
 	r.Len(res.Commands, len(cmds))
 

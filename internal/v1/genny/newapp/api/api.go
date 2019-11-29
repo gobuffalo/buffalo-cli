@@ -6,7 +6,6 @@ import (
 	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/newapp/core"
 	"github.com/gobuffalo/genny"
 	"github.com/gobuffalo/genny/gogen"
-	"github.com/gobuffalo/genny/gogen/gomods"
 	"github.com/gobuffalo/packr/v2"
 )
 
@@ -32,12 +31,6 @@ func New(opts *Options) (*genny.Group, error) {
 	g.Transformer(t)
 	g.Box(packr.New("buffalo:genny:newapp:api", "../api/templates"))
 
-	gg.Add(g)
-
-	g, err = gomods.Tidy(opts.App.Root, false)
-	if err != nil {
-		return gg, err
-	}
 	gg.Add(g)
 
 	return gg, nil

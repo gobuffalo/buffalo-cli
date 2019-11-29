@@ -8,6 +8,7 @@ import (
 	"path"
 
 	"github.com/gobuffalo/buffalo-cli/cli"
+	"github.com/gobuffalo/buffalo-cli/internal/cmdx"
 	"github.com/gobuffalo/here"
 	"github.com/markbates/haste"
 	"github.com/markbates/jim"
@@ -15,6 +16,7 @@ import (
 
 func main() {
 	ctx := context.Background()
+	defer cmdx.Tidy(ctx)
 
 	// trap Ctrl+C and call cancel on the context
 	ctx, cancel := context.WithCancel(ctx)
@@ -34,6 +36,7 @@ func main() {
 	}()
 
 	if err := run(ctx); err != nil {
+		cmdx.Tidy(ctx)
 		log.Fatal(err)
 	}
 }
