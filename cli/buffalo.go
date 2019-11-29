@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 
+	"github.com/gobuffalo/buffalo-cli/cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/internal/cmdx"
 	"github.com/gobuffalo/buffalo-cli/internal/v1/cmd"
 )
@@ -17,7 +18,7 @@ type Buffalo struct {
 	Stdin   io.Reader
 	Stdout  io.Writer
 	Stderr  io.Writer
-	Plugins Plugins
+	Plugins plugins.Plugins
 	version bool
 	help    bool
 }
