@@ -57,7 +57,7 @@ func Test_New(t *testing.T) {
 	// we should never leave any files modified or dropped
 	r.Len(res.Files, 0)
 
-	cmds := []string{"go build -tags bar -o bin/foo", "go mod tidy"}
+	cmds := []string{"go build -tags bar -o bin/foo"}
 	r.Len(res.Commands, len(cmds))
 	for i, c := range res.Commands {
 		eq(r, cmds[i], c)
