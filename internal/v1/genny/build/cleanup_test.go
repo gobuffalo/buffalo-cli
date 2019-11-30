@@ -31,7 +31,7 @@ func Test_Cleanup(t *testing.T) {
 
 	results := run.Results()
 
-	cmds := []string{"go mod tidy"}
+	cmds := []string{}
 	for i, c := range results.Commands {
 		eq(r, cmds[i], c)
 	}

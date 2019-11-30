@@ -4,10 +4,12 @@ import (
 	"context"
 	"flag"
 	"io"
+	"io/ioutil"
 	"os"
 
 	"github.com/gobuffalo/buffalo-cli/internal/cmdx"
 	"github.com/gobuffalo/buffalo-cli/internal/v1/cmd"
+	"github.com/gobuffalo/buffalo-cli/internal/v1/cmd/fix"
 )
 
 // Buffalo represents the `buffalo` cli.
@@ -41,13 +43,34 @@ func (b *Buffalo) Flags() *flag.FlagSet {
 }
 
 func (b *Buffalo) setFlags() {
-	b.flags = flag.NewFlagSet("buffalo", flag.ContinueOnError)
+	b.flags = NewFlagSet("buffalo")
 	b.flags.BoolVar(&b.version, "v", false, "display version")
 	b.flags.BoolVar(&b.help, "h", false, "display help")
 	cmdx.Usage(b, b.flags)
 }
 
+func (b *Buffalo) Fix(ctx context.Context, args []string) error {
+	flags := NewFlagSet("buffalo fix")
+	flags.SetOutput(ioutil.Discard)
+	flags.BoolVar(&fix.YesToAll, "y", false, "update all without asking for confirmation")
+	if err := flags.Parse(args); err != nil {
+		return err
+	}
+
+	if err := fix.Run(); err != nil {
+		return err
+	}
+	return b.Plugins.Fix(ctx, args)
+}
+
 func (b *Buffalo) Main(ctx context.Context, args []string) error {
+	if len(args) > 0 {
+		switch args[0] {
+		case "fix":
+			return b.Fix(ctx, args[1:])
+		}
+	}
+
 	c := cmd.RootCmd
 	c.SetArgs(args)
 	return c.Execute()

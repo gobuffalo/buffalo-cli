@@ -2,8 +2,6 @@ package fix
 
 import (
 	"fmt"
-	"os"
-	"os/exec"
 
 	bufcli "github.com/gobuffalo/buffalo-cli"
 	"github.com/gobuffalo/meta"
@@ -44,13 +42,6 @@ func Run() error {
 	}()
 
 	for _, c := range checks {
-		if r.App.WithModules {
-			cmd := exec.Command("go", "mod", "tidy")
-			cmd.Stderr = os.Stderr
-			if err := cmd.Run(); err != nil {
-				return err
-			}
-		}
 		if err := c(r); err != nil {
 			return err
 		}

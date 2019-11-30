@@ -2,7 +2,6 @@ package build
 
 import (
 	"os"
-	"os/exec"
 	"path/filepath"
 
 	"github.com/gobuffalo/genny"
@@ -39,6 +38,6 @@ func Cleanup(opts *Options) genny.RunFn {
 				return err
 			}
 		}
-		return r.Exec(exec.Command(genny.GoBin(), "mod", "tidy"))
+		return nil
 	}
 }

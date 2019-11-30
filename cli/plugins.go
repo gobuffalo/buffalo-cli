@@ -2,7 +2,6 @@ package cli
 
 import (
 	"context"
-	"flag"
 	"fmt"
 	"sort"
 
@@ -60,12 +59,10 @@ func (plugs Plugins) Fix(ctx context.Context, args []string) error {
 		help bool
 	}{}
 
-	flags := flag.NewFlagSet("buffalo fix", flag.ContinueOnError)
+	flags := NewFlagSet("buffalo fix")
 	flags.BoolVar(&opts.help, "h", false, "print this help")
 
-	if err := flags.Parse(args); err != nil {
-		return err
-	}
+	flags.Parse(args)
 
 	args = flags.Args()
 
@@ -127,12 +124,9 @@ func (plugs Plugins) Generate(ctx context.Context, args []string) error {
 		help bool
 	}{}
 
-	flags := flag.NewFlagSet("buffalo generate", flag.ContinueOnError)
+	flags := NewFlagSet("buffalo generate")
 	flags.BoolVar(&opts.help, "h", false, "print this help")
-
-	if err := flags.Parse(args); err != nil {
-		return err
-	}
+	flags.Parse(args)
 
 	args = flags.Args()
 	if opts.help || len(args) == 0 {
