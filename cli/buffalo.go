@@ -53,7 +53,9 @@ func (b *Buffalo) Fix(ctx context.Context, args []string) error {
 	flags := NewFlagSet("buffalo fix")
 	flags.SetOutput(ioutil.Discard)
 	flags.BoolVar(&fix.YesToAll, "y", false, "update all without asking for confirmation")
-	flags.Parse(args)
+	if err := flags.Parse(args); err != nil {
+		return err
+	}
 
 	if err := fix.Run(); err != nil {
 		return err
