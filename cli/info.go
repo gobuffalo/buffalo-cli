@@ -10,6 +10,9 @@ import (
 	"github.com/gobuffalo/genny"
 )
 
+// Info implements the `buffalo info` command. Buffalo's checks
+// are run first, then any plugins that implement plugins.Informer
+// will be run in order at the end.
 func (b *Buffalo) Info(ctx context.Context, args []string) error {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
