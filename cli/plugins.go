@@ -59,14 +59,14 @@ func (plugs Plugins) Fix(ctx context.Context, args []string) error {
 		help bool
 	}{}
 
-	flags := NewFlagSet("buffalo fix")
+	flags := cmdx.NewFlagSet("buffalo fix", cmdx.Stderr(ctx))
 	flags.BoolVar(&opts.help, "h", false, "print this help")
 
 	flags.Parse(args)
 
 	args = flags.Args()
 
-	stderr := cmdx.Stderr(ctx)
+	// stderr := cmdx.Stderr(ctx)
 	if opts.help {
 		sort.Slice(plugs, func(i, j int) bool {
 			return plugs[i].Name() < plugs[j].Name()
@@ -74,7 +74,7 @@ func (plugs Plugins) Fix(ctx context.Context, args []string) error {
 
 		for _, p := range plugs {
 			if _, ok := p.(Fixer); ok {
-				fmt.Fprintf(stderr, "%s %s - [%s]\n", flags.Name(), p.Name(), p)
+				// fmt.Fprintf(stderr, "%s %s - [%s]\n", flags.Name(), p.Name(), p)
 			}
 		}
 		return nil
@@ -124,7 +124,7 @@ func (plugs Plugins) Generate(ctx context.Context, args []string) error {
 		help bool
 	}{}
 
-	flags := NewFlagSet("buffalo generate")
+	flags := cmdx.NewFlagSet("buffalo generate", cmdx.Stderr(ctx))
 	flags.BoolVar(&opts.help, "h", false, "print this help")
 	flags.Parse(args)
 
@@ -134,10 +134,10 @@ func (plugs Plugins) Generate(ctx context.Context, args []string) error {
 			return plugs[i].Name() < plugs[j].Name()
 		})
 
-		stderr := cmdx.Stderr(ctx)
+		// stderr := cmdx.Stderr(ctx)
 		for _, p := range plugs {
 			if _, ok := p.(Generator); ok {
-				fmt.Fprintf(stderr, "%s %s - [%s]\n", flags.Name(), p.Name(), p)
+				// fmt.Fprintf(stderr, "%s %s - [%s]\n", flags.Name(), p.Name(), p)
 			}
 		}
 		return nil
