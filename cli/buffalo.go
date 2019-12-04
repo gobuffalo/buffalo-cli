@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 
+	"github.com/gobuffalo/buffalo-cli/cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/internal/cmdx"
 	"github.com/gobuffalo/buffalo-cli/internal/v1/cmd"
 	"github.com/gobuffalo/buffalo-cli/internal/v1/cmd/fix"
@@ -18,7 +19,7 @@ type Buffalo struct {
 	Stdin   io.Reader
 	Stdout  io.Writer
 	Stderr  io.Writer
-	Plugins Plugins
+	Plugins plugins.Plugins
 	version bool
 	help    bool
 }
@@ -58,13 +59,15 @@ func (b *Buffalo) Fix(ctx context.Context, args []string) error {
 }
 
 func (b *Buffalo) Main(ctx context.Context, args []string) error {
-	flags := cmdx.NewFlagSet("buffalo", cmdx.Stderr(ctx))
-	flags.BoolVar(&b.version, "v", false, "display version")
-	flags.BoolVar(&b.help, "h", false, "display help")
+	// flags := cmdx.NewFlagSet("buffalo", cmdx.Stderr(ctx))
+	// flags.BoolVar(&b.version, "v", false, "display version")
+	// flags.BoolVar(&b.help, "h", false, "display help")
 	if len(args) > 0 {
 		switch args[0] {
 		case "fix":
 			return b.Fix(ctx, args[1:])
+		case "info":
+			return b.Info(ctx, args[1:])
 		}
 	}
 
