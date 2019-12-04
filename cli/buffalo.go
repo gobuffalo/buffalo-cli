@@ -2,19 +2,20 @@ package cli
 
 import (
 	"context"
-	"flag"
 	"io"
 	"os"
 
 	"github.com/gobuffalo/buffalo-cli/cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/internal/cmdx"
 	"github.com/gobuffalo/buffalo-cli/internal/v1/cmd"
+	"github.com/gobuffalo/buffalo-cli/internal/v1/cmd/fix"
+	"github.com/spf13/pflag"
 )
 
 // Buffalo represents the `buffalo` cli.
 type Buffalo struct {
 	context.Context
-	flags   *flag.FlagSet
+	flags   *pflag.FlagSet
 	Stdin   io.Reader
 	Stdout  io.Writer
 	Stderr  io.Writer
@@ -34,7 +35,7 @@ func New(ctx context.Context) (*Buffalo, error) {
 	return b, nil
 }
 
-func (b *Buffalo) Flags() *flag.FlagSet {
+func (b *Buffalo) Flags() *pflag.FlagSet {
 	if b.flags == nil {
 		b.setFlags()
 	}
@@ -42,48 +43,33 @@ func (b *Buffalo) Flags() *flag.FlagSet {
 }
 
 func (b *Buffalo) setFlags() {
-	b.flags = flag.NewFlagSet("buffalo", flag.ContinueOnError)
-	b.flags.BoolVar(&b.version, "v", false, "display version")
-	b.flags.BoolVar(&b.help, "h", false, "display help")
-	cmdx.Usage(b, b.flags)
+}
+
+func (b *Buffalo) Fix(ctx context.Context, args []string) error {
+	flags := cmdx.NewFlagSet("buffalo fix", cmdx.Stderr(ctx))
+	flags.BoolVar(&fix.YesToAll, "y", false, "update all without asking for confirmation")
+	if err := flags.Parse(args); err != nil {
+		return err
+	}
+
+	if err := fix.Run(); err != nil {
+		return err
+	}
+	return b.Plugins.Fix(ctx, args)
 }
 
 func (b *Buffalo) Main(ctx context.Context, args []string) error {
+	flags := cmdx.NewFlagSet("buffalo", cmdx.Stderr(ctx))
+	flags.BoolVar(&b.version, "v", false, "display version")
+	flags.BoolVar(&b.help, "h", false, "display help")
+	if len(args) > 0 {
+		switch args[0] {
+		case "fix":
+			return b.Fix(ctx, args[1:])
+		}
+	}
+
 	c := cmd.RootCmd
 	c.SetArgs(args)
 	return c.Execute()
-
-	// flags := b.Flags()
-	// if err := flags.Parse(args); err != nil {
-	// 	return err
-	// }
-	// args = flags.Args()
-	//
-	// if len(args) == 0 {
-	// 	flags.Usage()
-	// 	return nil
-	// }
-	//
-	// arg := args[0]
-	// if len(args) > 0 {
-	// 	args = args[1:]
-	// }
-	//
-	// switch arg {
-	// case "fix":
-	// 	return b.Plugins.Fix(ctx, args)
-	// case "generate":
-	// 	return b.Plugins.Generate(ctx, args)
-	// }
-	//
-	// if b.version {
-	// 	fmt.Fprintln(b.Stdout, "ssh")
-	// 	return nil
-	// }
-	//
-	// if b.help {
-	// 	flags.Usage()
-	// 	return nil
-	// }
-	// return nil
 }

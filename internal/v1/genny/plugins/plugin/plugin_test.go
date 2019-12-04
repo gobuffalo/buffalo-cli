@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/gobuffalo/genny/gentest"
-	"github.com/gobuffalo/genny/gogen/gomods"
 	"github.com/stretchr/testify/require"
 )
 
@@ -26,12 +25,7 @@ func Test_Generator(t *testing.T) {
 	r.NoError(run.Run())
 	res := run.Results()
 
-	var cmds []string
-	if !gomods.On() {
-		cmds = []string{"git init", "go get github.com/alecthomas/gometalinter", "gometalinter --install"}
-	} else {
-		cmds = []string{"git init", "go mod init github.com/foo/buffalo-bar", "go get github.com/alecthomas/gometalinter", "gometalinter --install", "go mod tidy"}
-	}
+	cmds := []string{"git init", "go mod init github.com/foo/buffalo-bar", "go get github.com/alecthomas/gometalinter", "gometalinter --install"}
 
 	gentest.CompareCommands(cmds, res.Commands)
 

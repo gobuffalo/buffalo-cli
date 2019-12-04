@@ -1,10 +1,8 @@
 package core
 
 import (
-	"io/ioutil"
 	"testing"
 
-	bufcli "github.com/gobuffalo/buffalo-cli"
 	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/docker"
 	"github.com/gobuffalo/genny/gentest"
 	"github.com/gobuffalo/meta"
@@ -13,62 +11,8 @@ import (
 
 func Test_New(t *testing.T) {
 	r := require.New(t)
-
-	tdir, err := ioutil.TempDir("", "")
-	r.NoError(err)
-
-	app := meta.Named("coke", tdir)
-	app.WithModules = false
-
-	gg, err := New(&Options{
-		App: app,
-	})
-	r.NoError(err)
-
-	run := gentest.NewRunner()
-	run.WithGroup(gg)
-
-	r.NoError(run.Run())
-
-	res := run.Results()
-
-	cmds := []string{
-		"go get -t ./...",
-	}
-	r.NoError(gentest.CompareCommands(cmds, res.Commands))
-
-	expected := commonExpected
-	for _, e := range expected {
-		_, err = res.Find(e)
-		r.NoError(err)
-	}
-
-	f, err := res.Find("actions/render.go")
-	r.NoError(err)
-
-	body := f.String()
-	r.Contains(body, `r = render.New(render.Options{})`)
-	unexpected := []string{
-		"Dockerfile",
-		"database.yml",
-		"models/models.go",
-		"go.mod",
-		".buffalo.dev.yml",
-		"assets/css/application.scss.css",
-		"public/assets/application.js",
-	}
-
-	for _, u := range unexpected {
-		_, err = res.Find(u)
-		r.Error(err)
-	}
-}
-
-func Test_New_Mods(t *testing.T) {
-	r := require.New(t)
 	app := meta.Named("coke", ".")
 	(&app).PackageRoot("coke")
-	app.WithModules = true
 
 	gg, err := New(&Options{
 		App: app,
@@ -84,9 +28,6 @@ func Test_New_Mods(t *testing.T) {
 
 	cmds := []string{
 		"go mod init coke",
-		"go get github.com/gobuffalo/buffalo@" + bufcli.Version,
-		"go get ./...",
-		"go mod tidy",
 	}
 	r.NoError(gentest.CompareCommands(cmds, res.Commands))
 

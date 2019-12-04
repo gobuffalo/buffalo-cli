@@ -1,3 +1,3 @@
 package bufcli
 
-var Version = "development"
+var Version = "buffalo-cli/unknown"
