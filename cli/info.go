@@ -10,18 +10,30 @@ import (
 	"github.com/gobuffalo/genny"
 )
 
-// Info implements the `buffalo info` command. Buffalo's checks
+type infoCmd struct {
+	*Buffalo
+	help bool
+}
+
+func (ic *infoCmd) Name() string {
+	return "info"
+}
+
+func (ic *infoCmd) Description() string {
+	return "Print diagnostic information (useful for debugging)"
+}
+
+// Main implements the `buffalo info` command. Buffalo's checks
 // are run first, then any plugins that implement plugins.Informer
 // will be run in order at the end.
-func (b *Buffalo) Info(ctx context.Context, args []string) error {
-	var help bool
+func (ic *infoCmd) Main(ctx context.Context, args []string) error {
 	flags := cmdx.NewFlagSet("buffalo info", cmdx.Stderr(ctx))
-	flags.BoolVarP(&help, "help", "h", false, "print this help")
+	flags.BoolVarP(&ic.help, "help", "h", false, "print this help")
 	if err := flags.Parse(args); err != nil {
 		return err
 	}
 
-	if help {
+	if ic.help {
 		flags.Usage()
 		return nil
 	}
@@ -33,7 +45,7 @@ func (b *Buffalo) Info(ctx context.Context, args []string) error {
 
 	run := genny.WetRunner(ctx)
 
-	out := cmdx.Stdout(ctx)
+	out := ic.Stdout
 
 	opts := &rx.Options{
 		Out: rx.NewWriter(out),
@@ -53,5 +65,5 @@ func (b *Buffalo) Info(ctx context.Context, args []string) error {
 	if err := run.Run(); err != nil {
 		return err
 	}
-	return b.Plugins.Info(ctx, args)
+	return ic.Plugins.Info(ctx, args)
 }

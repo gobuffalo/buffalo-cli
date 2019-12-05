@@ -3,10 +3,9 @@ package cli
 import (
 	"context"
 	"io"
-	"os"
 
 	"github.com/gobuffalo/buffalo-cli/cli/plugins"
-	"github.com/gobuffalo/buffalo-cli/internal/v1/cmd"
+	"github.com/gobuffalo/buffalo-cli/internal/cmdx"
 )
 
 // Buffalo represents the `buffalo` cli.
@@ -16,30 +15,20 @@ type Buffalo struct {
 	Stdout  io.Writer
 	Stderr  io.Writer
 	Plugins plugins.Plugins
+	help    bool
 }
 
 func New(ctx context.Context) (*Buffalo, error) {
 	b := &Buffalo{
 		Context: ctx,
-		Stdin:   os.Stdin,
-		Stdout:  os.Stdout,
-		Stderr:  os.Stderr,
+		Stdin:   cmdx.Stdin(ctx),
+		Stdout:  cmdx.Stdout(ctx),
+		Stderr:  cmdx.Stderr(ctx),
 	}
+	b.Plugins = append(b.Plugins,
+		&versionCmd{Buffalo: b},
+		&fixCmd{Buffalo: b},
+		&infoCmd{Buffalo: b},
+	)
 	return b, nil
-}
-
-func (b *Buffalo) Main(ctx context.Context, args []string) error {
-	if len(args) > 0 {
-		switch args[0] {
-		case "fix":
-			return b.Fix(ctx, args[1:])
-		case "info":
-			return b.Info(ctx, args[1:])
-		case "version":
-			return b.Version(ctx, args[1:])
-		}
-	}
-	c := cmd.RootCmd
-	c.SetArgs(args)
-	return c.Execute()
 }

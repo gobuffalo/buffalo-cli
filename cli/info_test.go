@@ -5,7 +5,6 @@ import (
 	"context"
 	"testing"
 
-	"github.com/gobuffalo/buffalo-cli/cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/internal/cmdx"
 	"github.com/stretchr/testify/require"
 )
@@ -33,11 +32,9 @@ func Test_Buffalo_Info(t *testing.T) {
 	buffalo, err := New(ctx)
 	r.NoError(err)
 
-	buffalo.Plugins = plugins.Plugins{
-		snow{},
-	}
+	buffalo.Plugins = append(buffalo.Plugins, snow{})
 
-	err = buffalo.Info(ctx, []string{})
+	err = buffalo.Main(ctx, []string{"info"})
 	r.NoError(err)
 
 	out := bb.String()

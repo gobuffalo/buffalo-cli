@@ -21,7 +21,7 @@ func Test_Buffalo_Version(t *testing.T) {
 	buffalo, err := New(ctx)
 	r.NoError(err)
 
-	err = buffalo.Version(ctx, []string{})
+	err = buffalo.Main(ctx, []string{"version"})
 	r.NoError(err)
 
 	out := strings.TrimSpace(bb.String())
@@ -38,7 +38,7 @@ func Test_Buffalo_Version_JSON(t *testing.T) {
 	buffalo, err := New(ctx)
 	r.NoError(err)
 
-	err = buffalo.Version(ctx, []string{"--json"})
+	err = buffalo.Main(ctx, []string{"version", "--json"})
 	r.NoError(err)
 
 	out := strings.TrimSpace(bb.String())
