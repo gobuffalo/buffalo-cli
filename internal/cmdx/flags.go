@@ -13,6 +13,7 @@ func NewFlagSet(name string, w io.Writer) *pflag.FlagSet {
 	flags.SetOutput(ioutil.Discard)
 	flags.Usage = func() {
 		fmt.Fprintf(w, "Usage of %s:\n", name)
+		flags.SetOutput(w)
 		flags.PrintDefaults()
 	}
 	return flags
