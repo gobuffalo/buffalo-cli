@@ -19,6 +19,10 @@ func (ic *infoCmd) Name() string {
 	return "info"
 }
 
+func (ic *infoCmd) Description() string {
+	return "Print diagnostic information (useful for debugging)"
+}
+
 // Main implements the `buffalo info` command. Buffalo's checks
 // are run first, then any plugins that implement plugins.Informer
 // will be run in order at the end.

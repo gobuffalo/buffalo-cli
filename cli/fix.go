@@ -18,6 +18,10 @@ func (fc *fixCmd) Name() string {
 	return "fix"
 }
 
+func (fc *fixCmd) Description() string {
+	return "Attempt to fix a Buffalo application's API to match version in go.mod"
+}
+
 func (fc *fixCmd) Main(ctx context.Context, args []string) error {
 	flags := cmdx.NewFlagSet("buffalo fix", cmdx.Stderr(ctx))
 	flags.BoolVarP(&fix.YesToAll, "yes", "y", false, "update all without asking for confirmation")
