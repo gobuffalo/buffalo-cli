@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/gobuffalo/buffalo-cli/cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/internal/cmdx"
 	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/info"
 	"github.com/gobuffalo/clara/genny/rx"
@@ -21,6 +22,22 @@ func (ic *infoCmd) Name() string {
 
 func (ic *infoCmd) Description() string {
 	return "Print diagnostic information (useful for debugging)"
+}
+
+// Info runs all of the plugins that implement the
+// `Informer` interface in order.
+func (ic *infoCmd) plugins(ctx context.Context, args []string) error {
+	plugs := ic.Plugins
+	for _, p := range plugs {
+		i, ok := p.(plugins.Informer)
+		if !ok {
+			continue
+		}
+		if err := i.Info(ctx, args); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // Main implements the `buffalo info` command. Buffalo's checks
@@ -65,5 +82,5 @@ func (ic *infoCmd) Main(ctx context.Context, args []string) error {
 	if err := run.Run(); err != nil {
 		return err
 	}
-	return ic.Plugins.Info(ctx, args)
+	return ic.plugins(ctx, args)
 }

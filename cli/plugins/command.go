@@ -28,18 +28,6 @@ func (commands Commands) Swap(i int, j int) {
 	commands[i], commands[j] = commands[j], commands[i]
 }
 
-func (plugs Plugins) Commands() Commands {
-	var commands Commands
-	for _, p := range plugs {
-		c, ok := p.(Command)
-		if !ok {
-			continue
-		}
-		commands = append(commands, c)
-	}
-	return commands
-}
-
 func (commands Commands) Find(name string) (Command, error) {
 	for _, c := range commands {
 		if c.Name() == name {
