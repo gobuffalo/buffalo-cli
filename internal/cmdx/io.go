@@ -12,7 +12,7 @@ const (
 	stderr = "stderr"
 )
 
-func WithStdin(r io.Reader, ctx context.Context) context.Context {
+func WithStdin(ctx context.Context, r io.Reader) context.Context {
 	return context.WithValue(ctx, stdin, r)
 }
 
@@ -23,7 +23,7 @@ func Stdin(ctx context.Context) io.Reader {
 	return os.Stdin
 }
 
-func WithStdout(w io.Writer, ctx context.Context) context.Context {
+func WithStdout(ctx context.Context, w io.Writer) context.Context {
 	return context.WithValue(ctx, stdout, w)
 }
 
@@ -34,7 +34,7 @@ func Stdout(ctx context.Context) io.Writer {
 	return os.Stdout
 }
 
-func WithStderr(w io.Writer, ctx context.Context) context.Context {
+func WithStderr(ctx context.Context, w io.Writer) context.Context {
 	return context.WithValue(ctx, stderr, w)
 }
 
