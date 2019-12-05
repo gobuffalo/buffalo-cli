@@ -14,6 +14,20 @@ import (
 // are run first, then any plugins that implement plugins.Informer
 // will be run in order at the end.
 func (b *Buffalo) Info(ctx context.Context, args []string) error {
+	var help bool
+	flags := cmdx.NewFlagSet("buffalo info", cmdx.Stderr(ctx))
+	flags.BoolVarP(&help, "help", "h", false, "print this help")
+	if err := flags.Parse(args); err != nil {
+		return err
+	}
+
+	if help {
+		flags.Usage()
+		return nil
+	}
+
+	args = flags.Args()
+
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 

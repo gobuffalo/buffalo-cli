@@ -1,10 +1,9 @@
 package cmdx
 
-// func Usage(ctx context.Context, flags *flag.FlagSet) {
-// 	stderr := Stderr(ctx)
-// 	flags.SetOutput(stderr)
+// func Usage(w io.Writer, flags *flag.FlagSet) {
+// 	flags.SetOutput(w)
 // 	flags.Usage = func() {
-// 		fmt.Fprintf(stderr, "Usage of %s:\n", flags.Name())
+// 		fmt.Fprintf(w, "Usage of %s:\n", flags.Name())
 // 		flags.PrintDefaults()
 // 	}
 // }
