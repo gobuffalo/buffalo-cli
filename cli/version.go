@@ -9,27 +9,35 @@ import (
 	"github.com/gobuffalo/buffalo-cli/internal/cmdx"
 )
 
-func (b *Buffalo) Version(ctx context.Context, args []string) error {
-	var help bool
-	var jsonOutput bool
+type versionCmd struct {
+	*Buffalo
+	help bool
+	json bool
+}
+
+func (vc *versionCmd) Name() string {
+	return "version"
+}
+
+func (vc *versionCmd) Main(ctx context.Context, args []string) error {
 	flags := cmdx.NewFlagSet("buffalo info", cmdx.Stderr(ctx))
-	flags.BoolVarP(&help, "help", "h", false, "print this help")
-	flags.BoolVarP(&jsonOutput, "json", "j", false, "Print information in json format")
+	flags.BoolVarP(&vc.help, "help", "h", false, "print this help")
+	flags.BoolVarP(&vc.json, "json", "j", false, "Print information in json format")
 	if err := flags.Parse(args); err != nil {
 		return err
 	}
 
-	if help {
+	if vc.help {
 		flags.Usage()
 		return nil
 	}
 
-	if !jsonOutput {
-		fmt.Fprintln(cmdx.Stdout(ctx), bufcli.Version)
+	if !vc.json {
+		fmt.Fprintln(vc.Stdout, bufcli.Version)
 		return nil
 	}
 
-	enc := json.NewEncoder(cmdx.Stdout(ctx))
+	enc := json.NewEncoder(vc.Stdout)
 	enc.SetIndent("", "    ")
 	return enc.Encode(map[string]string{
 		"version": bufcli.Version,
