@@ -3,9 +3,6 @@ package plugins
 import (
 	"context"
 	"fmt"
-	"sort"
-
-	"github.com/gobuffalo/buffalo-cli/internal/cmdx"
 )
 
 // Fixer is an optional interface a plugin can implement
@@ -23,31 +20,6 @@ type Fixer interface {
 // 	buffalo fix plush pop
 // 	buffalo fix -h
 func (plugs Plugins) Fix(ctx context.Context, args []string) error {
-	opts := struct {
-		help bool
-	}{}
-
-	flags := cmdx.NewFlagSet("buffalo fix", cmdx.Stderr(ctx))
-	flags.BoolVar(&opts.help, "h", false, "print this help")
-
-	flags.Parse(args)
-
-	args = flags.Args()
-
-	// stderr := cmdx.Stderr(ctx)
-	if opts.help {
-		sort.Slice(plugs, func(i, j int) bool {
-			return plugs[i].Name() < plugs[j].Name()
-		})
-
-		for _, p := range plugs {
-			if _, ok := p.(Fixer); ok {
-				// fmt.Fprintf(stderr, "%s %s - [%s]\n", flags.Name(), p.Name(), p)
-			}
-		}
-		return nil
-	}
-
 	if len(args) > 0 {
 		fixers := map[string]Fixer{}
 		for _, p := range plugs {

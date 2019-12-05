@@ -2,7 +2,9 @@ package cli
 
 import (
 	"context"
+	"fmt"
 
+	"github.com/gobuffalo/buffalo-cli/cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/internal/cmdx"
 	"github.com/gobuffalo/buffalo-cli/internal/v1/cmd/fix"
 )
@@ -18,8 +20,17 @@ func (b *Buffalo) Fix(ctx context.Context, args []string) error {
 	}
 
 	if help {
-		flags.Usage()
+		stderr := cmdx.Stderr(ctx)
+		for _, p := range b.Plugins {
+			if _, ok := p.(plugins.Fixer); ok {
+				fmt.Fprintf(stderr, "buffalo fix %s - [%s]\n", p.Name(), p)
+			}
+		}
 		return nil
+	}
+
+	if len(args) > 0 {
+		return b.Plugins.Fix(ctx, args)
 	}
 
 	if err := fix.Run(); err != nil {
