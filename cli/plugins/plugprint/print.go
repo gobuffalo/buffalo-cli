@@ -1,4 +1,4 @@
-package plugins
+package plugprint
 
 import (
 	"fmt"
@@ -6,6 +6,8 @@ import (
 	"sort"
 	"strings"
 	"text/tabwriter"
+
+	"github.com/gobuffalo/buffalo-cli/cli/plugins"
 )
 
 // Print will try and print a helpful Usage printing
@@ -20,7 +22,7 @@ import (
 // 		buffalo fix      Attempt to fix a Buffalo application's API to match version in go.mod
 // 		buffalo info     Print diagnostic information (useful for debugging)
 // 		buffalo version  Print the version information
-func Print(w io.Writer, prefix string, main Plugin, plugs Plugins) error {
+func Print(w io.Writer, prefix string, main plugins.Plugin, plugs plugins.Plugins) error {
 	header := strings.TrimSpace(fmt.Sprintf("%s %s", prefix, main.Name()))
 	header = fmt.Sprintf("$ %s", header)
 	fmt.Fprintln(w, header)
@@ -46,7 +48,8 @@ func Print(w io.Writer, prefix string, main Plugin, plugs Plugins) error {
 	fmt.Fprint(w, ac)
 
 	sort.Sort(plugs)
-	desc := func(p Plugin) string {
+
+	desc := func(p plugins.Plugin) string {
 		if d, ok := p.(Describer); ok {
 			return d.Description()
 		}

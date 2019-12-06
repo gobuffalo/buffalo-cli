@@ -1,4 +1,4 @@
-package plugins
+package plugprint
 
 // Describer is called by `Print` and can be
 // implemented to print a short, single line,
