@@ -7,18 +7,3 @@ import "context"
 type Informer interface {
 	Info(ctx context.Context, args []string) error
 }
-
-// Info runs all of the plugins that implement the
-// `Informer` interface in order.
-func (plugs Plugins) Info(ctx context.Context, args []string) error {
-	for _, p := range plugs {
-		i, ok := p.(Informer)
-		if !ok {
-			continue
-		}
-		if err := i.Info(ctx, args); err != nil {
-			return err
-		}
-	}
-	return nil
-}
