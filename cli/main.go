@@ -9,7 +9,7 @@ import (
 )
 
 func (b *Buffalo) Main(ctx context.Context, args []string) error {
-	flags := cmdx.NewFlagSet("buffalo", b.Stderr)
+	flags := cmdx.NewFlagSet(b.Name(), b.Stderr)
 	flags.BoolVarP(&b.help, "help", "h", false, "print this help")
 	flags.Parse(args)
 
@@ -25,7 +25,8 @@ func (b *Buffalo) Main(ctx context.Context, args []string) error {
 		for i, c := range cmds {
 			plugs[i] = c
 		}
-		return plugins.Print(b.Stderr, "", b, plugs)
+
+		return cmdx.Print(b.Stderr, "", b, plugs, flags)
 	}
 
 	if c, err := cmds.Find(args[0]); err == nil {

@@ -82,7 +82,7 @@ func (fc *fixCmd) Main(ctx context.Context, args []string) error {
 				plugs = append(plugs, p)
 			}
 		}
-		return plugins.Print(fc.Stderr, fc.Buffalo.Name(), fc, plugs)
+		return cmdx.Print(fc.Stderr, fc.Buffalo.Name(), fc, plugs, flags)
 	}
 
 	if len(args) > 0 {

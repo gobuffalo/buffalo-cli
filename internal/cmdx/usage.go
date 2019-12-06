@@ -1,9 +1,17 @@
 package cmdx
 
-// func Usage(w io.Writer, flags *flag.FlagSet) {
-// 	flags.SetOutput(w)
-// 	flags.Usage = func() {
-// 		fmt.Fprintf(w, "Usage of %s:\n", flags.Name())
-// 		flags.PrintDefaults()
-// 	}
-// }
+import (
+	"io"
+
+	"github.com/gobuffalo/buffalo-cli/cli/plugins"
+	"github.com/spf13/pflag"
+)
+
+func Print(w io.Writer, prefix string, main plugins.Plugin, plugs plugins.Plugins, flags *pflag.FlagSet) error {
+	p := plugins.WithUsagePrinter(main, func(w io.Writer) error {
+		flags.SetOutput(w)
+		flags.Usage()
+		return nil
+	})
+	return plugins.Print(w, prefix, p, plugs)
+}

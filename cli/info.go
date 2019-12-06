@@ -51,8 +51,7 @@ func (ic *infoCmd) Main(ctx context.Context, args []string) error {
 	}
 
 	if ic.help {
-		flags.Usage()
-		return nil
+		return cmdx.Print(ic.Stderr, ic.Buffalo.Name(), ic, nil, flags)
 	}
 
 	args = flags.Args()
