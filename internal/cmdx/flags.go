@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/pflag"
 )
 
+// NewFlagSet ...
 func NewFlagSet(name string) *pflag.FlagSet {
 	flags := pflag.NewFlagSet(name, pflag.ContinueOnError)
 	flags.SetOutput(ioutil.Discard)

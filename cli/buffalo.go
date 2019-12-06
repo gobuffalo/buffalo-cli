@@ -33,10 +33,12 @@ func New(ctx context.Context) (*Buffalo, error) {
 	return b, nil
 }
 
+// Name ...
 func (Buffalo) Name() string {
 	return "buffalo"
 }
 
+// Description ...
 func (Buffalo) Description() string {
 	return "Tools for working with Buffalo applications"
 }

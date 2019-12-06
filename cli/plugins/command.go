@@ -13,7 +13,7 @@ type Command interface {
 	Main(ctx context.Context, args []string) error
 }
 
-// Command is a slice of type `Command`
+// Commands is a slice of type `Command`
 type Commands []Command
 
 // Len is the number of elements in the collection.
