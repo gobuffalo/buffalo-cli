@@ -44,14 +44,14 @@ func (ic *infoCmd) plugins(ctx context.Context, args []string) error {
 // are run first, then any plugins that implement plugins.Informer
 // will be run in order at the end.
 func (ic *infoCmd) Main(ctx context.Context, args []string) error {
-	flags := cmdx.NewFlagSet("buffalo info", cmdx.Stderr(ctx))
+	flags := cmdx.NewFlagSet(ic.Name())
 	flags.BoolVarP(&ic.help, "help", "h", false, "print this help")
 	if err := flags.Parse(args); err != nil {
 		return err
 	}
 
 	if ic.help {
-		return cmdx.Print(ic.Stderr, ic.Buffalo.Name(), ic, nil, flags)
+		return cmdx.Print(ic.Stdout, ic.Buffalo.Name(), ic, nil, flags)
 	}
 
 	args = flags.Args()

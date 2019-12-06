@@ -24,7 +24,7 @@ func (vc *versionCmd) Description() string {
 }
 
 func (vc *versionCmd) Main(ctx context.Context, args []string) error {
-	flags := cmdx.NewFlagSet("buffalo version", vc.Stderr)
+	flags := cmdx.NewFlagSet(vc.Name())
 	flags.BoolVarP(&vc.help, "help", "h", false, "print this help")
 	flags.BoolVarP(&vc.json, "json", "j", false, "Print information in json format")
 	if err := flags.Parse(args); err != nil {
@@ -32,7 +32,7 @@ func (vc *versionCmd) Main(ctx context.Context, args []string) error {
 	}
 
 	if vc.help {
-		return cmdx.Print(vc.Stderr, vc.Buffalo.Name(), vc, nil, flags)
+		return cmdx.Print(vc.Stdout, vc.Buffalo.Name(), vc, nil, flags)
 	}
 
 	if !vc.json {

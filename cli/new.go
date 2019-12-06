@@ -11,7 +11,7 @@ import (
 
 // New is WIP!! DON'T USE IT!!!
 func (b *Buffalo) New(ctx context.Context, args []string) error {
-	flags := flag.NewFlagSet("buffalo new", flag.ContinueOnError)
+	flags := flag.NewFlagSet(b.Name(), flag.ContinueOnError)
 
 	opts := struct {
 		API         bool

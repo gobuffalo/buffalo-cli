@@ -67,7 +67,7 @@ func (fc *fixCmd) plugins(ctx context.Context, args []string) error {
 }
 
 func (fc *fixCmd) Main(ctx context.Context, args []string) error {
-	flags := cmdx.NewFlagSet("buffalo fix", fc.Stderr)
+	flags := cmdx.NewFlagSet(fc.Name())
 	flags.BoolVarP(&fix.YesToAll, "yes", "y", false, "update all without asking for confirmation")
 	flags.BoolVarP(&fc.help, "help", "h", false, "print this help")
 
@@ -82,7 +82,7 @@ func (fc *fixCmd) Main(ctx context.Context, args []string) error {
 				plugs = append(plugs, p)
 			}
 		}
-		return cmdx.Print(fc.Stderr, fc.Buffalo.Name(), fc, plugs, flags)
+		return cmdx.Print(fc.Stdout, fc.Buffalo.Name(), fc, plugs, flags)
 	}
 
 	if len(args) > 0 {

@@ -36,6 +36,6 @@ require (
 	github.com/spf13/viper v1.5.0
 	github.com/stretchr/testify v1.4.0
 	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e
-	golang.org/x/tools v0.0.0-20191204211804-0d967effbd14
+	golang.org/x/tools v0.0.0-20191205225056-3393d29bb9fe
 	gopkg.in/yaml.v2 v2.2.7
 )
