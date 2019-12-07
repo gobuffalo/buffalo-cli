@@ -53,7 +53,9 @@ func (v {{.opts.Name.Resource}}Resource) List(c buffalo.Context) error {
   // hint for Auto renderer to search proper template location
   c.Set("template_prefix", "{{.opts.Name.URL}}")
   {{ end -}}
-  return c.Render(http.StatusOK, r.Auto(c, {{.opts.Model.VarCasePlural}}))
+  
+  c.Set("{{.opts.Model.VarCasePlural}}", {{.opts.Model.VarCasePlural}})
+  return c.Render(http.StatusOK, r.HTML("/{{.opts.Name.File.Pluralize}}/index.plush.html"))
 }
 
 // Show gets the data for one {{.opts.Model.Proper}}. This function is mapped to
@@ -77,7 +79,9 @@ func (v {{.opts.Name.Resource}}Resource) Show(c buffalo.Context) error {
   // hint for Auto renderer to search proper template location
   c.Set("template_prefix", "{{.opts.Name.URL}}")
   {{ end -}}
-  return c.Render(http.StatusOK, r.Auto(c, {{.opts.Model.VarCaseSingle}}))
+  
+  c.Set("{{.opts.Model.VarCaseSingle}}", {{.opts.Model.VarCaseSingle}})
+  return c.Render(http.StatusOK, r.HTML("/{{.opts.Name.File.Pluralize}}/show.plush.html"))
 }
 
 {{ if .opts.App.AsWeb -}}
@@ -88,7 +92,10 @@ func (v {{.opts.Name.Resource}}Resource) New(c buffalo.Context) error {
   // hint for Auto renderer to search proper template location
   c.Set("template_prefix", "{{.opts.Name.URL}}")
   {{ end -}}
-  return c.Render(http.StatusOK, r.Auto(c, &models.{{.opts.Model.Proper}}{}))
+  
+  c.Set("{{.opts.Model.VarCaseSingle}}", &models.{{.opts.Model.Proper}}{})
+
+  return c.Render(http.StatusOK, r.HTML("/{{.opts.Name.File.Pluralize}}/new.plush.html"))
 }
 {{ end -}}
 
@@ -121,7 +128,9 @@ func (v {{.opts.Name.Resource}}Resource) Create(c buffalo.Context) error {
 
     // Render again the new.html template that the user can
     // correct the input.
-    return c.Render(http.StatusUnprocessableEntity, r.Auto(c, {{.opts.Model.VarCaseSingle}}))
+
+    c.Set("{{.opts.Model.VarCaseSingle}}", {{.opts.Model.VarCaseSingle}})
+    return c.Render(http.StatusUnprocessableEntity, r.HTML("/{{.opts.Name.File.Pluralize}}/new.plush.html"))
   }
 
   {{ if .opts.App.AsWeb -}}
@@ -129,8 +138,8 @@ func (v {{.opts.Name.Resource}}Resource) Create(c buffalo.Context) error {
   c.Flash().Add("success", T.Translate(c, "{{.opts.Model.VarCaseSingle}}.created.success"))
   {{ end -}}
 
-  // and redirect to the {{.opts.Name.URL}} index page
-  return c.Render(http.StatusCreated, r.Auto(c, {{.opts.Model.VarCaseSingle}}))
+  // and redirect to the show page
+  return c.Redirect(http.StatusSeeOther, "/{{.opts.Name.URL}}/%v", {{.opts.Model.VarCaseSingle}}.ID)
 }
 
 {{ if .opts.App.AsWeb -}}
@@ -154,7 +163,9 @@ func (v {{.opts.Name.Resource}}Resource) Edit(c buffalo.Context) error {
   // hint for Auto renderer to search proper template location
   c.Set("template_prefix", "{{.opts.Name.URL}}")
   {{ end -}}
-  return c.Render(http.StatusOK, r.Auto(c, {{.opts.Model.VarCaseSingle}}))
+  
+  c.Set("{{.opts.Model.VarCaseSingle}}", {{.opts.Model.VarCaseSingle}})
+  return c.Render(http.StatusOK, r.HTML("/{{.opts.Name.File.Pluralize}}/edit.plush.html"))
 }
 {{ end -}}
 
@@ -190,7 +201,8 @@ func (v {{.opts.Name.Resource}}Resource) Update(c buffalo.Context) error {
 
     // Render again the edit.html template that the user can
     // correct the input.
-    return c.Render(http.StatusUnprocessableEntity, r.Auto(c, {{.opts.Model.VarCaseSingle}}))
+    c.Set("{{.opts.Model.VarCaseSingle}}", {{.opts.Model.VarCaseSingle}})
+    return c.Render(http.StatusUnprocessableEntity, r.HTML("/{{.opts.Name.File.Pluralize}}/edit.plush.html"))
   }
 
   {{ if .opts.App.AsWeb -}}
@@ -198,8 +210,8 @@ func (v {{.opts.Name.Resource}}Resource) Update(c buffalo.Context) error {
   c.Flash().Add("success", T.Translate(c, "{{.opts.Model.VarCaseSingle}}.updated.success"))
   {{ end -}}
 
-  // and redirect to the {{.opts.Name.URL}} index page
-  return c.Render(http.StatusOK, r.Auto(c, {{.opts.Model.VarCaseSingle}}))
+  // and redirect to the show page
+  return c.Redirect(http.StatusSeeOther, "/{{.opts.Name.URL}}/%v", {{.opts.Model.VarCaseSingle}}.ID)
 }
 
 // Destroy deletes a {{.opts.Model.Proper}} from the DB. This function is mapped
@@ -228,6 +240,6 @@ func (v {{.opts.Name.Resource}}Resource) Destroy(c buffalo.Context) error {
   c.Flash().Add("success", T.Translate(c, "{{.opts.Model.VarCaseSingle}}.destroyed.success"))
   {{ end -}}
 
-  // Redirect to the {{.opts.Name.URL}} index page
-  return c.Render(http.StatusOK, r.Auto(c, {{.opts.Model.VarCaseSingle}}))
+  // Redirect to the index page
+  return c.Redirect(http.StatusSeeOther, "/{{.opts.Name.URL}}")
 }
