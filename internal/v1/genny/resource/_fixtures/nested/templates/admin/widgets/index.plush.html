@@ -15,7 +15,7 @@
   <tbody>
     <%= for (widget) in widgets { %>
       <tr>
-      <td><%= widget.Name %></td>
+        <td><%= widget.Name %></td>
         <td>
           <div class="float-right">
             <%= linkTo(adminWidgetPath({ admin_widget_id: widget.ID }), {class: "btn btn-info", body: "View"}) %>
