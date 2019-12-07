@@ -13,10 +13,12 @@
 
 
 <ul class="list-group mb-2 ">
-{{ range $p := .opts.Attrs -}}
-    <li class="list-group-item pb-1">
-        <label class="small d-block">{{ $p.Name.Pascalize }}</label>
-        <p class="d-inline-block"><%= {{$.opts.Model.VarCaseSingle}}.{{$p.Name.Pascalize}} %></p>
-    </li>
-{{ end -}}
+{{ range $p := .opts.Attrs }}
+
+  <li class="list-group-item pb-1">
+    <label class="small d-block">{{ $p.Name.Pascalize }}</label>
+    <p class="d-inline-block"><%= {{$.opts.Model.VarCaseSingle}}.{{$p.Name.Pascalize}} %></p>
+  </li>
+
+{{ end }}
 </ul>
