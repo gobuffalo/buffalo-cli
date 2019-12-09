@@ -60,7 +60,7 @@ func (ic *InfoCmd) plugins(ctx context.Context, args []string) error {
 	}
 	plugs := ic.Plugins()
 	for _, p := range plugs {
-		i, ok := p.(plugins.Informer)
+		i, ok := p.(Informer)
 		if !ok {
 			continue
 		}

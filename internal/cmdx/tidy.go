@@ -2,9 +2,10 @@ package cmdx
 
 import (
 	"context"
+	"os/exec"
 )
 
 func Tidy(ctx context.Context) error {
-	c := CommandContext(ctx, "go", "mod", "tidy")
+	c := exec.CommandContext(ctx, "go", "mod", "tidy")
 	return c.Run()
 }

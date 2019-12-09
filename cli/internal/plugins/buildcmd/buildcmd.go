@@ -69,9 +69,9 @@ func (bc *BuildCmd) builders() plugins.Plugins {
 	}
 	for _, p := range bc.Plugins() {
 		switch p.(type) {
-		case plugins.BeforeBuilder:
+		case BeforeBuilder:
 			plugs = append(plugs, p)
-		case plugins.AfterBuilder:
+		case AfterBuilder:
 			plugs = append(plugs, p)
 		}
 	}
@@ -135,7 +135,7 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 	}
 
 	for _, p := range bc.builders() {
-		if bb, ok := p.(plugins.BeforeBuilder); ok {
+		if bb, ok := p.(BeforeBuilder); ok {
 			if err := bb.BeforeBuild(ctx, args); err != nil {
 				return err
 			}
@@ -189,7 +189,7 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 	}
 
 	for _, p := range bc.builders() {
-		if bb, ok := p.(plugins.AfterBuilder); ok {
+		if bb, ok := p.(AfterBuilder); ok {
 			if err := bb.AfterBuild(ctx, args); err != nil {
 				return err
 			}

@@ -16,14 +16,26 @@ import (
 )
 
 type Assets struct {
-	Stdin         io.Reader
-	Stdout        io.Writer
-	Stderr        io.Writer
+	stdin         io.Reader
+	stdout        io.Writer
+	stderr        io.Writer
 	Environment   string
 	CleanAssets   bool
 	ExtractAssets bool
 	SkipAssets    bool
 	dryRun        bool
+}
+
+func (a *Assets) SetStderr(w io.Writer) {
+	a.stderr = w
+}
+
+func (a *Assets) SetStdin(r io.Reader) {
+	a.stdin = r
+}
+
+func (a *Assets) SetStdout(w io.Writer) {
+	a.stdout = w
 }
 
 func (a *Assets) BeforeBuild(ctx context.Context, args []string) error {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"os"
 	"strings"
 
 	"github.com/gobuffalo/buffalo-cli/cli/plugins"
@@ -59,9 +60,9 @@ func (fc *FixCmd) plugins(ctx context.Context, args []string) error {
 	}
 	plugs := fc.Plugins()
 	if len(args) > 0 {
-		fixers := map[string]plugins.Fixer{}
+		fixers := map[string]Fixer{}
 		for _, p := range plugs {
-			f, ok := p.(plugins.Fixer)
+			f, ok := p.(Fixer)
 			if !ok {
 				continue
 			}
@@ -82,7 +83,7 @@ func (fc *FixCmd) plugins(ctx context.Context, args []string) error {
 	}
 
 	for _, p := range plugs {
-		f, ok := p.(plugins.Fixer)
+		f, ok := p.(Fixer)
 		if !ok {
 			continue
 		}
@@ -104,16 +105,21 @@ func (fc *FixCmd) Main(ctx context.Context, args []string) error {
 		return err
 	}
 
+	out := fc.stdout
+	if out == nil {
+		out = os.Stdout
+	}
+
 	if help {
 		var plugs plugins.Plugins
 		if fc.Plugins != nil {
 			for _, p := range fc.Plugins() {
-				if _, ok := p.(plugins.Fixer); ok {
+				if _, ok := p.(Fixer); ok {
 					plugs = append(plugs, p)
 				}
 			}
 		}
-		return cmdx.Print(fc.stdout, fc, plugs, flags)
+		return cmdx.Print(out, fc, plugs, flags)
 	}
 
 	if len(args) > 0 {
