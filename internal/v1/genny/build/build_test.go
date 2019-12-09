@@ -42,7 +42,6 @@ func Test_New(t *testing.T) {
 	run := cokeRunner()
 
 	opts := &Options{
-		WithAssets:  true,
 		Environment: "bar",
 		App:         meta.New("."),
 	}

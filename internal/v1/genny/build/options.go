@@ -17,12 +17,6 @@ type Options struct {
 	// a) git sha of last commit or
 	// b) to time.RFC3339 of BuildTime
 	BuildVersion string `json:"build_version,omitempty"`
-	// CleanAssets will remove the public/assets folder build compiling
-	CleanAssets bool `json:"clean_assets"`
-	WithAssets  bool `json:"with_assets,omitempty"`
-	// places ./public/assets into ./bin/assets.zip.
-	// requires WithAssets = true
-	ExtractAssets bool `json:"extract_assets,omitempty"`
 	// LDFlags to be passed to the final `go build` command
 	LDFlags string `json:"ld_flags,omitempty"`
 	// Tags to be passed to the final `go build` command

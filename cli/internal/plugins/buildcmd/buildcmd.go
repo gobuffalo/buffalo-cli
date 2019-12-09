@@ -160,7 +160,6 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 		}
 	}
 
-	opts.WithAssets = !bc.skipAssets
 	run := genny.WetRunner(ctx)
 	if bc.dryRun {
 		run = genny.DryRunner(ctx)

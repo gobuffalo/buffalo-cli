@@ -18,7 +18,6 @@ func Test_Cleanup(t *testing.T) {
 	run := gentest.NewRunner()
 
 	opts := &Options{
-		WithAssets:  false,
 		Environment: "bar",
 		App:         meta.New("."),
 	}

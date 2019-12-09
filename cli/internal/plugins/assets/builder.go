@@ -27,8 +27,10 @@ func (b Builder) webpackBin() string {
 }
 
 type Builder struct {
-	Environment   string
-	CleanBuilder  bool
+	Environment string
+	// CleanAssets will remove the public/assets folder build compiling
+	CleanAssets bool
+	// places ./public/assets into ./bin/assets.zip.
 	ExtractAssets bool
 	SkipAssets    bool
 	stdin         io.Reader
@@ -141,7 +143,7 @@ func (a *Builder) PflagSet() *pflag.FlagSet {
 
 	flags := pflag.NewFlagSet(a.String(), pflag.ContinueOnError)
 	flags.SetOutput(ioutil.Discard)
-	flags.BoolVar(&a.CleanBuilder, "clean-assets", false, "will delete public/assets before calling webpack")
+	flags.BoolVar(&a.CleanAssets, "clean-assets", false, "will delete public/assets before calling webpack")
 	flags.BoolVarP(&a.ExtractAssets, "extract-assets", "e", false, "extract the assets and put them in a distinct archive")
 	flags.BoolVarP(&a.SkipAssets, "skip-assets", "k", false, "skip running webpack and building assets")
 
