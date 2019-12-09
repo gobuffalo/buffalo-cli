@@ -46,15 +46,3 @@ type StdoutSetter interface {
 type StderrSetter interface {
 	SetStderr(w io.Writer)
 }
-
-func SetIO(iog IOGetters, p Plugin) {
-	if stdin, ok := p.(StdinSetter); ok {
-		stdin.SetStdin(iog.Stdin())
-	}
-	if stdout, ok := p.(StdoutSetter); ok {
-		stdout.SetStdout(iog.Stdout())
-	}
-	if stderr, ok := p.(StderrSetter); ok {
-		stderr.SetStderr(iog.Stderr())
-	}
-}

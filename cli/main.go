@@ -31,11 +31,23 @@ func (b *Buffalo) Main(ctx context.Context, args []string) error {
 		return plugprint.Print(b.Stdout(), b, plugs)
 	}
 	if c, err := cmds.Find(args[0]); err == nil {
-		plugins.SetIO(b, c)
+		b.setIO(c)
 		return c.Main(ctx, args[1:])
 	}
 
 	c := cmd.RootCmd
 	c.SetArgs(args)
 	return c.Execute()
+}
+
+func (b *Buffalo) setIO(p plugins.Plugin) {
+	if stdin, ok := p.(plugins.StdinSetter); ok {
+		stdin.SetStdin(b.Stdin())
+	}
+	if stdout, ok := p.(plugins.StdoutSetter); ok {
+		stdout.SetStdout(b.Stdout())
+	}
+	if stderr, ok := p.(plugins.StderrSetter); ok {
+		stderr.SetStderr(b.Stderr())
+	}
 }
