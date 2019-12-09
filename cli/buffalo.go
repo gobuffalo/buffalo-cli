@@ -5,36 +5,83 @@ import (
 	"os"
 
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/assets"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/fixcmd"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/infocmd"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/versioncmd"
 	"github.com/gobuffalo/buffalo-cli/cli/plugins"
 )
 
 // Buffalo represents the `buffalo` cli.
 type Buffalo struct {
-	Stdin   io.Reader
-	Stdout  io.Writer
-	Stderr  io.Writer
+	stdin   io.Reader
+	stdout  io.Writer
+	stderr  io.Writer
 	Plugins plugins.Plugins
 }
 
 func New() (*Buffalo, error) {
 	b := &Buffalo{
-		Stdin:  os.Stdin,
-		Stdout: os.Stdout,
-		Stderr: os.Stderr,
+		stdin:  os.Stdin,
+		stdout: os.Stdout,
+		stderr: os.Stderr,
 	}
 
+	pfn := func() plugins.Plugins {
+		return b.Plugins
+	}
 	b.Plugins = append(b.Plugins,
-		&versionCmd{Buffalo: b},
-		&fixCmd{Buffalo: b},
-		&buildCmd{Buffalo: b},
-		&assets.Assets{
-			Stdin:  b.Stdin,
-			Stdout: b.Stdout,
-			Stderr: b.Stderr,
+		&buildcmd.BuildCmd{
+			Parent:  b,
+			Plugins: pfn,
 		},
-		&infoCmd{Buffalo: b},
+		&fixcmd.FixCmd{
+			Parent:  b,
+			Plugins: pfn,
+		},
+		&assets.Assets{},
+		&infocmd.InfoCmd{
+			Parent:  b,
+			Plugins: pfn,
+		},
+		&versioncmd.VersionCmd{
+			Parent: b,
+		},
 	)
 	return b, nil
+}
+
+func (b *Buffalo) Stdin() io.Reader {
+	if b.stdin == nil {
+		return os.Stdin
+	}
+	return b.stdin
+}
+
+func (b *Buffalo) Stdout() io.Writer {
+	if b.stdout == nil {
+		return os.Stdout
+	}
+	return b.stdout
+}
+
+func (b *Buffalo) Stderr() io.Writer {
+	if b.stderr == nil {
+		return os.Stderr
+	}
+	return b.stderr
+}
+
+func (b *Buffalo) SetStdin(r io.Reader) {
+	b.stdin = r
+}
+
+func (b *Buffalo) SetStdout(w io.Writer) {
+	b.stdout = w
+}
+
+func (b *Buffalo) SetStderr(w io.Writer) {
+	b.stderr = w
 }
 
 // Name ...

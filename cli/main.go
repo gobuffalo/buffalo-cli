@@ -27,9 +27,10 @@ func (b *Buffalo) Main(ctx context.Context, args []string) error {
 			plugs[i] = c
 		}
 
-		return cmdx.Print(b.Stdout, b, plugs, flags)
+		return cmdx.Print(b.Stdout(), b, plugs, flags)
 	}
 	if c, err := cmds.Find(args[0]); err == nil {
+		plugins.SetIO(b, c)
 		return c.Main(ctx, args[1:])
 	}
 

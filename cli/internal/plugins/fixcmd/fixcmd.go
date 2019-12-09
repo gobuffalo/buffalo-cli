@@ -1,8 +1,9 @@
-package cli
+package fixcmd
 
 import (
 	"context"
 	"fmt"
+	"io"
 	"strings"
 
 	"github.com/gobuffalo/buffalo-cli/cli/plugins"
@@ -10,20 +11,39 @@ import (
 	"github.com/gobuffalo/buffalo-cli/internal/v1/cmd/fix"
 )
 
-type fixCmd struct {
-	Buffalo *Buffalo
+type FixCmd struct {
+	Parent  plugins.Plugin
+	Plugins func() plugins.Plugins
+	stdin   io.Reader
+	stdout  io.Writer
+	stderr  io.Writer
 }
 
-func (fc *fixCmd) Name() string {
+func (f *FixCmd) SetStderr(w io.Writer) {
+	f.stderr = w
+}
+
+func (f *FixCmd) SetStdin(r io.Reader) {
+	f.stdin = r
+}
+
+func (f *FixCmd) SetStdout(w io.Writer) {
+	f.stdout = w
+}
+
+func (fc *FixCmd) Name() string {
 	return "fix"
 }
 
-func (fc *fixCmd) Description() string {
+func (fc *FixCmd) Description() string {
 	return "Attempt to fix a Buffalo application's API to match version in go.mod"
 }
 
-func (fc fixCmd) String() string {
-	s := fmt.Sprintf("%s %s", fc.Buffalo, fc.Name())
+func (f FixCmd) String() string {
+	s := f.Name()
+	if f.Parent != nil {
+		s = fmt.Sprintf("%s %s", f.Parent.Name(), f.Name())
+	}
 	return strings.TrimSpace(s)
 }
 
@@ -33,8 +53,11 @@ func (fc fixCmd) String() string {
 // 	buffalo fix
 // 	buffalo fix plush pop
 // 	buffalo fix -h
-func (fc *fixCmd) plugins(ctx context.Context, args []string) error {
-	plugs := fc.Buffalo.Plugins
+func (fc *FixCmd) plugins(ctx context.Context, args []string) error {
+	if fc.Plugins == nil {
+		return nil
+	}
+	plugs := fc.Plugins()
 	if len(args) > 0 {
 		fixers := map[string]plugins.Fixer{}
 		for _, p := range plugs {
@@ -71,7 +94,7 @@ func (fc *fixCmd) plugins(ctx context.Context, args []string) error {
 	return nil
 }
 
-func (fc *fixCmd) Main(ctx context.Context, args []string) error {
+func (fc *FixCmd) Main(ctx context.Context, args []string) error {
 	var help bool
 	flags := cmdx.NewFlagSet(fc.String())
 	flags.BoolVarP(&fix.YesToAll, "yes", "y", false, "update all without asking for confirmation")
@@ -83,12 +106,14 @@ func (fc *fixCmd) Main(ctx context.Context, args []string) error {
 
 	if help {
 		var plugs plugins.Plugins
-		for _, p := range fc.Buffalo.Plugins {
-			if _, ok := p.(plugins.Fixer); ok {
-				plugs = append(plugs, p)
+		if fc.Plugins != nil {
+			for _, p := range fc.Plugins() {
+				if _, ok := p.(plugins.Fixer); ok {
+					plugs = append(plugs, p)
+				}
 			}
 		}
-		return cmdx.Print(fc.Buffalo.Stdout, fc, plugs, flags)
+		return cmdx.Print(fc.stdout, fc, plugs, flags)
 	}
 
 	if len(args) > 0 {

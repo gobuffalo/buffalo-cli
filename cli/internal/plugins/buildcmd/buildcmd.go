@@ -1,4 +1,4 @@
-package cli
+package buildcmd
 
 import (
 	"context"
@@ -16,36 +16,58 @@ import (
 	"github.com/gobuffalo/meta"
 )
 
-type buildCmd struct {
-	Buffalo                *Buffalo
+type BuildCmd struct {
+	Parent                 plugins.Plugin
+	Plugins                func() plugins.Plugins
 	dryRun                 bool
 	help                   bool
 	skipAssets             bool
 	skipTemplateValidation bool
 	verbose                bool
 	tags                   string
+	stdin                  io.Reader
+	stdout                 io.Writer
+	stderr                 io.Writer
 }
 
-func (*buildCmd) Aliases() []string {
+func (b *BuildCmd) SetStderr(w io.Writer) {
+	b.stderr = w
+}
+
+func (b *BuildCmd) SetStdin(r io.Reader) {
+	b.stdin = r
+}
+
+func (b *BuildCmd) SetStdout(w io.Writer) {
+	b.stdout = w
+}
+
+func (*BuildCmd) Aliases() []string {
 	return []string{"b", "bill", "install"}
 }
 
-func (b buildCmd) Name() string {
+func (b BuildCmd) Name() string {
 	return "build"
 }
 
-func (b buildCmd) String() string {
-	s := fmt.Sprintf("%s %s", b.Buffalo, b.Name())
+func (b BuildCmd) String() string {
+	s := b.Name()
+	if b.Parent != nil {
+		s = fmt.Sprintf("%s %s", b.Parent.Name(), b.Name())
+	}
 	return strings.TrimSpace(s)
 }
 
-func (buildCmd) Description() string {
+func (BuildCmd) Description() string {
 	return "Build the application binary, including bundling of assets (packr & webpack)"
 }
 
-func (bc *buildCmd) builders() plugins.Plugins {
+func (bc *BuildCmd) builders() plugins.Plugins {
 	var plugs plugins.Plugins
-	for _, p := range bc.Buffalo.Plugins {
+	if bc.Plugins == nil {
+		return plugs
+	}
+	for _, p := range bc.Plugins() {
 		switch p.(type) {
 		case plugins.BeforeBuilder:
 			plugs = append(plugs, p)
@@ -56,7 +78,7 @@ func (bc *buildCmd) builders() plugins.Plugins {
 	return plugs
 }
 
-func (bc *buildCmd) PrintFlags(w io.Writer) error {
+func (bc *BuildCmd) PrintFlags(w io.Writer) error {
 	flags := bc.flags(&build.Options{})
 	flags.SetOutput(w)
 	flags.PrintDefaults()
@@ -78,7 +100,7 @@ func (bc *buildCmd) PrintFlags(w io.Writer) error {
 	return nil
 }
 
-func (bc *buildCmd) flags(opts *build.Options) *cmdx.FlagSet {
+func (bc *BuildCmd) flags(opts *build.Options) *cmdx.FlagSet {
 	flags := cmdx.NewFlagSet(bc.String())
 
 	flags.BoolVar(&bc.dryRun, "dry-run", false, "runs the build 'dry'")
@@ -95,7 +117,7 @@ func (bc *buildCmd) flags(opts *build.Options) *cmdx.FlagSet {
 	return flags
 }
 
-func (bc *buildCmd) Main(ctx context.Context, args []string) error {
+func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 	pwd, err := os.Getwd()
 	if err != nil {
 		return err
@@ -109,7 +131,7 @@ func (bc *buildCmd) Main(ctx context.Context, args []string) error {
 	err = flags.Parse(args)
 
 	if bc.help {
-		return cmdx.Print(bc.Buffalo.Stdout, bc, nil, flags)
+		return cmdx.Print(bc.stdout, bc, nil, flags)
 	}
 
 	for _, p := range bc.builders() {
@@ -176,7 +198,7 @@ func (bc *buildCmd) Main(ctx context.Context, args []string) error {
 	return nil
 }
 
-// func (bc *buildCmd) buildVersion(opts *build.Options) string {
+// func (bc *BuildCmd) buildVersion(opts *build.Options) string {
 // 	version := opts.BuildTime.Format(time.RFC3339)
 // 	vcs := opts.VCS
 //

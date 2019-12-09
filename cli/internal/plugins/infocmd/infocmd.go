@@ -1,8 +1,10 @@
-package cli
+package infocmd
 
 import (
 	"context"
 	"fmt"
+	"io"
+	"os"
 	"strings"
 	"time"
 
@@ -13,28 +15,50 @@ import (
 	"github.com/gobuffalo/genny"
 )
 
-type infoCmd struct {
-	Buffalo *Buffalo
+type InfoCmd struct {
+	Parent  plugins.Plugin
+	Plugins func() plugins.Plugins
+	stdin   io.Reader
+	stdout  io.Writer
+	stderr  io.Writer
 	help    bool
 }
 
-func (ic *infoCmd) Name() string {
+func (i *InfoCmd) SetStderr(w io.Writer) {
+	i.stderr = w
+}
+
+func (i *InfoCmd) SetStdin(r io.Reader) {
+	i.stdin = r
+}
+
+func (i *InfoCmd) SetStdout(w io.Writer) {
+	i.stdout = w
+}
+
+func (ic *InfoCmd) Name() string {
 	return "info"
 }
 
-func (ic *infoCmd) Description() string {
+func (ic *InfoCmd) Description() string {
 	return "Print diagnostic information (useful for debugging)"
 }
 
-func (ic infoCmd) String() string {
-	s := fmt.Sprintf("%s %s", ic.Buffalo, ic.Name())
+func (i InfoCmd) String() string {
+	s := i.Name()
+	if i.Parent != nil {
+		s = fmt.Sprintf("%s %s", i.Parent.Name(), i.Name())
+	}
 	return strings.TrimSpace(s)
 }
 
 // Info runs all of the plugins that implement the
 // `Informer` interface in order.
-func (ic *infoCmd) plugins(ctx context.Context, args []string) error {
-	plugs := ic.Buffalo.Plugins
+func (ic *InfoCmd) plugins(ctx context.Context, args []string) error {
+	if ic.Plugins == nil {
+		return nil
+	}
+	plugs := ic.Plugins()
 	for _, p := range plugs {
 		i, ok := p.(plugins.Informer)
 		if !ok {
@@ -50,7 +74,12 @@ func (ic *infoCmd) plugins(ctx context.Context, args []string) error {
 // Main implements the `buffalo info` command. Buffalo's checks
 // are run first, then any plugins that implement plugins.Informer
 // will be run in order at the end.
-func (ic *infoCmd) Main(ctx context.Context, args []string) error {
+func (ic *InfoCmd) Main(ctx context.Context, args []string) error {
+	out := ic.stdout
+	if out == nil {
+		out = os.Stdout
+	}
+
 	flags := cmdx.NewFlagSet(ic.String())
 	flags.BoolVarP(&ic.help, "help", "h", false, "print this help")
 	if err := flags.Parse(args); err != nil {
@@ -58,7 +87,7 @@ func (ic *infoCmd) Main(ctx context.Context, args []string) error {
 	}
 
 	if ic.help {
-		return cmdx.Print(ic.Buffalo.Stdout, ic, nil, flags)
+		return cmdx.Print(out, ic, nil, flags)
 	}
 
 	args = flags.Args()
@@ -67,8 +96,6 @@ func (ic *infoCmd) Main(ctx context.Context, args []string) error {
 	defer cancel()
 
 	run := genny.WetRunner(ctx)
-
-	out := ic.Buffalo.Stdout
 
 	opts := &rx.Options{
 		Out: rx.NewWriter(out),
