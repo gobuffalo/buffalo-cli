@@ -15,6 +15,7 @@ require (
 	github.com/gobuffalo/licenser v1.4.0
 	github.com/gobuffalo/logger v1.0.3
 	github.com/gobuffalo/meta v0.2.1
+	github.com/gobuffalo/meta/v2 v2.0.0
 	github.com/gobuffalo/packd v0.3.0
 	github.com/gobuffalo/packr/v2 v2.7.1
 	github.com/gobuffalo/plush v3.8.3+incompatible
@@ -29,7 +30,6 @@ require (
 	github.com/markbates/oncer v1.0.0
 	github.com/markbates/refresh v1.8.0
 	github.com/markbates/safe v1.0.1
-	github.com/markbates/sigtx v1.0.0
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/pflag v1.0.5

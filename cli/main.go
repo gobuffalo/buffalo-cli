@@ -9,8 +9,9 @@ import (
 )
 
 func (b *Buffalo) Main(ctx context.Context, args []string) error {
-	flags := cmdx.NewFlagSet(b.Name())
-	flags.BoolVarP(&b.help, "help", "h", false, "print this help")
+	var help bool
+	flags := cmdx.NewFlagSet(b.String())
+	flags.BoolVarP(&help, "help", "h", false, "print this help")
 	flags.Parse(args)
 
 	var cmds plugins.Commands
@@ -20,15 +21,14 @@ func (b *Buffalo) Main(ctx context.Context, args []string) error {
 		}
 	}
 
-	if len(args) == 0 || (len(flags.Args()) == 0 && b.help) {
+	if len(args) == 0 || (len(flags.Args()) == 0 && help) {
 		plugs := make(plugins.Plugins, len(cmds))
 		for i, c := range cmds {
 			plugs[i] = c
 		}
 
-		return cmdx.Print(b.Stdout, "", b, plugs, flags)
+		return cmdx.Print(b.Stdout, b, plugs, flags)
 	}
-
 	if c, err := cmds.Find(args[0]); err == nil {
 		return c.Main(ctx, args[1:])
 	}

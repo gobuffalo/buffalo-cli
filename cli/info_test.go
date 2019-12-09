@@ -3,38 +3,39 @@ package cli
 import (
 	"bytes"
 	"context"
+	"io"
 	"testing"
 
-	"github.com/gobuffalo/buffalo-cli/internal/cmdx"
 	"github.com/stretchr/testify/require"
 )
 
-type snow struct{}
+type snow struct {
+	io.Writer
+}
 
 func (s snow) Name() string {
 	return "snow"
 }
 
 func (s snow) Info(ctx context.Context, args []string) error {
-	out := cmdx.Stdout(ctx)
-	out.Write([]byte("informer"))
+	s.Write([]byte("informer"))
 	return nil
 }
 
 func Test_Buffalo_Info(t *testing.T) {
 	r := require.New(t)
 
-	bb := &bytes.Buffer{}
-
-	ctx := context.Background()
-	ctx = cmdx.WithStdout(ctx, bb)
-
-	buffalo, err := New(ctx)
+	buffalo, err := New()
 	r.NoError(err)
 
-	buffalo.Plugins = append(buffalo.Plugins, snow{})
+	bb := &bytes.Buffer{}
+	buffalo.Stdout = bb
 
-	err = buffalo.Main(ctx, []string{"info"})
+	buffalo.Plugins = append(buffalo.Plugins, snow{
+		Writer: bb,
+	})
+
+	err = buffalo.Main(context.Background(), []string{"info"})
 	r.NoError(err)
 
 	out := bb.String()

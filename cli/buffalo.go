@@ -1,33 +1,37 @@
 package cli
 
 import (
-	"context"
 	"io"
+	"os"
 
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/assets"
 	"github.com/gobuffalo/buffalo-cli/cli/plugins"
-	"github.com/gobuffalo/buffalo-cli/internal/cmdx"
 )
 
 // Buffalo represents the `buffalo` cli.
 type Buffalo struct {
-	context.Context
 	Stdin   io.Reader
 	Stdout  io.Writer
 	Stderr  io.Writer
 	Plugins plugins.Plugins
-	help    bool
 }
 
-func New(ctx context.Context) (*Buffalo, error) {
+func New() (*Buffalo, error) {
 	b := &Buffalo{
-		Context: ctx,
-		Stdin:   cmdx.Stdin(ctx),
-		Stdout:  cmdx.Stdout(ctx),
-		Stderr:  cmdx.Stderr(ctx),
+		Stdin:  os.Stdin,
+		Stdout: os.Stdout,
+		Stderr: os.Stderr,
 	}
+
 	b.Plugins = append(b.Plugins,
 		&versionCmd{Buffalo: b},
 		&fixCmd{Buffalo: b},
+		&buildCmd{Buffalo: b},
+		&assets.Assets{
+			Stdin:  b.Stdin,
+			Stdout: b.Stdout,
+			Stderr: b.Stderr,
+		},
 		&infoCmd{Buffalo: b},
 	)
 	return b, nil
@@ -35,6 +39,10 @@ func New(ctx context.Context) (*Buffalo, error) {
 
 // Name ...
 func (Buffalo) Name() string {
+	return "buffalo"
+}
+
+func (Buffalo) String() string {
 	return "buffalo"
 }
 

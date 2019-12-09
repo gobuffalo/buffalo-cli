@@ -3,6 +3,7 @@ package cli
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/gobuffalo/buffalo-cli/cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/internal/cmdx"
@@ -10,8 +11,7 @@ import (
 )
 
 type fixCmd struct {
-	*Buffalo
-	help bool
+	Buffalo *Buffalo
 }
 
 func (fc *fixCmd) Name() string {
@@ -22,6 +22,11 @@ func (fc *fixCmd) Description() string {
 	return "Attempt to fix a Buffalo application's API to match version in go.mod"
 }
 
+func (fc fixCmd) String() string {
+	s := fmt.Sprintf("%s %s", fc.Buffalo, fc.Name())
+	return strings.TrimSpace(s)
+}
+
 // Fix runs any Fixers that are in the Plugins.
 // If no arguments are provided it will run all fixers in the Plugins.
 // Otherwise Fix will run the fixers for the arguments provided.
@@ -29,7 +34,7 @@ func (fc *fixCmd) Description() string {
 // 	buffalo fix plush pop
 // 	buffalo fix -h
 func (fc *fixCmd) plugins(ctx context.Context, args []string) error {
-	plugs := fc.Plugins
+	plugs := fc.Buffalo.Plugins
 	if len(args) > 0 {
 		fixers := map[string]plugins.Fixer{}
 		for _, p := range plugs {
@@ -67,22 +72,23 @@ func (fc *fixCmd) plugins(ctx context.Context, args []string) error {
 }
 
 func (fc *fixCmd) Main(ctx context.Context, args []string) error {
-	flags := cmdx.NewFlagSet(fc.Name())
+	var help bool
+	flags := cmdx.NewFlagSet(fc.String())
 	flags.BoolVarP(&fix.YesToAll, "yes", "y", false, "update all without asking for confirmation")
-	flags.BoolVarP(&fc.help, "help", "h", false, "print this help")
+	flags.BoolVarP(&help, "help", "h", false, "print this help")
 
 	if err := flags.Parse(args); err != nil {
 		return err
 	}
 
-	if fc.help {
+	if help {
 		var plugs plugins.Plugins
-		for _, p := range fc.Plugins {
+		for _, p := range fc.Buffalo.Plugins {
 			if _, ok := p.(plugins.Fixer); ok {
 				plugs = append(plugs, p)
 			}
 		}
-		return cmdx.Print(fc.Stdout, fc.Buffalo.Name(), fc, plugs, flags)
+		return cmdx.Print(fc.Buffalo.Stdout, fc, plugs, flags)
 	}
 
 	if len(args) > 0 {

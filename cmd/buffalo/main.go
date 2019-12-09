@@ -58,7 +58,7 @@ func run(ctx context.Context) error {
 	const bufFn = "func Buffalo(context.Context, []string) error"
 
 	if _, err := h.Funcs().Find(bufFn); err != nil {
-		b, err := cli.New(ctx)
+		b, err := cli.New()
 		if err != nil {
 			return err
 		}

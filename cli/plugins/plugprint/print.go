@@ -22,21 +22,38 @@ import (
 // 		buffalo fix      Attempt to fix a Buffalo application's API to match version in go.mod
 // 		buffalo info     Print diagnostic information (useful for debugging)
 // 		buffalo version  Print the version information
-func Print(w io.Writer, prefix string, main plugins.Plugin, plugs plugins.Plugins) error {
-	header := strings.TrimSpace(fmt.Sprintf("%s %s", prefix, main.Name()))
+func Print(w io.Writer, main plugins.Plugin, plugs plugins.Plugins) error {
+	if d, ok := main.(Describer); ok {
+		fmt.Fprintf(w, "%s\n\n", d.Description())
+	}
+
+	header := strings.TrimSpace(fmt.Sprintf("%s", main))
 	header = fmt.Sprintf("$ %s", header)
 	fmt.Fprintln(w, header)
 	for i := 0; i < len(header); i++ {
 		fmt.Fprint(w, "-")
 	}
 	fmt.Fprintln(w)
-	if d, ok := main.(Describer); ok {
-		fmt.Fprintf(w, "%s\n", d.Description())
+
+	if a, ok := main.(plugins.Aliases); ok {
+		aliases := a.Aliases()
+		if len(aliases) != 0 {
+			const al = "\nAliases:\n"
+			fmt.Fprint(w, al)
+			fmt.Fprintln(w, strings.Join(aliases, ", "))
+		}
 	}
 
 	if u, ok := main.(UsagePrinter); ok {
 		fmt.Fprintln(w)
 		if err := u.PrintUsage(w); err != nil {
+			return err
+		}
+	}
+
+	if u, ok := main.(FlagPrinter); ok {
+		fmt.Fprintln(w)
+		if err := u.PrintFlags(w); err != nil {
 			return err
 		}
 	}
@@ -57,7 +74,7 @@ func Print(w io.Writer, prefix string, main plugins.Plugin, plugs plugins.Plugin
 	}
 	tw := tabwriter.NewWriter(w, 0, 0, 2, ' ', 0)
 	for _, c := range plugs {
-		line := fmt.Sprintf("%s %s %s\t%s\n", prefix, main.Name(), c.Name(), desc(c))
+		line := fmt.Sprintf("%s\t%s\n", c, desc(c))
 		fmt.Fprintf(tw, "\t%s\n", strings.TrimSpace(line))
 	}
 	tw.Flush()

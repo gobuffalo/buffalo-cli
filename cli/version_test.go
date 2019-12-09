@@ -7,21 +7,19 @@ import (
 	"testing"
 
 	bufcli "github.com/gobuffalo/buffalo-cli"
-	"github.com/gobuffalo/buffalo-cli/internal/cmdx"
 	"github.com/stretchr/testify/require"
 )
 
 func Test_Buffalo_Version(t *testing.T) {
 	r := require.New(t)
 
-	ctx := context.Background()
-	bb := &bytes.Buffer{}
-	ctx = cmdx.WithStdout(ctx, bb)
-
-	buffalo, err := New(ctx)
+	buffalo, err := New()
 	r.NoError(err)
 
-	err = buffalo.Main(ctx, []string{"version"})
+	bb := &bytes.Buffer{}
+	buffalo.Stdout = bb
+
+	err = buffalo.Main(context.Background(), []string{"version"})
 	r.NoError(err)
 
 	out := strings.TrimSpace(bb.String())
@@ -31,18 +29,16 @@ func Test_Buffalo_Version(t *testing.T) {
 func Test_Buffalo_Version_JSON(t *testing.T) {
 	r := require.New(t)
 
-	ctx := context.Background()
-	bb := &bytes.Buffer{}
-	ctx = cmdx.WithStdout(ctx, bb)
-
-	buffalo, err := New(ctx)
+	buffalo, err := New()
 	r.NoError(err)
 
-	err = buffalo.Main(ctx, []string{"version", "--json"})
+	bb := &bytes.Buffer{}
+	buffalo.Stdout = bb
+
+	err = buffalo.Main(context.Background(), []string{"version", "--json"})
 	r.NoError(err)
 
 	out := strings.TrimSpace(bb.String())
 	r.Contains(out, "version")
 	r.Contains(out, bufcli.Version)
-
 }

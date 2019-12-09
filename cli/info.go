@@ -2,6 +2,8 @@ package cli
 
 import (
 	"context"
+	"fmt"
+	"strings"
 	"time"
 
 	"github.com/gobuffalo/buffalo-cli/cli/plugins"
@@ -12,8 +14,8 @@ import (
 )
 
 type infoCmd struct {
-	*Buffalo
-	help bool
+	Buffalo *Buffalo
+	help    bool
 }
 
 func (ic *infoCmd) Name() string {
@@ -24,10 +26,15 @@ func (ic *infoCmd) Description() string {
 	return "Print diagnostic information (useful for debugging)"
 }
 
+func (ic infoCmd) String() string {
+	s := fmt.Sprintf("%s %s", ic.Buffalo, ic.Name())
+	return strings.TrimSpace(s)
+}
+
 // Info runs all of the plugins that implement the
 // `Informer` interface in order.
 func (ic *infoCmd) plugins(ctx context.Context, args []string) error {
-	plugs := ic.Plugins
+	plugs := ic.Buffalo.Plugins
 	for _, p := range plugs {
 		i, ok := p.(plugins.Informer)
 		if !ok {
@@ -44,14 +51,14 @@ func (ic *infoCmd) plugins(ctx context.Context, args []string) error {
 // are run first, then any plugins that implement plugins.Informer
 // will be run in order at the end.
 func (ic *infoCmd) Main(ctx context.Context, args []string) error {
-	flags := cmdx.NewFlagSet(ic.Name())
+	flags := cmdx.NewFlagSet(ic.String())
 	flags.BoolVarP(&ic.help, "help", "h", false, "print this help")
 	if err := flags.Parse(args); err != nil {
 		return err
 	}
 
 	if ic.help {
-		return cmdx.Print(ic.Stdout, ic.Buffalo.Name(), ic, nil, flags)
+		return cmdx.Print(ic.Buffalo.Stdout, ic, nil, flags)
 	}
 
 	args = flags.Args()
@@ -61,7 +68,7 @@ func (ic *infoCmd) Main(ctx context.Context, args []string) error {
 
 	run := genny.WetRunner(ctx)
 
-	out := ic.Stdout
+	out := ic.Buffalo.Stdout
 
 	opts := &rx.Options{
 		Out: rx.NewWriter(out),
