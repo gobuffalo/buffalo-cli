@@ -28,6 +28,7 @@ require (
 	github.com/markbates/haste v0.0.0-20191129201013-5d5b37040fba
 	github.com/markbates/jim v0.3.3
 	github.com/markbates/oncer v1.0.0
+	github.com/markbates/pkger v0.12.8
 	github.com/markbates/refresh v1.8.0
 	github.com/markbates/safe v1.0.1
 	github.com/sirupsen/logrus v1.4.2

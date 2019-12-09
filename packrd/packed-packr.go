@@ -102,7 +102,6 @@ var _ = func() error {
 		}()
 
 
-
 	func() {
 		b := packr.New("buffalo:genny:assets:standard", "../standard/templates")
 		b.SetResolver("public/assets/application.css.tmpl", packr.Pointer{ForwardBox: gk, ForwardPath: "c440d6bdacc801c0d76c5e73ffc703ae"})

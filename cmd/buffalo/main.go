@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"os/signal"
 	"path"
 
 	"github.com/gobuffalo/buffalo-cli/cli"
@@ -22,23 +21,6 @@ func Tidy(ctx context.Context) error {
 func main() {
 	ctx := context.Background()
 	defer Tidy(ctx)
-
-	// trap Ctrl+C and call cancel on the context
-	ctx, cancel := context.WithCancel(ctx)
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
-	defer func() {
-		signal.Stop(c)
-		cancel()
-	}()
-
-	go func() {
-		select {
-		case <-c:
-			cancel()
-		case <-ctx.Done():
-		}
-	}()
 
 	if err := run(ctx); err != nil {
 		Tidy(ctx)

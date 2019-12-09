@@ -677,6 +677,8 @@ github.com/markbates/oncer v0.0.0-20181014194634-05fccaae8fc4/go.mod h1:Ld9puTsI
 github.com/markbates/oncer v0.0.0-20181203154359-bf2de49a0be2/go.mod h1:Ld9puTsIW75CHf65OeIOkyKbteujpZVXDpWK6YGZbxE=
 github.com/markbates/oncer v1.0.0 h1:E83IaVAHygyndzPimgUYJjbshhDTALZyXxvk9FOlQRY=
 github.com/markbates/oncer v1.0.0/go.mod h1:Z59JA581E9GP6w96jai+TGqafHPW+cPfRxz2aSZ0mcI=
+github.com/markbates/pkger v0.12.8 h1:4mEUzWb1HzRnxPwUevBX8g8ntsQ4rWw2R8CRB2QdZVI=
+github.com/markbates/pkger v0.12.8/go.mod h1:C7e5A6bnWZT+nXkUwkvysGW7sxl/IGd63HEa6N/JY8s=
 github.com/markbates/refresh v1.4.10/go.mod h1:NDPHvotuZmTmesXxr95C9bjlw1/0frJwtME2dzcVKhc=
 github.com/markbates/refresh v1.4.11/go.mod h1:awpJuyo4zgexB/JaHfmBX0sRdvOjo2dXwIayWIz9i3g=
 github.com/markbates/refresh v1.5.0/go.mod h1:ZYMLkxV+x7wXQ2Xd7bXAPyF0EXiEWAMfiy/4URYb1+M=

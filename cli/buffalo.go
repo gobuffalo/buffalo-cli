@@ -31,7 +31,7 @@ func New() (*Buffalo, error) {
 		return b.Plugins
 	}
 	b.Plugins = append(b.Plugins,
-		&assets.Assets{},
+		&assets.Builder{},
 		&buildcmd.BuildCmd{
 			Parent:  b,
 			Plugins: pfn,

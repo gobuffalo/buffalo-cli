@@ -60,15 +60,6 @@ func New(opts *Options) (*genny.Generator, error) {
 	}
 	g.Merge(ag)
 
-	if opts.WithAssets {
-		// mount the assets generator
-		ag, err := assets(opts)
-		if err != nil {
-			return g, err
-		}
-		g.Merge(ag)
-	}
-
 	g.RunFn(func(r *genny.Runner) error {
 		return jam.Pack(jam.PackOptions{})
 	})
