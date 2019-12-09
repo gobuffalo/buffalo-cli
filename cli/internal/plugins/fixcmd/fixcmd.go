@@ -4,12 +4,14 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
 	"strings"
 
 	"github.com/gobuffalo/buffalo-cli/cli/plugins"
-	"github.com/gobuffalo/buffalo-cli/internal/cmdx"
+	"github.com/gobuffalo/buffalo-cli/cli/plugins/plugprint"
 	"github.com/gobuffalo/buffalo-cli/internal/v1/cmd/fix"
+	"github.com/spf13/pflag"
 )
 
 type FixCmd struct {
@@ -97,7 +99,8 @@ func (fc *FixCmd) plugins(ctx context.Context, args []string) error {
 
 func (fc *FixCmd) Main(ctx context.Context, args []string) error {
 	var help bool
-	flags := cmdx.NewFlagSet(fc.String())
+	flags := pflag.NewFlagSet(fc.String(), pflag.ContinueOnError)
+	flags.SetOutput(ioutil.Discard)
 	flags.BoolVarP(&fix.YesToAll, "yes", "y", false, "update all without asking for confirmation")
 	flags.BoolVarP(&help, "help", "h", false, "print this help")
 
@@ -119,7 +122,7 @@ func (fc *FixCmd) Main(ctx context.Context, args []string) error {
 				}
 			}
 		}
-		return cmdx.Print(out, fc, plugs, flags)
+		return plugprint.Print(out, fc, plugs)
 	}
 
 	if len(args) > 0 {

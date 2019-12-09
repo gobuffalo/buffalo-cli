@@ -4,16 +4,18 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"os"
 	"strings"
 
 	"github.com/gobuffalo/buffalo-cli/cli/plugins"
-	"github.com/gobuffalo/buffalo-cli/internal/cmdx"
+	"github.com/gobuffalo/buffalo-cli/cli/plugins/plugprint"
 	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/build"
 	"github.com/gobuffalo/genny"
 	"github.com/gobuffalo/logger"
 	"github.com/gobuffalo/meta"
+	"github.com/spf13/pflag"
 )
 
 type BuildCmd struct {
@@ -79,29 +81,15 @@ func (bc *BuildCmd) builders() plugins.Plugins {
 }
 
 func (bc *BuildCmd) PrintFlags(w io.Writer) error {
-	flags := bc.flags(&build.Options{})
+	flags := bc.flagSet(&build.Options{})
 	flags.SetOutput(w)
 	flags.PrintDefaults()
-
-	type flagPrinter interface {
-		PrintFlags(w io.Writer) error
-	}
-
-	for _, p := range bc.builders() {
-		fp, ok := p.(flagPrinter)
-		if !ok {
-			continue
-		}
-		fmt.Fprintf(w, "\nUsage for %s\n", p)
-		if err := fp.PrintFlags(w); err != nil {
-			return err
-		}
-	}
 	return nil
 }
 
-func (bc *BuildCmd) flags(opts *build.Options) *cmdx.FlagSet {
-	flags := cmdx.NewFlagSet(bc.String())
+func (bc *BuildCmd) flagSet(opts *build.Options) *pflag.FlagSet {
+	flags := pflag.NewFlagSet(bc.String(), pflag.ContinueOnError)
+	flags.SetOutput(ioutil.Discard)
 
 	flags.BoolVar(&bc.dryRun, "dry-run", false, "runs the build 'dry'")
 	flags.BoolVar(&bc.skipTemplateValidation, "skip-template-validation", false, "skip validating templates")
@@ -114,6 +102,33 @@ func (bc *BuildCmd) flags(opts *build.Options) *cmdx.FlagSet {
 	flags.StringVarP(&opts.App.Bin, "output", "o", opts.Bin, "set the name of the binary")
 	flags.StringVarP(&opts.Environment, "environment", "", "development", "set the environment for the binary")
 	flags.StringVarP(&bc.tags, "tags", "t", "", "compile with specific build tags")
+
+	if bc.Plugins == nil {
+		return flags
+	}
+
+	plugs := bc.Plugins()
+
+	for _, p := range plugs {
+		bf, ok := p.(BuildFlagger)
+		if !ok {
+			continue
+		}
+		for _, f := range bf.BuildFlags() {
+			flags.AddGoFlag(f)
+		}
+	}
+
+	for _, p := range plugs {
+		bf, ok := p.(BuildPflagger)
+		if !ok {
+			continue
+		}
+		for _, f := range bf.BuildPflags() {
+			flags.AddFlag(f)
+		}
+	}
+
 	return flags
 }
 
@@ -127,14 +142,17 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 		App: meta.New(pwd),
 	}
 
-	flags := bc.flags(opts)
-	err = flags.Parse(args)
-
-	if bc.help {
-		return cmdx.Print(bc.stdout, bc, nil, flags)
+	flags := bc.flagSet(opts)
+	if err = flags.Parse(args); err != nil {
+		return err
 	}
 
-	for _, p := range bc.builders() {
+	if bc.help {
+		return plugprint.Print(bc.stdout, bc, nil)
+	}
+
+	builders := bc.builders()
+	for _, p := range builders {
 		if bb, ok := p.(BeforeBuilder); ok {
 			if err := bb.BeforeBuild(ctx, args); err != nil {
 				return err
@@ -188,7 +206,7 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 		return err
 	}
 
-	for _, p := range bc.builders() {
+	for _, p := range builders {
 		if bb, ok := p.(AfterBuilder); ok {
 			if err := bb.AfterBuild(ctx, args); err != nil {
 				return err

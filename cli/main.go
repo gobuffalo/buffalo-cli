@@ -4,13 +4,14 @@ import (
 	"context"
 
 	"github.com/gobuffalo/buffalo-cli/cli/plugins"
-	"github.com/gobuffalo/buffalo-cli/internal/cmdx"
+	"github.com/gobuffalo/buffalo-cli/cli/plugins/plugprint"
 	"github.com/gobuffalo/buffalo-cli/internal/v1/cmd"
+	"github.com/spf13/pflag"
 )
 
 func (b *Buffalo) Main(ctx context.Context, args []string) error {
 	var help bool
-	flags := cmdx.NewFlagSet(b.String())
+	flags := pflag.NewFlagSet(b.String(), pflag.ContinueOnError)
 	flags.BoolVarP(&help, "help", "h", false, "print this help")
 	flags.Parse(args)
 
@@ -27,7 +28,7 @@ func (b *Buffalo) Main(ctx context.Context, args []string) error {
 			plugs[i] = c
 		}
 
-		return cmdx.Print(b.Stdout(), b, plugs, flags)
+		return plugprint.Print(b.Stdout(), b, plugs)
 	}
 	if c, err := cmds.Find(args[0]); err == nil {
 		plugins.SetIO(b, c)

@@ -3,26 +3,29 @@ package assets
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
 
-	"github.com/gobuffalo/buffalo-cli/internal/cmdx"
 	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/assets/webpack"
 	"github.com/gobuffalo/genny"
 	"github.com/gobuffalo/here/there"
 	"github.com/gobuffalo/meta/v2"
+	"github.com/spf13/pflag"
 )
 
 type Assets struct {
-	stdin         io.Reader
-	stdout        io.Writer
-	stderr        io.Writer
 	Environment   string
 	CleanAssets   bool
 	ExtractAssets bool
 	SkipAssets    bool
+	stdin         io.Reader
+	stdout        io.Writer
+	stderr        io.Writer
+	flagSet       *pflag.FlagSet
 	dryRun        bool
 }
 
@@ -39,12 +42,20 @@ func (a *Assets) SetStdout(w io.Writer) {
 }
 
 func (a *Assets) BeforeBuild(ctx context.Context, args []string) error {
-	flags := a.flags()
+	flags := a.PflagSet()
+	flags.BoolVarP(&a.dryRun, "dry-run", "d", false, "dry run")
+	flags.StringVarP(&a.Environment, "environment", "", "development", "set the environment for the binary")
 	flags.Parse(args)
 
-	if !a.CleanAssets {
+	out := a.stdout
+	if out == nil {
+		out = os.Stdout
+	}
+	if a.SkipAssets {
+		fmt.Fprintln(out, "skipping assets")
 		return nil
 	}
+
 	run := genny.WetRunner(ctx)
 	if a.dryRun {
 		run = genny.DryRunner(ctx)
@@ -56,6 +67,9 @@ func (a *Assets) BeforeBuild(ctx context.Context, args []string) error {
 	}
 
 	run.WithRun(func(r *genny.Runner) error {
+		if !a.CleanAssets {
+			return nil
+		}
 		r.Delete(filepath.Join(info.Root, "public", "assets"))
 		return nil
 	})
@@ -107,18 +121,32 @@ func (a Assets) String() string {
 	return "assets"
 }
 
-func (a *Assets) flags() *cmdx.FlagSet {
-	flags := cmdx.NewFlagSet(a.String())
-	flags.StringVarP(&a.Environment, "environment", "", "development", "set the environment for the binary")
-	flags.BoolVarP(&a.dryRun, "dry-run", "d", false, "dry run")
+func (a *Assets) BuildPflags() []*pflag.Flag {
+	var values []*pflag.Flag
+	flags := a.PflagSet()
+	flags.VisitAll(func(f *pflag.Flag) {
+		values = append(values, f)
+	})
+	return values
+}
+
+func (a *Assets) PflagSet() *pflag.FlagSet {
+	if a.flagSet != nil {
+		return a.flagSet
+	}
+
+	flags := pflag.NewFlagSet(a.String(), pflag.ContinueOnError)
+	flags.SetOutput(ioutil.Discard)
 	flags.BoolVar(&a.CleanAssets, "clean-assets", false, "will delete public/assets before calling webpack")
-	flags.BoolVarP(&a.SkipAssets, "skip-assets", "k", false, "skip running webpack and building assets")
 	flags.BoolVarP(&a.ExtractAssets, "extract-assets", "e", false, "extract the assets and put them in a distinct archive")
-	return flags
+	flags.BoolVarP(&a.SkipAssets, "skip-assets", "k", false, "skip running webpack and building assets")
+
+	a.flagSet = flags
+	return a.flagSet
 }
 
 func (a *Assets) PrintFlags(w io.Writer) error {
-	flags := a.flags()
+	flags := a.PflagSet()
 	flags.SetOutput(w)
 	flags.PrintDefaults()
 	return nil

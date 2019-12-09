@@ -31,6 +31,7 @@ func New() (*Buffalo, error) {
 		return b.Plugins
 	}
 	b.Plugins = append(b.Plugins,
+		&assets.Assets{},
 		&buildcmd.BuildCmd{
 			Parent:  b,
 			Plugins: pfn,
@@ -39,7 +40,6 @@ func New() (*Buffalo, error) {
 			Parent:  b,
 			Plugins: pfn,
 		},
-		&assets.Assets{},
 		&infocmd.InfoCmd{
 			Parent:  b,
 			Plugins: pfn,

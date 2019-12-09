@@ -4,19 +4,24 @@ import (
 	"context"
 	"log"
 	"os"
+	"os/exec"
 	"os/signal"
 	"path"
 
 	"github.com/gobuffalo/buffalo-cli/cli"
-	"github.com/gobuffalo/buffalo-cli/internal/cmdx"
 	"github.com/gobuffalo/here"
 	"github.com/markbates/haste"
 	"github.com/markbates/jim"
 )
 
+func Tidy(ctx context.Context) error {
+	c := exec.CommandContext(ctx, "go", "mod", "tidy")
+	return c.Run()
+}
+
 func main() {
 	ctx := context.Background()
-	defer cmdx.Tidy(ctx)
+	defer Tidy(ctx)
 
 	// trap Ctrl+C and call cancel on the context
 	ctx, cancel := context.WithCancel(ctx)
@@ -36,7 +41,7 @@ func main() {
 	}()
 
 	if err := run(ctx); err != nil {
-		cmdx.Tidy(ctx)
+		Tidy(ctx)
 		log.Fatal(err)
 	}
 }

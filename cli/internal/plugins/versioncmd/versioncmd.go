@@ -5,12 +5,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
 	"strings"
 
 	bufcli "github.com/gobuffalo/buffalo-cli"
 	"github.com/gobuffalo/buffalo-cli/cli/plugins"
-	"github.com/gobuffalo/buffalo-cli/internal/cmdx"
+	"github.com/gobuffalo/buffalo-cli/cli/plugins/plugprint"
+	"github.com/spf13/pflag"
 )
 
 type VersionCmd struct {
@@ -41,7 +43,8 @@ func (i VersionCmd) String() string {
 }
 
 func (vc *VersionCmd) Main(ctx context.Context, args []string) error {
-	flags := cmdx.NewFlagSet(vc.String())
+	flags := pflag.NewFlagSet(vc.String(), pflag.ContinueOnError)
+	flags.SetOutput(ioutil.Discard)
 	flags.BoolVarP(&vc.help, "help", "h", false, "print this help")
 	flags.BoolVarP(&vc.json, "json", "j", false, "Print information in json format")
 	if err := flags.Parse(args); err != nil {
@@ -53,7 +56,7 @@ func (vc *VersionCmd) Main(ctx context.Context, args []string) error {
 		out = os.Stdout
 	}
 	if vc.help {
-		return cmdx.Print(out, vc, nil, flags)
+		return plugprint.Print(out, vc, nil)
 	}
 
 	if !vc.json {
