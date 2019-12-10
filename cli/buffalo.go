@@ -1,8 +1,6 @@
 package cli
 
 import (
-	"os/exec"
-
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/assets"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/fixcmd"
@@ -14,6 +12,8 @@ import (
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/plush"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/versioncmd"
 	"github.com/gobuffalo/buffalo-cli/cli/plugins"
+	"github.com/gobuffalo/here/there"
+	"github.com/gobuffalo/meta/v2"
 )
 
 // Buffalo represents the `buffalo` cli.
@@ -23,6 +23,11 @@ type Buffalo struct {
 }
 
 func New() (*Buffalo, error) {
+	info, err := there.Current()
+	if err != nil {
+		return nil, err
+	}
+
 	b := &Buffalo{
 		IO: plugins.NewIO(),
 	}
@@ -59,7 +64,11 @@ func New() (*Buffalo, error) {
 		&pkger.Buffalo{},
 	)
 
-	if _, err := exec.LookPath("git"); err == nil {
+	app, err := meta.New(info)
+	if err != nil {
+		return nil, err
+	}
+	if app.VCS == "git" {
 		b.Plugins = append(b.Plugins,
 			&git.Buffalo{
 				IO: b,
