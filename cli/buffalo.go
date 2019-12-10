@@ -1,9 +1,6 @@
 package cli
 
 import (
-	"io"
-	"os"
-
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/assets"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/fixcmd"
@@ -18,17 +15,13 @@ import (
 
 // Buffalo represents the `buffalo` cli.
 type Buffalo struct {
+	plugins.IO
 	Plugins plugins.Plugins
-	stdin   io.Reader
-	stdout  io.Writer
-	stderr  io.Writer
 }
 
 func New() (*Buffalo, error) {
 	b := &Buffalo{
-		stdin:  os.Stdin,
-		stdout: os.Stdout,
-		stderr: os.Stderr,
+		IO: plugins.NewIO(),
 	}
 
 	pfn := func() plugins.Plugins {
@@ -57,39 +50,6 @@ func New() (*Buffalo, error) {
 		&pkger.Buffalo{},
 	)
 	return b, nil
-}
-
-func (b *Buffalo) Stdin() io.Reader {
-	if b.stdin == nil {
-		return os.Stdin
-	}
-	return b.stdin
-}
-
-func (b *Buffalo) Stdout() io.Writer {
-	if b.stdout == nil {
-		return os.Stdout
-	}
-	return b.stdout
-}
-
-func (b *Buffalo) Stderr() io.Writer {
-	if b.stderr == nil {
-		return os.Stderr
-	}
-	return b.stderr
-}
-
-func (b *Buffalo) SetStdin(r io.Reader) {
-	b.stdin = r
-}
-
-func (b *Buffalo) SetStdout(w io.Writer) {
-	b.stdout = w
-}
-
-func (b *Buffalo) SetStderr(w io.Writer) {
-	b.stderr = w
 }
 
 // Name ...

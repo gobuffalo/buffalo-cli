@@ -4,9 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
 	"io/ioutil"
-	"os"
 	"strings"
 
 	bufcli "github.com/gobuffalo/buffalo-cli"
@@ -16,14 +14,10 @@ import (
 )
 
 type VersionCmd struct {
+	plugins.IO
 	Parent plugins.Plugin
-	stdout io.Writer
 	help   bool
 	json   bool
-}
-
-func (vc *VersionCmd) SetStdout(w io.Writer) {
-	vc.stdout = w
 }
 
 func (vc *VersionCmd) Name() string {
@@ -51,10 +45,7 @@ func (vc *VersionCmd) Main(ctx context.Context, args []string) error {
 		return err
 	}
 
-	out := vc.stdout
-	if out == nil {
-		out = os.Stdout
-	}
+	out := vc.Stdout()
 	if vc.help {
 		return plugprint.Print(out, vc, nil)
 	}

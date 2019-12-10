@@ -12,9 +12,9 @@ import (
 	"path/filepath"
 	"runtime"
 
+	"github.com/gobuffalo/buffalo-cli/cli/plugins"
 	"github.com/gobuffalo/here/there"
 	"github.com/gobuffalo/meta/v2"
-	"github.com/markbates/pkger"
 	"github.com/spf13/pflag"
 )
 
@@ -27,44 +27,23 @@ func (b Builder) webpackBin() string {
 }
 
 type Builder struct {
+	plugins.IO
 	Environment string
 	// CleanAssets will remove the public/assets folder build compiling
 	CleanAssets bool
 	// places ./public/assets into ./bin/assets.zip.
 	ExtractAssets bool
 	SkipAssets    bool
-	stdin         io.Reader
-	stdout        io.Writer
-	stderr        io.Writer
 	flagSet       *pflag.FlagSet
-	dryRun        bool
-}
-
-func (a *Builder) SetStderr(w io.Writer) {
-	a.stderr = w
-}
-
-func (a *Builder) SetStdin(r io.Reader) {
-	a.stdin = r
-}
-
-func (a *Builder) SetStdout(w io.Writer) {
-	a.stdout = w
 }
 
 func (a *Builder) BeforeBuild(ctx context.Context, args []string) error {
 	flags := a.PflagSet()
-	flags.BoolVarP(&a.dryRun, "dry-run", "d", false, "dry run")
 	flags.StringVarP(&a.Environment, "environment", "", "development", "set the environment for the binary")
 	flags.Parse(args)
 
-	out := a.stdout
-	if out == nil {
-		out = os.Stdout
-	}
-
 	if a.SkipAssets {
-		fmt.Fprintln(out, "skipping assets")
+		fmt.Fprintln(a.Stdout(), "skipping assets")
 		return nil
 	}
 
@@ -92,7 +71,7 @@ func (a *Builder) BeforeBuild(ctx context.Context, args []string) error {
 	// Fallback on legacy runner
 	c := exec.CommandContext(ctx, a.webpackBin())
 	scripts := packageJSON{}
-	if pf, err := pkger.Open("package.json"); err == nil {
+	if pf, err := os.Open(filepath.Join(info.Root, "package.json")); err == nil {
 		if err = json.NewDecoder(pf).Decode(&scripts); err != nil {
 			return err
 		}
@@ -127,7 +106,7 @@ func (a Builder) String() string {
 	return a.Name()
 }
 
-func (a *Builder) BuildPflags() []*pflag.Flag {
+func (a *Builder) BuildFlags() []*pflag.Flag {
 	var values []*pflag.Flag
 	flags := a.PflagSet()
 	flags.VisitAll(func(f *pflag.Flag) {

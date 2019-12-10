@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -18,19 +17,8 @@ import (
 	"github.com/spf13/pflag"
 )
 
-func (b *BuildCmd) setIO(p plugins.Plugin) {
-	if stdin, ok := p.(plugins.StdinSetter); ok {
-		stdin.SetStdin(b.Stdin())
-	}
-	if stdout, ok := p.(plugins.StdoutSetter); ok {
-		stdout.SetStdout(b.Stdout())
-	}
-	if stderr, ok := p.(plugins.StderrSetter); ok {
-		stderr.SetStderr(b.Stderr())
-	}
-}
-
 type BuildCmd struct {
+	plugins.IO
 	Parent                 plugins.Plugin
 	Plugins                func() plugins.Plugins
 	dryRun                 bool
@@ -39,46 +27,10 @@ type BuildCmd struct {
 	skipTemplateValidation bool
 	verbose                bool
 	tags                   string
-	stdin                  io.Reader
-	stdout                 io.Writer
-	stderr                 io.Writer
-}
-
-func (b *BuildCmd) Stdin() io.Reader {
-	if b.stdin == nil {
-		return os.Stdin
-	}
-	return b.stdin
-}
-
-func (b *BuildCmd) Stdout() io.Writer {
-	if b.stdout == nil {
-		return os.Stdout
-	}
-	return b.stdout
-}
-
-func (b *BuildCmd) Stderr() io.Writer {
-	if b.stderr == nil {
-		return os.Stderr
-	}
-	return b.stderr
-}
-
-func (b *BuildCmd) SetStderr(w io.Writer) {
-	b.stderr = w
-}
-
-func (b *BuildCmd) SetStdin(r io.Reader) {
-	b.stdin = r
-}
-
-func (b *BuildCmd) SetStdout(w io.Writer) {
-	b.stdout = w
 }
 
 func (*BuildCmd) Aliases() []string {
-	return []string{"b", "bill", "install"}
+	return []string{"b", "install"}
 }
 
 func (b BuildCmd) Name() string {
@@ -142,22 +94,15 @@ func (bc *BuildCmd) flagSet(opts *build.Options) *pflag.FlagSet {
 	plugs := bc.plugins()
 
 	for _, p := range plugs {
-		bf, ok := p.(BuildFlagger)
-		if !ok {
-			continue
-		}
-		for _, f := range bf.BuildFlags() {
-			flags.AddGoFlag(f)
-		}
-	}
-
-	for _, p := range plugs {
-		bf, ok := p.(BuildPflagger)
-		if !ok {
-			continue
-		}
-		for _, f := range bf.BuildPflags() {
-			flags.AddFlag(f)
+		switch t := p.(type) {
+		case BuildFlagger:
+			for _, f := range t.BuildFlags() {
+				flags.AddGoFlag(f)
+			}
+		case BuildPflagger:
+			for _, f := range t.BuildFlags() {
+				flags.AddFlag(f)
+			}
 		}
 	}
 
@@ -180,7 +125,7 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 	}
 
 	if bc.help {
-		return plugprint.Print(bc.stdout, bc, nil)
+		return plugprint.Print(bc.Stdout(), bc, nil)
 	}
 
 	plugs := bc.plugins()
@@ -188,7 +133,7 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 	builders := bc.builders()
 	for _, p := range builders {
 		if bb, ok := p.(BeforeBuilder); ok {
-			bc.setIO(p)
+			plugins.SetIO(bc, p)
 			if err := bb.BeforeBuild(ctx, args); err != nil {
 				return err
 			}
@@ -209,7 +154,7 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 			if !ok {
 				continue
 			}
-			bc.setIO(p)
+			plugins.SetIO(bc, p)
 			if err := tv.ValidateTemplates(filepath.Join(info.Root, "templates")); err != nil {
 				return err
 			}
@@ -221,7 +166,7 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 		if !ok {
 			continue
 		}
-		bc.setIO(p)
+		plugins.SetIO(bc, p)
 		if err := pkg.Package(ctx, info.Root); err != nil {
 			return err
 		}
@@ -270,7 +215,7 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 
 	for _, p := range builders {
 		if bb, ok := p.(AfterBuilder); ok {
-			bc.setIO(p)
+			plugins.SetIO(bc, p)
 			if err := bb.AfterBuild(ctx, args); err != nil {
 				return err
 			}

@@ -20,7 +20,7 @@ type BuildFlagger interface {
 }
 
 type BuildPflagger interface {
-	BuildPflags() []*pflag.Flag
+	BuildFlags() []*pflag.Flag
 }
 
 type TemplatesValidator interface {

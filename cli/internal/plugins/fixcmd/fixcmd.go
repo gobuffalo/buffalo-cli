@@ -3,9 +3,7 @@ package fixcmd
 import (
 	"context"
 	"fmt"
-	"io"
 	"io/ioutil"
-	"os"
 	"strings"
 
 	"github.com/gobuffalo/buffalo-cli/cli/plugins"
@@ -15,23 +13,9 @@ import (
 )
 
 type FixCmd struct {
+	plugins.IO
 	Parent  plugins.Plugin
 	Plugins func() plugins.Plugins
-	stdin   io.Reader
-	stdout  io.Writer
-	stderr  io.Writer
-}
-
-func (f *FixCmd) SetStderr(w io.Writer) {
-	f.stderr = w
-}
-
-func (f *FixCmd) SetStdin(r io.Reader) {
-	f.stdin = r
-}
-
-func (f *FixCmd) SetStdout(w io.Writer) {
-	f.stdout = w
 }
 
 func (fc *FixCmd) Name() string {
@@ -69,6 +53,7 @@ func (fc *FixCmd) plugins(ctx context.Context, args []string) error {
 				continue
 			}
 
+			plugins.SetIO(fc, p)
 			fixers[p.Name()] = f
 		}
 
@@ -90,6 +75,7 @@ func (fc *FixCmd) plugins(ctx context.Context, args []string) error {
 			continue
 		}
 
+		plugins.SetIO(fc, p)
 		if err := f.Fix(ctx, args); err != nil {
 			return err
 		}
@@ -108,10 +94,7 @@ func (fc *FixCmd) Main(ctx context.Context, args []string) error {
 		return err
 	}
 
-	out := fc.stdout
-	if out == nil {
-		out = os.Stdout
-	}
+	out := fc.Stdout()
 
 	if help {
 		var plugs plugins.Plugins

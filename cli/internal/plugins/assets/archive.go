@@ -29,7 +29,7 @@ func (a *Builder) archive(app *meta.App) error {
 	archive := zip.NewWriter(f)
 	defer archive.Close()
 
-	err = pkger.Walk(pkger.Include(source), func(path string, info os.FileInfo, err error) error {
+	err = filepath.Walk(source, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -38,11 +38,7 @@ func (a *Builder) archive(app *meta.App) error {
 			return err
 		}
 
-		pt, err := app.Info.Parse(path)
-		if err != nil {
-			return err
-		}
-		header.Name = pt.Name
+		header.Name = info.Name()
 
 		if info.IsDir() {
 			header.Name += "/"
@@ -59,13 +55,13 @@ func (a *Builder) archive(app *meta.App) error {
 			return nil
 		}
 
-		file, err := pkger.Open(path)
+		file, err := os.Open(path)
 		if err != nil {
 			return err
 		}
 		defer file.Close()
+
 		_, err = io.Copy(writer, file)
-		return err
 		if err != nil {
 			return err
 		}

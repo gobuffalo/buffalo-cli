@@ -3,9 +3,7 @@ package infocmd
 import (
 	"context"
 	"fmt"
-	"io"
 	"io/ioutil"
-	"os"
 	"strings"
 	"time"
 
@@ -18,24 +16,10 @@ import (
 )
 
 type InfoCmd struct {
+	plugins.IO
 	Parent  plugins.Plugin
 	Plugins func() plugins.Plugins
-	stdin   io.Reader
-	stdout  io.Writer
-	stderr  io.Writer
 	help    bool
-}
-
-func (i *InfoCmd) SetStderr(w io.Writer) {
-	i.stderr = w
-}
-
-func (i *InfoCmd) SetStdin(r io.Reader) {
-	i.stdin = r
-}
-
-func (i *InfoCmd) SetStdout(w io.Writer) {
-	i.stdout = w
 }
 
 func (ic *InfoCmd) Name() string {
@@ -88,10 +72,7 @@ func (ic *InfoCmd) informers() []Informer {
 // are run first, then any plugins that implement plugins.Informer
 // will be run in order at the end.
 func (ic *InfoCmd) Main(ctx context.Context, args []string) error {
-	out := ic.stdout
-	if out == nil {
-		out = os.Stdout
-	}
+	out := ic.Stdout()
 
 	flags := pflag.NewFlagSet(ic.String(), pflag.ContinueOnError)
 	flags.SetOutput(ioutil.Discard)
