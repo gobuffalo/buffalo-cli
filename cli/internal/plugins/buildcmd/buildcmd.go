@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/gobuffalo/buffalo-cli/cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/cli/plugins/plugprint"
@@ -15,6 +17,18 @@ import (
 	"github.com/gobuffalo/meta"
 	"github.com/spf13/pflag"
 )
+
+func (b *BuildCmd) setIO(p plugins.Plugin) {
+	if stdin, ok := p.(plugins.StdinSetter); ok {
+		stdin.SetStdin(b.Stdin())
+	}
+	if stdout, ok := p.(plugins.StdoutSetter); ok {
+		stdout.SetStdout(b.Stdout())
+	}
+	if stderr, ok := p.(plugins.StderrSetter); ok {
+		stderr.SetStderr(b.Stderr())
+	}
+}
 
 type BuildCmd struct {
 	Parent                 plugins.Plugin
@@ -28,6 +42,27 @@ type BuildCmd struct {
 	stdin                  io.Reader
 	stdout                 io.Writer
 	stderr                 io.Writer
+}
+
+func (b *BuildCmd) Stdin() io.Reader {
+	if b.stdin == nil {
+		return os.Stdin
+	}
+	return b.stdin
+}
+
+func (b *BuildCmd) Stdout() io.Writer {
+	if b.stdout == nil {
+		return os.Stdout
+	}
+	return b.stdout
+}
+
+func (b *BuildCmd) Stderr() io.Writer {
+	if b.stderr == nil {
+		return os.Stderr
+	}
+	return b.stderr
 }
 
 func (b *BuildCmd) SetStderr(w io.Writer) {
@@ -153,6 +188,7 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 	builders := bc.builders()
 	for _, p := range builders {
 		if bb, ok := p.(BeforeBuilder); ok {
+			bc.setIO(p)
 			if err := bb.BeforeBuild(ctx, args); err != nil {
 				return err
 			}
@@ -173,6 +209,7 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 			if !ok {
 				continue
 			}
+			bc.setIO(p)
 			if err := tv.ValidateTemplates(filepath.Join(info.Root, "templates")); err != nil {
 				return err
 			}
@@ -184,11 +221,30 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 		if !ok {
 			continue
 		}
+		bc.setIO(p)
 		if err := pkg.Package(ctx, info.Root); err != nil {
 			return err
 		}
 	}
-	fmt.Println("TODO: go build ...")
+
+	version := time.Now().Format(time.RFC3339)
+	// for _, p := range plugs {
+	// 	bv, ok := p.(BuildVersioner)
+	// 	if !ok {
+	// 		continue
+	// 	}
+	// 	bc.setIO(p)
+	// 	s, err := bv.BuildVersion(ctx, info.Root)
+	// 	if err != nil {
+	// 		return err
+	// 	}
+	// 	if len(s) == 0 {
+	// 		continue
+	// 	}
+	// 	version = strings.TrimSpace(s)
+	// }
+
+	fmt.Println("TODO: go build ...", version)
 	// opts.GoCommand = bc.Name()
 	// clean := build.Cleanup(opts)
 	// defer func() {
@@ -214,6 +270,7 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 
 	for _, p := range builders {
 		if bb, ok := p.(AfterBuilder); ok {
+			bc.setIO(p)
 			if err := bb.AfterBuild(ctx, args); err != nil {
 				return err
 			}

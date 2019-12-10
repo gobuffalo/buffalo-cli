@@ -30,3 +30,7 @@ type TemplatesValidator interface {
 type Packager interface {
 	Package(ctx context.Context, root string) error
 }
+
+type BuildVersioner interface {
+	BuildVersion(ctx context.Context, root string) (string, error)
+}

@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/gobuffalo/plush"
-	"github.com/markbates/pkger"
 )
 
 type Buffalo struct {
@@ -57,7 +56,7 @@ func (b *Buffalo) SetStdout(w io.Writer) {
 }
 
 func (b *Buffalo) ValidateTemplates(root string) error {
-	return pkger.Walk(root, func(path string, info os.FileInfo, err error) error {
+	return filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -71,16 +70,11 @@ func (b *Buffalo) ValidateTemplates(root string) error {
 			return nil
 		}
 
-		f, err := pkger.Open(path)
+		b, err := ioutil.ReadFile(path)
 		if err != nil {
 			return err
 		}
-		defer f.Close()
 
-		b, err := ioutil.ReadAll(f)
-		if err != nil {
-			return err
-		}
 		if _, err = plush.Parse(string(b)); err != nil {
 			return fmt.Errorf("could not parse %s: %v", path, err)
 		}

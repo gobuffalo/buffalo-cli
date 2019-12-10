@@ -18,10 +18,10 @@ import (
 
 // Buffalo represents the `buffalo` cli.
 type Buffalo struct {
+	Plugins plugins.Plugins
 	stdin   io.Reader
 	stdout  io.Writer
 	stderr  io.Writer
-	Plugins plugins.Plugins
 }
 
 func New() (*Buffalo, error) {
