@@ -173,21 +173,21 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 	}
 
 	version := time.Now().Format(time.RFC3339)
-	// for _, p := range plugs {
-	// 	bv, ok := p.(BuildVersioner)
-	// 	if !ok {
-	// 		continue
-	// 	}
-	// 	bc.setIO(p)
-	// 	s, err := bv.BuildVersion(ctx, info.Root)
-	// 	if err != nil {
-	// 		return err
-	// 	}
-	// 	if len(s) == 0 {
-	// 		continue
-	// 	}
-	// 	version = strings.TrimSpace(s)
-	// }
+	for _, p := range plugs {
+		bv, ok := p.(BuildVersioner)
+		if !ok {
+			continue
+		}
+		plugins.SetIO(bc, p)
+		s, err := bv.BuildVersion(ctx, info.Root)
+		if err != nil {
+			return err
+		}
+		if len(s) == 0 {
+			continue
+		}
+		version = strings.TrimSpace(s)
+	}
 
 	fmt.Println("TODO: go build ...", version)
 	// opts.GoCommand = bc.Name()

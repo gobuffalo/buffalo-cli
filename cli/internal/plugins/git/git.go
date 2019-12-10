@@ -1,9 +1,10 @@
 package git
 
 import (
+	"bytes"
 	"context"
-	"fmt"
-	"time"
+	"os/exec"
+	"strings"
 
 	"github.com/gobuffalo/buffalo-cli/cli/plugins"
 )
@@ -13,10 +14,22 @@ type Buffalo struct {
 }
 
 func (b *Buffalo) BuildVersion(ctx context.Context, root string) (string, error) {
-	now := time.Now()
-	version := now.Format(time.RFC3339)
-	fmt.Println(">>>TODO cli/internal/plugins/git/git.go:20: version ", version)
-	return "", nil
+	if _, err := exec.LookPath("git"); err != nil {
+		return "", err
+	}
+
+	bb := &bytes.Buffer{}
+
+	cmd := exec.CommandContext(ctx, "git", "rev-parse", "--short", "HEAD")
+	cmd.Stdout = bb
+	if err := cmd.Run(); err != nil {
+		return "", err
+	}
+	s := strings.TrimSpace(bb.String())
+	if len(s) == 0 {
+		return "", nil
+	}
+	return s, nil
 }
 
 // Name is the name of the plugin.

@@ -78,5 +78,29 @@ func Print(w io.Writer, main plugins.Plugin, plugs plugins.Plugins) error {
 		fmt.Fprintf(tw, "\t%s\n", strings.TrimSpace(line))
 	}
 	tw.Flush()
+
+	type PluginsUser interface {
+		WithPlugins() plugins.Plugins
+	}
+
+	wp, ok := main.(PluginsUser)
+	if !ok {
+		return nil
+	}
+
+	plugs = wp.WithPlugins()
+	if len(plugs) == 0 {
+		return nil
+	}
+
+	tw = tabwriter.NewWriter(w, 0, 0, 2, ' ', 0)
+	fmt.Fprintln(w, "\nUsing Plugins:")
+	fmt.Fprintf(tw, "\t%s\t%s\t%s\n", "Type", "Name", "Description")
+	fmt.Fprintf(tw, "\t%s\t%s\t%s\n", "----", "----", "-----------")
+	for _, p := range plugs {
+		fmt.Fprintf(tw, "\t%T\t%s\t%s\n", p, p.Name(), desc(p))
+	}
+
+	tw.Flush()
 	return nil
 }
