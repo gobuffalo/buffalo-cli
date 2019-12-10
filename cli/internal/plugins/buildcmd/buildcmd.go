@@ -5,15 +5,13 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
-	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/gobuffalo/buffalo-cli/cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/cli/plugins/plugprint"
 	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/build"
-	"github.com/gobuffalo/genny"
-	"github.com/gobuffalo/logger"
+	"github.com/gobuffalo/here/there"
 	"github.com/gobuffalo/meta"
 	"github.com/spf13/pflag"
 )
@@ -64,12 +62,16 @@ func (BuildCmd) Description() string {
 	return "Build the application binary, including bundling of assets (packr & webpack)"
 }
 
+func (bc *BuildCmd) plugins() plugins.Plugins {
+	if bc.Plugins == nil {
+		return nil
+	}
+	return bc.Plugins()
+}
+
 func (bc *BuildCmd) builders() plugins.Plugins {
 	var plugs plugins.Plugins
-	if bc.Plugins == nil {
-		return plugs
-	}
-	for _, p := range bc.Plugins() {
+	for _, p := range bc.plugins() {
 		switch p.(type) {
 		case BeforeBuilder:
 			plugs = append(plugs, p)
@@ -91,7 +93,6 @@ func (bc *BuildCmd) flagSet(opts *build.Options) *pflag.FlagSet {
 	flags := pflag.NewFlagSet(bc.String(), pflag.ContinueOnError)
 	flags.SetOutput(ioutil.Discard)
 
-	flags.BoolVar(&bc.dryRun, "dry-run", false, "runs the build 'dry'")
 	flags.BoolVar(&bc.skipTemplateValidation, "skip-template-validation", false, "skip validating templates")
 	flags.BoolVarP(&bc.help, "help", "h", false, "print this help")
 	flags.BoolVarP(&bc.verbose, "verbose", "v", false, "print debugging information")
@@ -103,11 +104,7 @@ func (bc *BuildCmd) flagSet(opts *build.Options) *pflag.FlagSet {
 	flags.StringVarP(&opts.Environment, "environment", "", "development", "set the environment for the binary")
 	flags.StringVarP(&bc.tags, "tags", "t", "", "compile with specific build tags")
 
-	if bc.Plugins == nil {
-		return flags
-	}
-
-	plugs := bc.Plugins()
+	plugs := bc.plugins()
 
 	for _, p := range plugs {
 		bf, ok := p.(BuildFlagger)
@@ -133,13 +130,13 @@ func (bc *BuildCmd) flagSet(opts *build.Options) *pflag.FlagSet {
 }
 
 func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
-	pwd, err := os.Getwd()
+	info, err := there.Current()
 	if err != nil {
 		return err
 	}
 
 	opts := &build.Options{
-		App: meta.New(pwd),
+		App: meta.New(info.Root),
 	}
 
 	flags := bc.flagSet(opts)
@@ -151,6 +148,8 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 		return plugprint.Print(bc.stdout, bc, nil)
 	}
 
+	plugs := bc.plugins()
+
 	builders := bc.builders()
 	for _, p := range builders {
 		if bb, ok := p.(BeforeBuilder); ok {
@@ -160,14 +159,7 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 		}
 	}
 
-	run := genny.WetRunner(ctx)
-	if bc.dryRun {
-		run = genny.DryRunner(ctx)
-	}
-
 	if bc.verbose {
-		lg := logger.New(logger.DebugLevel)
-		run.Logger = lg
 		opts.BuildFlags = append(opts.BuildFlags, "-v")
 	}
 
@@ -176,34 +168,49 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 	}
 
 	if !bc.skipTemplateValidation {
-		opts.TemplateValidators = append(
-			opts.TemplateValidators,
-			build.PlushValidator,
-			build.GoTemplateValidator,
-		)
-	}
-	opts.GoCommand = bc.Name()
-	clean := build.Cleanup(opts)
-	defer func() {
-		if err := clean(run); err != nil {
-			log.Fatal("build:clean", err)
+		for _, p := range plugs {
+			tv, ok := p.(TemplatesValidator)
+			if !ok {
+				continue
+			}
+			if err := tv.ValidateTemplates(filepath.Join(info.Root, "templates")); err != nil {
+				return err
+			}
 		}
-	}()
-
-	bd, err := build.New(opts)
-	if err != nil {
-		return err
 	}
 
-	// opts.BuildVersion = cmd.buildVersion(opts)
-	// fmt.Println(">>>TODO cli/build.go:106: opts ", opts)
-
-	if err := run.With(bd); err != nil {
-		return err
+	for _, p := range plugs {
+		pkg, ok := p.(Packager)
+		if !ok {
+			continue
+		}
+		if err := pkg.Package(ctx, info.Root); err != nil {
+			return err
+		}
 	}
-	if err := run.Run(); err != nil {
-		return err
-	}
+	fmt.Println("TODO: go build ...")
+	// opts.GoCommand = bc.Name()
+	// clean := build.Cleanup(opts)
+	// defer func() {
+	// 	if err := clean(run); err != nil {
+	// 		log.Fatal("build:clean", err)
+	// 	}
+	// }()
+	//
+	// bd, err := build.New(opts)
+	// if err != nil {
+	// 	return err
+	// }
+	//
+	// // opts.BuildVersion = cmd.buildVersion(opts)
+	// // fmt.Println(">>>TODO cli/build.go:106: opts ", opts)
+	//
+	// if err := run.With(bd); err != nil {
+	// 	return err
+	// }
+	// if err := run.Run(); err != nil {
+	// 	return err
+	// }
 
 	for _, p := range builders {
 		if bb, ok := p.(AfterBuilder); ok {

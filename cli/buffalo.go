@@ -7,7 +7,11 @@ import (
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/assets"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/fixcmd"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/golang"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/infocmd"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/packr"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/pkger"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/plush"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/versioncmd"
 	"github.com/gobuffalo/buffalo-cli/cli/plugins"
 )
@@ -47,6 +51,10 @@ func New() (*Buffalo, error) {
 		&versioncmd.VersionCmd{
 			Parent: b,
 		},
+		&plush.Buffalo{},
+		&golang.Templates{},
+		&packr.Buffalo{},
+		&pkger.Buffalo{},
 	)
 	return b, nil
 }

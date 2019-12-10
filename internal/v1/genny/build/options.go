@@ -29,9 +29,6 @@ type Options struct {
 	Static bool `json:"static,omitempty"`
 	// Environment the binary is meant for. defaults to "development"
 	Environment string `json:"environment,omitempty"`
-	// TemplateValidators can be used to validate the applications templates.
-	// Empty by default
-	TemplateValidators []TemplateValidator `json:"-"`
 	// Mod is the -mod flag
 	Mod string `json:"mod"`
 	// GoCommand is the `go X` command to be used. Default is "build".

@@ -22,3 +22,11 @@ type BuildFlagger interface {
 type BuildPflagger interface {
 	BuildPflags() []*pflag.Flag
 }
+
+type TemplatesValidator interface {
+	ValidateTemplates(root string) error
+}
+
+type Packager interface {
+	Package(ctx context.Context, root string) error
+}

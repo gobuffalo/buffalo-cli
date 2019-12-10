@@ -33,9 +33,6 @@ func New(opts *Options) (*genny.Generator, error) {
 
 	g.Transformer(genny.Dot())
 
-	// validate templates
-	g.RunFn(ValidateTemplates(templateWalker(opts.App), opts.TemplateValidators))
-
 	// rename main() to originalMain()
 	g.RunFn(transformMain(opts))
 
