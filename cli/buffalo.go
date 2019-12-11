@@ -1,8 +1,12 @@
 package cli
 
 import (
+	"os"
+	"path/filepath"
+
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/assets"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/bzr"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/fixcmd"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/git"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/golang"
@@ -13,6 +17,7 @@ import (
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/versioncmd"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
+	"github.com/gobuffalo/here/there"
 )
 
 var _ plugins.Plugin = &Buffalo{}
@@ -63,16 +68,23 @@ func New() (*Buffalo, error) {
 		&pkger.Buffalo{},
 	)
 
-	// app, err := meta.New(info)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// if app.VCS == "git" {
-	b.Plugins = append(b.Plugins,
-		&git.Buffalo{
-			IO: b,
-		})
-	// }
+	info, err := there.Current()
+	if err != nil {
+		return nil, err
+	}
+
+	if _, err := os.Stat(filepath.Join(info.Root, ".git")); err == nil {
+		b.Plugins = append(b.Plugins,
+			&git.Buffalo{
+				IO: b,
+			})
+	}
+	if _, err := os.Stat(filepath.Join(info.Root, ".bzr")); err == nil {
+		b.Plugins = append(b.Plugins,
+			&bzr.Buffalo{
+				IO: b,
+			})
+	}
 	return b, nil
 }
 

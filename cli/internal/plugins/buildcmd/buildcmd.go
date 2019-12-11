@@ -235,9 +235,6 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 	// 	return err
 	// }
 	//
-	// // opts.BuildVersion = cmd.buildVersion(opts)
-	// // fmt.Println(">>>TODO cli/build.go:106: opts ", opts)
-	//
 	// if err := run.With(bd); err != nil {
 	// 	return err
 	// }
@@ -255,38 +252,3 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 	}
 	return nil
 }
-
-// func (bc *BuildCmd) buildVersion(opts *build.Options) string {
-// 	version := opts.BuildTime.Format(time.RFC3339)
-// 	vcs := opts.VCS
-//
-// 	if len(vcs) == 0 {
-// 		return version
-// 	}
-//
-// 	if _, err := exec.LookPath(vcs); err != nil {
-// 		return version
-// 	}
-//
-// 	var cmd *exec.Cmd
-// 	switch vcs {
-// 	case "git":
-// 		cmd = exec.Command("git", "rev-parse", "--short", "HEAD")
-// 	case "bzr":
-// 		cmd = exec.Command("bzr", "revno")
-// 	default:
-// 		return vcs
-// 	}
-//
-// 	out := &bytes.Buffer{}
-// 	cmd.Stdout = out
-// 	if err := cmd.Run(); err != nil {
-// 		return version
-// 	}
-//
-// 	if out.String() == "" {
-// 		return version
-// 	}
-//
-// 	return strings.TrimSpace(out.String())
-// }
