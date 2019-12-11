@@ -15,7 +15,6 @@ import (
 )
 
 var _ plugins.Plugin = &VersionCmd{}
-var _ plugprint.Command = &VersionCmd{}
 var _ plugprint.Describer = &VersionCmd{}
 var _ plugprint.FlagPrinter = &VersionCmd{}
 

@@ -18,7 +18,7 @@ import (
 )
 
 var _ plugins.Plugin = &Buffalo{}
-var _ plugprint.Command = &Buffalo{}
+var _ plugprint.SubCommander = &Buffalo{}
 var _ plugprint.Describer = &Buffalo{}
 var _ plugprint.WithPlugins = &Buffalo{}
 
@@ -85,6 +85,16 @@ func New() (*Buffalo, error) {
 
 func (b Buffalo) WithPlugins() plugins.Plugins {
 	return b.Plugins
+}
+
+func (b Buffalo) SubCommands() plugins.Plugins {
+	var plugs plugins.Plugins
+	for _, p := range b.WithPlugins() {
+		if _, ok := p.(Command); ok {
+			plugs = append(plugs, p)
+		}
+	}
+	return plugs
 }
 
 // Name ...

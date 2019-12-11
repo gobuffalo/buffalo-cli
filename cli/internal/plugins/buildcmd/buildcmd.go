@@ -19,7 +19,7 @@ import (
 
 var _ plugins.Plugin = &BuildCmd{}
 var _ plugprint.Aliases = &BuildCmd{}
-var _ plugprint.Command = &BuildCmd{}
+var _ plugprint.SubCommander = &BuildCmd{}
 var _ plugprint.Describer = &BuildCmd{}
 var _ plugprint.FlagPrinter = &BuildCmd{}
 var _ plugprint.WithPlugins = &BuildCmd{}
@@ -56,6 +56,16 @@ func (BuildCmd) Description() string {
 	return "Build the application binary, including bundling of assets (packr & webpack)"
 }
 
+func (bc *BuildCmd) SubCommands() plugins.Plugins {
+	var plugs plugins.Plugins
+	for _, p := range bc.WithPlugins() {
+		if _, ok := p.(Builder); ok {
+			plugs = append(plugs, p)
+		}
+	}
+	return plugs
+}
+
 func (bc *BuildCmd) WithPlugins() plugins.Plugins {
 	var plugs plugins.Plugins
 	if bc.Plugins != nil {
@@ -65,6 +75,8 @@ func (bc *BuildCmd) WithPlugins() plugins.Plugins {
 	var builders plugins.Plugins
 	for _, p := range plugs {
 		switch p.(type) {
+		case Builder:
+			builders = append(builders, p)
 		case BeforeBuilder:
 			builders = append(builders, p)
 		case AfterBuilder:
@@ -134,6 +146,19 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 	}
 
 	plugs := bc.WithPlugins()
+
+	if len(flags.Args()) > 0 {
+		for _, p := range plugs {
+			b, ok := p.(Builder)
+			if !ok {
+				continue
+			}
+			if p.Name() == args[0] {
+				return b.Build(ctx, args)
+			}
+		}
+		return fmt.Errorf("unknown command %q", args[0])
+	}
 
 	builders := bc.WithPlugins()
 	for _, p := range builders {

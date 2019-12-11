@@ -13,7 +13,7 @@ import (
 )
 
 var _ plugins.Plugin = &FixCmd{}
-var _ plugprint.Command = &FixCmd{}
+var _ plugprint.SubCommander = &FixCmd{}
 var _ plugprint.Describer = &FixCmd{}
 var _ plugprint.WithPlugins = &FixCmd{}
 
@@ -113,6 +113,10 @@ func (fc *FixCmd) Main(ctx context.Context, args []string) error {
 		return err
 	}
 	return fc.plugins(ctx, args)
+}
+
+func (fc *FixCmd) SubCommands() plugins.Plugins {
+	return fc.WithPlugins()
 }
 
 func (fc *FixCmd) WithPlugins() plugins.Plugins {

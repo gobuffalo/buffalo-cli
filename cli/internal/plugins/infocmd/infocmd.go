@@ -17,7 +17,6 @@ import (
 )
 
 var _ plugins.Plugin = &InfoCmd{}
-var _ plugprint.Command = &InfoCmd{}
 var _ plugprint.Describer = &InfoCmd{}
 var _ plugprint.FlagPrinter = &InfoCmd{}
 var _ plugprint.WithPlugins = &InfoCmd{}

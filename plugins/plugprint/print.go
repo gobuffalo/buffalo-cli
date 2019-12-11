@@ -1,7 +1,6 @@
 package plugprint
 
 import (
-	"context"
 	"fmt"
 	"io"
 	"sort"
@@ -59,39 +58,24 @@ func Print(w io.Writer, main plugins.Plugin) error {
 		}
 	}
 
-	wp, ok := main.(WithPlugins)
-	if !ok {
-		return nil
-	}
-
-	plugs := wp.WithPlugins()
-	if len(plugs) == 0 {
-		return nil
-	}
-
-	if err := printCommands(w, main, plugs); err != nil {
+	if err := printCommands(w, main); err != nil {
 		return err
 	}
 
-	if err := printPlugins(w, main, plugs); err != nil {
+	if err := printPlugins(w, main); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-type WithPlugins interface {
-	WithPlugins() plugins.Plugins
-}
-
-func printPlugins(w io.Writer, main plugins.Plugin, plugs plugins.Plugins) error {
-
+func printPlugins(w io.Writer, main plugins.Plugin) error {
 	wp, ok := main.(WithPlugins)
 	if !ok {
 		return nil
 	}
 
-	plugs = wp.WithPlugins()
+	plugs := wp.WithPlugins()
 	if len(plugs) == 0 {
 		return nil
 	}
@@ -108,22 +92,13 @@ func printPlugins(w io.Writer, main plugins.Plugin, plugs plugins.Plugins) error
 	return nil
 }
 
-type Command interface {
-	Main(ctx context.Context, args []string) error
-}
-
-func printCommands(w io.Writer, main plugins.Plugin, all plugins.Plugins) error {
-	if len(all) == 0 {
+func printCommands(w io.Writer, main plugins.Plugin) error {
+	sc, ok := main.(SubCommander)
+	if !ok {
 		return nil
 	}
 
-	plugs := make(plugins.Plugins, 0, len(all))
-	for _, p := range all {
-		if _, ok := p.(Command); ok {
-			plugs = append(plugs, p)
-		}
-	}
-
+	plugs := sc.SubCommands()
 	if len(plugs) == 0 {
 		return nil
 	}
@@ -135,19 +110,11 @@ func printCommands(w io.Writer, main plugins.Plugin, all plugins.Plugins) error 
 
 	tw := tabwriter.NewWriter(w, 0, 0, 2, ' ', 0)
 	for _, c := range plugs {
-		fmt.Printf("TYPE: %T\n", c)
-		line := fmt.Sprintf("%s\t%s\n", stringer(c), desc(c))
-		fmt.Fprintf(tw, "\t%s\n", strings.TrimSpace(line))
+		line := fmt.Sprintf("\t%s %s\t%s", main.Name(), c.Name(), desc(c))
+		fmt.Fprintln(tw, line)
 	}
 	tw.Flush()
 	return nil
-}
-
-func stringer(p plugins.Plugin) string {
-	if st, ok := p.(fmt.Stringer); ok {
-		return st.String()
-	}
-	return p.Name()
 }
 
 func desc(p plugins.Plugin) string {

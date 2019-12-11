@@ -7,6 +7,12 @@ import (
 	"github.com/spf13/pflag"
 )
 
+// Builder is a sub-command of buffalo build.
+// 	buffalo build assets
+type Builder interface {
+	Build(ctx context.Context, args []string) error
+}
+
 type BeforeBuilder interface {
 	BeforeBuild(ctx context.Context, args []string) error
 }

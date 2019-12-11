@@ -45,7 +45,7 @@ type Builder struct {
 	flagSet       *pflag.FlagSet
 }
 
-func (a *Builder) BeforeBuild(ctx context.Context, args []string) error {
+func (a *Builder) Build(ctx context.Context, args []string) error {
 	flags := a.PflagSet()
 	flags.StringVarP(&a.Environment, "environment", "", "development", "set the environment for the binary")
 	flags.Parse(args)
@@ -106,8 +106,12 @@ func (a *Builder) BeforeBuild(ctx context.Context, args []string) error {
 	return nil
 }
 
+func (a *Builder) BeforeBuild(ctx context.Context, args []string) error {
+	return a.Build(ctx, args)
+}
+
 func (a Builder) Name() string {
-	return "assets builder"
+	return "assets"
 }
 
 func (a Builder) Description() string {
