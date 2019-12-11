@@ -11,10 +11,16 @@ import (
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/pkger"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/plush"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/versioncmd"
-	"github.com/gobuffalo/buffalo-cli/cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/gobuffalo/here/there"
 	"github.com/gobuffalo/meta/v2"
 )
+
+var _ plugins.Plugin = &Buffalo{}
+var _ plugprint.Command = &Buffalo{}
+var _ plugprint.Describer = &Buffalo{}
+var _ plugprint.WithPlugins = &Buffalo{}
 
 // Buffalo represents the `buffalo` cli.
 type Buffalo struct {

@@ -9,13 +9,20 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gobuffalo/buffalo-cli/cli/plugins"
-	"github.com/gobuffalo/buffalo-cli/cli/plugins/plugprint"
 	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/build"
+	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/gobuffalo/here/there"
 	"github.com/gobuffalo/meta"
 	"github.com/spf13/pflag"
 )
+
+var _ plugins.Plugin = &BuildCmd{}
+var _ plugprint.Aliases = &BuildCmd{}
+var _ plugprint.Command = &BuildCmd{}
+var _ plugprint.Describer = &BuildCmd{}
+var _ plugprint.FlagPrinter = &BuildCmd{}
+var _ plugprint.WithPlugins = &BuildCmd{}
 
 type BuildCmd struct {
 	plugins.IO
@@ -50,23 +57,21 @@ func (BuildCmd) Description() string {
 }
 
 func (bc *BuildCmd) WithPlugins() plugins.Plugins {
-	if bc.Plugins == nil {
-		return nil
-	}
-	return bc.Plugins()
-}
-
-func (bc *BuildCmd) builders() plugins.Plugins {
 	var plugs plugins.Plugins
-	for _, p := range bc.WithPlugins() {
+	if bc.Plugins != nil {
+		plugs = bc.Plugins()
+	}
+
+	var builders plugins.Plugins
+	for _, p := range plugs {
 		switch p.(type) {
 		case BeforeBuilder:
-			plugs = append(plugs, p)
+			builders = append(builders, p)
 		case AfterBuilder:
-			plugs = append(plugs, p)
+			builders = append(builders, p)
 		}
 	}
-	return plugs
+	return builders
 }
 
 func (bc *BuildCmd) PrintFlags(w io.Writer) error {
@@ -125,12 +130,12 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 	}
 
 	if bc.help {
-		return plugprint.Print(bc.Stdout(), bc, nil)
+		return plugprint.Print(bc.Stdout(), bc)
 	}
 
 	plugs := bc.WithPlugins()
 
-	builders := bc.builders()
+	builders := bc.WithPlugins()
 	for _, p := range builders {
 		if bb, ok := p.(BeforeBuilder); ok {
 			plugins.SetIO(bc, p)

@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/gobuffalo/buffalo-cli/cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/plugins"
 )
 
 type Buffalo struct {

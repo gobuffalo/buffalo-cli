@@ -3,23 +3,37 @@ package infocmd
 import (
 	"context"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"strings"
 	"time"
 
-	"github.com/gobuffalo/buffalo-cli/cli/plugins"
-	"github.com/gobuffalo/buffalo-cli/cli/plugins/plugprint"
 	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/info"
+	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/gobuffalo/clara/genny/rx"
 	"github.com/gobuffalo/genny"
 	"github.com/spf13/pflag"
 )
+
+var _ plugins.Plugin = &InfoCmd{}
+var _ plugprint.Command = &InfoCmd{}
+var _ plugprint.Describer = &InfoCmd{}
+var _ plugprint.FlagPrinter = &InfoCmd{}
+var _ plugprint.WithPlugins = &InfoCmd{}
 
 type InfoCmd struct {
 	plugins.IO
 	Parent  plugins.Plugin
 	Plugins func() plugins.Plugins
 	help    bool
+}
+
+func (ic *InfoCmd) PrintFlags(w io.Writer) error {
+	flags := ic.flagSet()
+	flags.SetOutput(w)
+	flags.PrintDefaults()
+	return nil
 }
 
 func (ic *InfoCmd) Name() string {
@@ -41,7 +55,7 @@ func (i InfoCmd) String() string {
 // Info runs all of the plugins that implement the
 // `Informer` interface in order.
 func (ic *InfoCmd) plugins(ctx context.Context, args []string) error {
-	for _, p := range ic.informers() {
+	for _, p := range ic.WithPlugins() {
 		i, ok := p.(Informer)
 		if !ok {
 			continue
@@ -53,11 +67,11 @@ func (ic *InfoCmd) plugins(ctx context.Context, args []string) error {
 	return nil
 }
 
-func (ic *InfoCmd) informers() []Informer {
-	var plugs []Informer
+func (ic *InfoCmd) WithPlugins() plugins.Plugins {
+	var plugs plugins.Plugins
 
 	if ic.Plugins == nil {
-		return nil
+		return plugs
 	}
 	for _, p := range ic.Plugins() {
 		if i, ok := p.(Informer); ok {
@@ -68,26 +82,26 @@ func (ic *InfoCmd) informers() []Informer {
 	return plugs
 }
 
+func (ic *InfoCmd) flagSet() *pflag.FlagSet {
+	flags := pflag.NewFlagSet(ic.String(), pflag.ContinueOnError)
+	flags.SetOutput(ioutil.Discard)
+	flags.BoolVarP(&ic.help, "help", "h", false, "print this help")
+	return flags
+}
+
 // Main implements the `buffalo info` command. Buffalo's checks
 // are run first, then any plugins that implement plugins.Informer
 // will be run in order at the end.
 func (ic *InfoCmd) Main(ctx context.Context, args []string) error {
 	out := ic.Stdout()
 
-	flags := pflag.NewFlagSet(ic.String(), pflag.ContinueOnError)
-	flags.SetOutput(ioutil.Discard)
-	flags.BoolVarP(&ic.help, "help", "h", false, "print this help")
+	flags := ic.flagSet()
 	if err := flags.Parse(args); err != nil {
 		return err
 	}
 
 	if ic.help {
-		ips := ic.informers()
-		plugs := make(plugins.Plugins, len(ips))
-		for i, ip := range ips {
-			plugs[i] = ip
-		}
-		return plugprint.Print(out, ic, plugs)
+		return plugprint.Print(out, ic)
 	}
 
 	args = flags.Args()

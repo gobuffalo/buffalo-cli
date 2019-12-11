@@ -12,11 +12,19 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/gobuffalo/buffalo-cli/cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
+	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/gobuffalo/here/there"
 	"github.com/gobuffalo/meta/v2"
 	"github.com/spf13/pflag"
 )
+
+var _ buildcmd.BeforeBuilder = &Builder{}
+var _ buildcmd.BuildPflagger = &Builder{}
+var _ plugins.Plugin = &Builder{}
+var _ plugprint.Describer = &Builder{}
+var _ plugprint.FlagPrinter = &Builder{}
 
 func (b Builder) webpackBin() string {
 	s := filepath.Join("node_modules", ".bin", "webpack")
@@ -100,6 +108,10 @@ func (a *Builder) BeforeBuild(ctx context.Context, args []string) error {
 
 func (a Builder) Name() string {
 	return "assets builder"
+}
+
+func (a Builder) Description() string {
+	return "Manages webpack assets during the buffalo build process."
 }
 
 func (a Builder) String() string {

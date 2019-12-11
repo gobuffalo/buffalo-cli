@@ -1,4 +1,4 @@
-package plugins
+package cli
 
 type Aliases interface {
 	Aliases() []string

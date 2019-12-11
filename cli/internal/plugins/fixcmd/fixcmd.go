@@ -6,11 +6,16 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"github.com/gobuffalo/buffalo-cli/cli/plugins"
-	"github.com/gobuffalo/buffalo-cli/cli/plugins/plugprint"
 	"github.com/gobuffalo/buffalo-cli/internal/v1/cmd/fix"
+	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/spf13/pflag"
 )
+
+var _ plugins.Plugin = &FixCmd{}
+var _ plugprint.Command = &FixCmd{}
+var _ plugprint.Describer = &FixCmd{}
+var _ plugprint.WithPlugins = &FixCmd{}
 
 type FixCmd struct {
 	plugins.IO
@@ -44,7 +49,7 @@ func (fc *FixCmd) plugins(ctx context.Context, args []string) error {
 	if fc.Plugins == nil {
 		return nil
 	}
-	plugs := fc.Plugins()
+	plugs := fc.WithPlugins()
 	if len(args) > 0 {
 		fixers := map[string]Fixer{}
 		for _, p := range plugs {
@@ -97,15 +102,7 @@ func (fc *FixCmd) Main(ctx context.Context, args []string) error {
 	out := fc.Stdout()
 
 	if help {
-		var plugs plugins.Plugins
-		if fc.Plugins != nil {
-			for _, p := range fc.Plugins() {
-				if _, ok := p.(Fixer); ok {
-					plugs = append(plugs, p)
-				}
-			}
-		}
-		return plugprint.Print(out, fc, plugs)
+		return plugprint.Print(out, fc)
 	}
 
 	if len(args) > 0 {
@@ -116,4 +113,16 @@ func (fc *FixCmd) Main(ctx context.Context, args []string) error {
 		return err
 	}
 	return fc.plugins(ctx, args)
+}
+
+func (fc *FixCmd) WithPlugins() plugins.Plugins {
+	var plugs plugins.Plugins
+	if fc.Plugins != nil {
+		for _, p := range fc.Plugins() {
+			if _, ok := p.(Fixer); ok {
+				plugs = append(plugs, p)
+			}
+		}
+	}
+	return plugs
 }
