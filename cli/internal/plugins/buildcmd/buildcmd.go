@@ -49,7 +49,7 @@ func (BuildCmd) Description() string {
 	return "Build the application binary, including bundling of assets (packr & webpack)"
 }
 
-func (bc *BuildCmd) plugins() plugins.Plugins {
+func (bc *BuildCmd) WithPlugins() plugins.Plugins {
 	if bc.Plugins == nil {
 		return nil
 	}
@@ -58,7 +58,7 @@ func (bc *BuildCmd) plugins() plugins.Plugins {
 
 func (bc *BuildCmd) builders() plugins.Plugins {
 	var plugs plugins.Plugins
-	for _, p := range bc.plugins() {
+	for _, p := range bc.WithPlugins() {
 		switch p.(type) {
 		case BeforeBuilder:
 			plugs = append(plugs, p)
@@ -91,7 +91,7 @@ func (bc *BuildCmd) flagSet(opts *build.Options) *pflag.FlagSet {
 	flags.StringVarP(&opts.Environment, "environment", "", "development", "set the environment for the binary")
 	flags.StringVarP(&bc.tags, "tags", "t", "", "compile with specific build tags")
 
-	plugs := bc.plugins()
+	plugs := bc.WithPlugins()
 
 	for _, p := range plugs {
 		switch t := p.(type) {
@@ -128,7 +128,7 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 		return plugprint.Print(bc.Stdout(), bc, nil)
 	}
 
-	plugs := bc.plugins()
+	plugs := bc.WithPlugins()
 
 	builders := bc.builders()
 	for _, p := range builders {
