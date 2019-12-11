@@ -81,6 +81,8 @@ func (bc *BuildCmd) WithPlugins() plugins.Plugins {
 			builders = append(builders, p)
 		case AfterBuilder:
 			builders = append(builders, p)
+		case BuildVersioner:
+			builders = append(builders, p)
 		}
 	}
 	return builders

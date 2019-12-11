@@ -52,7 +52,8 @@ func Print(w io.Writer, main plugins.Plugin) error {
 	}
 
 	if u, ok := main.(FlagPrinter); ok {
-		fmt.Fprintln(w)
+		const fp = "\nFlags:\n"
+		fmt.Fprint(w, fp)
 		if err := u.PrintFlags(w); err != nil {
 			return err
 		}
@@ -80,8 +81,8 @@ func printPlugins(w io.Writer, main plugins.Plugin) error {
 		return nil
 	}
 
-	tw := tabwriter.NewWriter(w, 0, 0, 2, ' ', 0)
 	fmt.Fprintln(w, "\nUsing Plugins:")
+	tw := tabwriter.NewWriter(w, 0, 0, 2, ' ', 0)
 	fmt.Fprintf(tw, "\t%s\t%s\t%s\n", "Type", "Name", "Description")
 	fmt.Fprintf(tw, "\t%s\t%s\t%s\n", "----", "----", "-----------")
 	for _, p := range plugs {
@@ -109,8 +110,10 @@ func printCommands(w io.Writer, main plugins.Plugin) error {
 	fmt.Fprint(w, ac)
 
 	tw := tabwriter.NewWriter(w, 0, 0, 2, ' ', 0)
+	fmt.Fprintf(tw, "\t%s\t%s\n", "Name", "Description")
+	fmt.Fprintf(tw, "\t%s\t%s\n", "----", "-----------")
 	for _, c := range plugs {
-		line := fmt.Sprintf("\t%s %s\t%s", main.Name(), c.Name(), desc(c))
+		line := fmt.Sprintf("\t%s\t%s", c.Name(), desc(c))
 		fmt.Fprintln(tw, line)
 	}
 	tw.Flush()

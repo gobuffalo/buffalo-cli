@@ -13,8 +13,6 @@ import (
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/versioncmd"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
-	"github.com/gobuffalo/here/there"
-	"github.com/gobuffalo/meta/v2"
 )
 
 var _ plugins.Plugin = &Buffalo{}
@@ -29,11 +27,6 @@ type Buffalo struct {
 }
 
 func New() (*Buffalo, error) {
-	info, err := there.Current()
-	if err != nil {
-		return nil, err
-	}
-
 	b := &Buffalo{
 		IO: plugins.NewIO(),
 	}
@@ -70,16 +63,16 @@ func New() (*Buffalo, error) {
 		&pkger.Buffalo{},
 	)
 
-	app, err := meta.New(info)
-	if err != nil {
-		return nil, err
-	}
-	if app.VCS == "git" {
-		b.Plugins = append(b.Plugins,
-			&git.Buffalo{
-				IO: b,
-			})
-	}
+	// app, err := meta.New(info)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// if app.VCS == "git" {
+	b.Plugins = append(b.Plugins,
+		&git.Buffalo{
+			IO: b,
+		})
+	// }
 	return b, nil
 }
 

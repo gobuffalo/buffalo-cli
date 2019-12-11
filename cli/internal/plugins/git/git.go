@@ -38,3 +38,7 @@ func (b *Buffalo) BuildVersion(ctx context.Context, root string) (string, error)
 func (b *Buffalo) Name() string {
 	return "git"
 }
+
+func (b *Buffalo) Description() string {
+	return "Provides git related hooks to Buffalo applications."
+}
