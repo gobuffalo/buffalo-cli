@@ -8,6 +8,10 @@ import (
 
 type Buffalo struct{}
 
+func (b *Buffalo) BeforeBuild(ctx context.Context, args []string) error {
+	return jam.Clean()
+}
+
 func (b *Buffalo) Package(ctx context.Context, root string) error {
 	return jam.Pack(jam.PackOptions{
 		Roots: []string{root},

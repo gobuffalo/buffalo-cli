@@ -56,13 +56,6 @@ func New(opts *Options) (*genny.Generator, error) {
 	}
 	g.Merge(ag)
 
-	// create the final go build command
-	c, err := buildCmd(opts)
-	if err != nil {
-		return g, err
-	}
-	g.Command(c)
-
 	g.RunFn(Cleanup(opts))
 
 	g.RunFn(func(r *genny.Runner) error {

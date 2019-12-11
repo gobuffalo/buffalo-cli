@@ -17,7 +17,6 @@ func (b *Buffalo) Package(ctx context.Context, root string) error {
 	if err != nil {
 		return err
 	}
-
 	info := here.Info{
 		Dir:        thar.Dir,
 		ImportPath: thar.ImportPath,

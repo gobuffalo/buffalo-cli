@@ -45,7 +45,6 @@ func New() (*Buffalo, error) {
 		},
 		&buildcmd.BuildCmd{
 			IO:      b,
-			Parent:  b,
 			Plugins: pfn,
 		},
 		&fixcmd.FixCmd{

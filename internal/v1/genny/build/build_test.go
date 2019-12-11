@@ -42,8 +42,7 @@ func Test_New(t *testing.T) {
 	run := cokeRunner()
 
 	opts := &Options{
-		Environment: "bar",
-		App:         meta.New("."),
+		App: meta.New("."),
 	}
 	opts.App.Bin = "bin/foo"
 	r.NoError(run.WithNew(New(opts)))

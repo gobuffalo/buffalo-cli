@@ -18,8 +18,7 @@ func Test_Cleanup(t *testing.T) {
 	run := gentest.NewRunner()
 
 	opts := &Options{
-		Environment: "bar",
-		App:         meta.New("."),
+		App: meta.New("."),
 	}
 
 	emptyMap := sync.Map{}

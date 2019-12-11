@@ -5,9 +5,9 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/gobuffalo/meta/v2"
-	"github.com/markbates/pkger"
 )
 
 func (a *Builder) archive(app *meta.App) error {
@@ -20,7 +20,7 @@ func (a *Builder) archive(app *meta.App) error {
 	target := filepath.Join(outputDir, "assets.zip")
 	source := filepath.Join(app.Info.Root, "public", "assets")
 
-	f, err := pkger.Create(target)
+	f, err := os.Create(target)
 	if err != nil {
 		return err
 	}
@@ -28,7 +28,6 @@ func (a *Builder) archive(app *meta.App) error {
 
 	archive := zip.NewWriter(f)
 	defer archive.Close()
-
 	err = filepath.Walk(source, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -38,7 +37,8 @@ func (a *Builder) archive(app *meta.App) error {
 			return err
 		}
 
-		header.Name = info.Name()
+		header.Name = strings.TrimPrefix(path, source)
+		header.Name = strings.TrimPrefix(header.Name, string(filepath.Separator))
 
 		if info.IsDir() {
 			header.Name += "/"
@@ -65,7 +65,6 @@ func (a *Builder) archive(app *meta.App) error {
 		if err != nil {
 			return err
 		}
-		archive.Close()
 		return nil
 	})
 
