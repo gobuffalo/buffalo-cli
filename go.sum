@@ -86,6 +86,7 @@ github.com/gobuffalo/buffalo v0.14.5/go.mod h1:RWK6evR4hY4nRVfw9xie9V/LYK3j0U9wU
 github.com/gobuffalo/buffalo v0.14.6/go.mod h1:71Un+T2JGgwXLjBqYFdGSooz/OUjw15BJM0nbbcAM0o=
 github.com/gobuffalo/buffalo v0.14.9/go.mod h1:M8XWw+Rcotn7C4NYpCEGBg3yX+O1TeD1pBfmiILhgHw=
 github.com/gobuffalo/buffalo v0.14.10/go.mod h1:49A7/JYlsCyTkVHtvKl91w6rG35ZiywwjWMVC1zKWsQ=
+github.com/gobuffalo/buffalo v0.14.11 h1:7gf0j5Fvfvt8U5p31U30H1zYBnF1DxhniePZk7McF8A=
 github.com/gobuffalo/buffalo v0.14.11/go.mod h1:RO5OwOJQjv6/TukzszV5ELA54lg84D1kZwla6oAkTlo=
 github.com/gobuffalo/buffalo-docker v1.0.5/go.mod h1:NZ3+21WIdqOUlOlM2onCt7cwojYp4Qwlsngoolw8zlE=
 github.com/gobuffalo/buffalo-docker v1.0.6/go.mod h1:UlqKHJD8CQvyIb+pFq+m/JQW2w2mXuhxsaKaTj1X1XI=
@@ -679,6 +680,8 @@ github.com/markbates/oncer v1.0.0 h1:E83IaVAHygyndzPimgUYJjbshhDTALZyXxvk9FOlQRY
 github.com/markbates/oncer v1.0.0/go.mod h1:Z59JA581E9GP6w96jai+TGqafHPW+cPfRxz2aSZ0mcI=
 github.com/markbates/pkger v0.12.8 h1:4mEUzWb1HzRnxPwUevBX8g8ntsQ4rWw2R8CRB2QdZVI=
 github.com/markbates/pkger v0.12.8/go.mod h1:C7e5A6bnWZT+nXkUwkvysGW7sxl/IGd63HEa6N/JY8s=
+github.com/markbates/pkger v0.12.10 h1:prh1H4VLkDKyPThBKlv4FwotLmcs3g9xFsCLV4c2G8M=
+github.com/markbates/pkger v0.12.10/go.mod h1:C7e5A6bnWZT+nXkUwkvysGW7sxl/IGd63HEa6N/JY8s=
 github.com/markbates/refresh v1.4.10/go.mod h1:NDPHvotuZmTmesXxr95C9bjlw1/0frJwtME2dzcVKhc=
 github.com/markbates/refresh v1.4.11/go.mod h1:awpJuyo4zgexB/JaHfmBX0sRdvOjo2dXwIayWIz9i3g=
 github.com/markbates/refresh v1.5.0/go.mod h1:ZYMLkxV+x7wXQ2Xd7bXAPyF0EXiEWAMfiy/4URYb1+M=

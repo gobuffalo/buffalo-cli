@@ -8,12 +8,14 @@ import (
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/bzr"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/fixcmd"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/flect"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/git"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/golang"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/infocmd"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/packr"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/pkger"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/plush"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/pop"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/versioncmd"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
@@ -40,6 +42,8 @@ func New() (*Buffalo, error) {
 		return b.Plugins
 	}
 	b.Plugins = append(b.Plugins,
+		&flect.Flect{},
+		&pop.Pop{},
 		&assets.Builder{
 			IO: b,
 		},
@@ -64,7 +68,9 @@ func New() (*Buffalo, error) {
 		&plush.Buffalo{},
 		&golang.Templates{},
 		&packr.Buffalo{},
-		&pkger.Buffalo{},
+		&pkger.Buffalo{
+			Plugins: pfn,
+		},
 	)
 
 	info, err := there.Current()

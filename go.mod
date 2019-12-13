@@ -6,6 +6,7 @@ require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/fatih/color v1.7.0
 	github.com/gobuffalo/attrs v0.1.0
+	github.com/gobuffalo/buffalo v0.14.11
 	github.com/gobuffalo/buffalo-pop v1.23.1
 	github.com/gobuffalo/clara v0.10.1
 	github.com/gobuffalo/events v1.4.0
@@ -28,7 +29,7 @@ require (
 	github.com/markbates/haste v0.0.0-20191129201013-5d5b37040fba
 	github.com/markbates/jim v0.3.3
 	github.com/markbates/oncer v1.0.0
-	github.com/markbates/pkger v0.12.8
+	github.com/markbates/pkger v0.12.10
 	github.com/markbates/refresh v1.8.0
 	github.com/markbates/safe v1.0.1
 	github.com/sirupsen/logrus v1.4.2
