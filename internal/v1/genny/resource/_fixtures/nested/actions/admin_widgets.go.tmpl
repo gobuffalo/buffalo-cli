@@ -6,7 +6,6 @@ import (
   "net/http"
   "github.com/gobuffalo/buffalo"
   "github.com/gobuffalo/pop"
-  "github.com/gobuffalo/x/responder"
   "github.com/markbates/coke/models"
 )
 
@@ -47,15 +46,11 @@ func (v AdminWidgetsResource) List(c buffalo.Context) error {
     return err
   }
 
-  return responder.Wants("html", func (c buffalo.Context) error {
-    // Add the paginator to the context so it can be used in the template.
-    c.Set("pagination", q.Paginator)
+  // Add the paginator to the context so it can be used in the template.
+  c.Set("pagination", q.Paginator)
 
-    c.Set("widgets", widgets)
-    return c.Render(http.StatusOK, r.HTML("/admin/widgets/index.plush.html"))
-  }).Wants("json", func (c buffalo.Context) error {
-    return c.Render(200, r.JSON(widgets))
-  }).Respond(c)
+  c.Set("widgets", widgets)
+  return c.Render(http.StatusOK, r.HTML("/admin/widgets/index.plush.html"))
 }
 
 // Show gets the data for one Widget. This function is mapped to
@@ -75,13 +70,9 @@ func (v AdminWidgetsResource) Show(c buffalo.Context) error {
     return c.Error(http.StatusNotFound, err)
   }
 
-  return responder.Wants("html", func (c buffalo.Context) error {
-    c.Set("widget", widget)
+  c.Set("widget", widget)
 
-    return c.Render(http.StatusOK, r.HTML("/admin/widgets/show.plush.html"))
-  }).Wants("json", func (c buffalo.Context) error {
-    return c.Render(200, r.JSON(widget))
-  }).Respond(c)
+  return c.Render(http.StatusOK, r.HTML("/admin/widgets/show.plush.html"))
 }
 
 // New renders the form for creating a new Widget.
@@ -116,29 +107,21 @@ func (v AdminWidgetsResource) Create(c buffalo.Context) error {
   }
 
   if verrs.HasAny() {
-    return responder.Wants("html", func (c buffalo.Context) error {
-      // Make the errors available inside the html template
-      c.Set("errors", verrs)
+    // Make the errors available inside the html template
+    c.Set("errors", verrs)
 
-      // Render again the new.html template that the user can
-      // correct the input.
-      c.Set("widget", widget)
+    // Render again the new.html template that the user can
+    // correct the input.
+    c.Set("widget", widget)
 
-      return c.Render(http.StatusUnprocessableEntity, r.HTML("/admin/widgets/new.plush.html"))
-    }).Wants("json", func (c buffalo.Context) error {
-      return c.Error(http.StatusUnprocessableEntity, r.JSON(widget))
-    }).Respond(c)
+    return c.Render(http.StatusUnprocessableEntity, r.HTML("/admin/widgets/new.plush.html"))
   }
 
-  return responder.Wants("html", func (c buffalo.Context) error {
-    // If there are no errors set a success message
-    c.Flash().Add("success", T.Translate(c, "widget.created.success"))
+  // If there are no errors set a success message
+  c.Flash().Add("success", T.Translate(c, "widget.created.success"))
 
-    // and redirect to the show page
-    return c.Redirect(http.StatusSeeOther, "/admin/widgets/%v", widget.ID)
-  }).Wants("json", func (c buffalo.Context) error {
-    return c.Render(http.StatusCreated, r.JSON(widget))
-  }).Respond(c)
+  // and redirect to the show page
+  return c.Redirect(http.StatusSeeOther, "/admin/widgets/%v", widget.ID)
 }
 
 // Edit renders a edit form for a Widget. This function is
@@ -188,29 +171,21 @@ func (v AdminWidgetsResource) Update(c buffalo.Context) error {
   }
 
   if verrs.HasAny() {
-    return responder.Wants("html", func (c buffalo.Context) error {
-      // Make the errors available inside the html template
-      c.Set("errors", verrs)
+    // Make the errors available inside the html template
+    c.Set("errors", verrs)
 
-      // Render again the edit.html template that the user can
-      // correct the input.
-      c.Set("widget", widget)
+    // Render again the edit.html template that the user can
+    // correct the input.
+    c.Set("widget", widget)
 
-      return c.Render(http.StatusUnprocessableEntity, r.HTML("/admin/widgets/edit.plush.html"))
-    }).Wants("json", func (c buffalo.Context) error {
-      return c.Error(http.StatusUnprocessableEntity, r.JSON(widget))
-    }).Respond(c) 
+    return c.Render(http.StatusUnprocessableEntity, r.HTML("/admin/widgets/edit.plush.html"))
   }
 
-  return responder.Wants("html", func (c buffalo.Context) error {
-    // If there are no errors set a success message
-    c.Flash().Add("success", T.Translate(c, "widget.updated.success"))
+  // If there are no errors set a success message
+  c.Flash().Add("success", T.Translate(c, "widget.updated.success"))
 
-    // and redirect to the show page
-    return c.Redirect(http.StatusSeeOther, "/admin/widgets/%v", widget.ID)
-  }).Wants("json", func (c buffalo.Context) error {
-    return c.Render(http.StatusOK, r.JSON(widget))
-  }).Respond(c) 
+  // and redirect to the show page
+  return c.Redirect(http.StatusSeeOther, "/admin/widgets/%v", widget.ID)
 }
 
 // Destroy deletes a Widget from the DB. This function is mapped
@@ -234,13 +209,9 @@ func (v AdminWidgetsResource) Destroy(c buffalo.Context) error {
     return err
   }
 
-  return responder.Wants("html", func (c buffalo.Context) error {
-    // If there are no errors set a flash message
-    c.Flash().Add("success", T.Translate(c, "widget.destroyed.success"))
+  // If there are no errors set a flash message
+  c.Flash().Add("success", T.Translate(c, "widget.destroyed.success"))
 
-    // Redirect to the index page
-    return c.Redirect(http.StatusSeeOther, "/admin/widgets")
-  }).Wants("json", func (c buffalo.Context) error {
-    return c.Render(http.StatusOK, r.JSON(widget))
-  }).Respond(c) 
+  // Redirect to the index page
+  return c.Redirect(http.StatusSeeOther, "/admin/widgets")
 }

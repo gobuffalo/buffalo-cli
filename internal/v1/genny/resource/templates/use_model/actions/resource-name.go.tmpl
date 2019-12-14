@@ -6,7 +6,6 @@ import (
   "net/http"
   "github.com/gobuffalo/buffalo"
   "github.com/gobuffalo/pop"
-  "github.com/gobuffalo/x/responder"
   "{{.opts.App.ModelsPkg}}"
 )
 
@@ -47,15 +46,15 @@ func (v {{.opts.Name.Resource}}Resource) List(c buffalo.Context) error {
     return err
   }
 
-  return responder.Wants("html", func (c buffalo.Context) error {
-    // Add the paginator to the context so it can be used in the template.
-    c.Set("pagination", q.Paginator)
+  {{ if .opts.App.AsWeb -}}
+  // Add the paginator to the context so it can be used in the template.
+  c.Set("pagination", q.Paginator)
 
-    c.Set("{{.opts.Model.VarCasePlural}}", {{.opts.Model.VarCasePlural}})
-    return c.Render(http.StatusOK, r.HTML("/{{.opts.Name.File.Pluralize}}/index.plush.html"))
-  }).Wants("json", func (c buffalo.Context) error {
-    return c.Render(200, r.JSON({{.opts.Model.VarCasePlural}}))
-  }).Respond(c)
+  c.Set("{{.opts.Model.VarCasePlural}}", {{.opts.Model.VarCasePlural}})
+  return c.Render(http.StatusOK, r.HTML("/{{.opts.Name.File.Pluralize}}/index.plush.html"))
+  {{- else if .opts.App.AsAPI -}}
+  return c.Render(200, r.JSON({{.opts.Model.VarCasePlural}}))
+  {{ end -}}
 }
 
 // Show gets the data for one {{.opts.Model.Proper}}. This function is mapped to
@@ -75,13 +74,13 @@ func (v {{.opts.Name.Resource}}Resource) Show(c buffalo.Context) error {
     return c.Error(http.StatusNotFound, err)
   }
 
-  return responder.Wants("html", func (c buffalo.Context) error {
-    c.Set("{{.opts.Model.VarCaseSingle}}", {{.opts.Model.VarCaseSingle}})
+  {{ if .opts.App.AsWeb -}}
+  c.Set("{{.opts.Model.VarCaseSingle}}", {{.opts.Model.VarCaseSingle}})
 
-    return c.Render(http.StatusOK, r.HTML("/{{.opts.Name.File.Pluralize}}/show.plush.html"))
-  }).Wants("json", func (c buffalo.Context) error {
-    return c.Render(200, r.JSON({{.opts.Model.VarCaseSingle}}))
-  }).Respond(c)
+  return c.Render(http.StatusOK, r.HTML("/{{.opts.Name.File.Pluralize}}/show.plush.html"))
+  {{- else if .opts.App.AsAPI -}}
+  return c.Render(200, r.JSON({{.opts.Model.VarCaseSingle}}))
+  {{ end -}}
 }
 
 {{ if .opts.App.AsWeb -}}
@@ -118,29 +117,29 @@ func (v {{.opts.Name.Resource}}Resource) Create(c buffalo.Context) error {
   }
 
   if verrs.HasAny() {
-    return responder.Wants("html", func (c buffalo.Context) error {
-      // Make the errors available inside the html template
-      c.Set("errors", verrs)
+    {{ if .opts.App.AsWeb -}}
+    // Make the errors available inside the html template
+    c.Set("errors", verrs)
 
-      // Render again the new.html template that the user can
-      // correct the input.
-      c.Set("{{.opts.Model.VarCaseSingle}}", {{.opts.Model.VarCaseSingle}})
+    // Render again the new.html template that the user can
+    // correct the input.
+    c.Set("{{.opts.Model.VarCaseSingle}}", {{.opts.Model.VarCaseSingle}})
 
-      return c.Render(http.StatusUnprocessableEntity, r.HTML("/{{.opts.Name.File.Pluralize}}/new.plush.html"))
-    }).Wants("json", func (c buffalo.Context) error {
-      return c.Error(http.StatusUnprocessableEntity, r.JSON({{.opts.Model.VarCaseSingle}}))
-    }).Respond(c)
+    return c.Render(http.StatusUnprocessableEntity, r.HTML("/{{.opts.Name.File.Pluralize}}/new.plush.html"))
+    {{- else if .opts.App.AsAPI -}}
+    return c.Error(http.StatusUnprocessableEntity, r.JSON({{.opts.Model.VarCaseSingle}}))
+    {{ end }}
   }
 
-  return responder.Wants("html", func (c buffalo.Context) error {
-    // If there are no errors set a success message
-    c.Flash().Add("success", T.Translate(c, "{{.opts.Model.VarCaseSingle}}.created.success"))
+  {{ if .opts.App.AsWeb -}}
+  // If there are no errors set a success message
+  c.Flash().Add("success", T.Translate(c, "{{.opts.Model.VarCaseSingle}}.created.success"))
 
-    // and redirect to the show page
-    return c.Redirect(http.StatusSeeOther, "/{{.opts.Name.URL}}/%v", {{.opts.Model.VarCaseSingle}}.ID)
-  }).Wants("json", func (c buffalo.Context) error {
-    return c.Render(http.StatusCreated, r.JSON({{.opts.Model.VarCaseSingle}}))
-  }).Respond(c)
+  // and redirect to the show page
+  return c.Redirect(http.StatusSeeOther, "/{{.opts.Name.URL}}/%v", {{.opts.Model.VarCaseSingle}}.ID)
+  {{- else if .opts.App.AsAPI -}}
+  return c.Render(http.StatusCreated, r.JSON({{.opts.Model.VarCaseSingle}}))
+  {{ end -}}
 }
 
 {{ if .opts.App.AsWeb -}}
@@ -192,29 +191,29 @@ func (v {{.opts.Name.Resource}}Resource) Update(c buffalo.Context) error {
   }
 
   if verrs.HasAny() {
-    return responder.Wants("html", func (c buffalo.Context) error {
-      // Make the errors available inside the html template
-      c.Set("errors", verrs)
+    {{ if .opts.App.AsWeb -}}
+    // Make the errors available inside the html template
+    c.Set("errors", verrs)
 
-      // Render again the edit.html template that the user can
-      // correct the input.
-      c.Set("{{.opts.Model.VarCaseSingle}}", {{.opts.Model.VarCaseSingle}})
+    // Render again the edit.html template that the user can
+    // correct the input.
+    c.Set("{{.opts.Model.VarCaseSingle}}", {{.opts.Model.VarCaseSingle}})
 
-      return c.Render(http.StatusUnprocessableEntity, r.HTML("/{{.opts.Name.File.Pluralize}}/edit.plush.html"))
-    }).Wants("json", func (c buffalo.Context) error {
-      return c.Error(http.StatusUnprocessableEntity, r.JSON({{.opts.Model.VarCaseSingle}}))
-    }).Respond(c) 
+    return c.Render(http.StatusUnprocessableEntity, r.HTML("/{{.opts.Name.File.Pluralize}}/edit.plush.html"))
+    {{- else if .opts.App.AsAPI -}}
+    return c.Error(http.StatusUnprocessableEntity, r.JSON({{.opts.Model.VarCaseSingle}}))
+    {{ end }}
   }
 
-  return responder.Wants("html", func (c buffalo.Context) error {
-    // If there are no errors set a success message
-    c.Flash().Add("success", T.Translate(c, "{{.opts.Model.VarCaseSingle}}.updated.success"))
+  {{ if .opts.App.AsWeb -}}
+  // If there are no errors set a success message
+  c.Flash().Add("success", T.Translate(c, "{{.opts.Model.VarCaseSingle}}.updated.success"))
 
-    // and redirect to the show page
-    return c.Redirect(http.StatusSeeOther, "/{{.opts.Name.URL}}/%v", {{.opts.Model.VarCaseSingle}}.ID)
-  }).Wants("json", func (c buffalo.Context) error {
-    return c.Render(http.StatusOK, r.JSON({{.opts.Model.VarCaseSingle}}))
-  }).Respond(c) 
+  // and redirect to the show page
+  return c.Redirect(http.StatusSeeOther, "/{{.opts.Name.URL}}/%v", {{.opts.Model.VarCaseSingle}}.ID)
+  {{- else if .opts.App.AsAPI -}}
+  return c.Render(http.StatusOK, r.JSON({{.opts.Model.VarCaseSingle}}))
+  {{ end -}}
 }
 
 // Destroy deletes a {{.opts.Model.Proper}} from the DB. This function is mapped
@@ -238,13 +237,13 @@ func (v {{.opts.Name.Resource}}Resource) Destroy(c buffalo.Context) error {
     return err
   }
 
-  return responder.Wants("html", func (c buffalo.Context) error {
-    // If there are no errors set a flash message
-    c.Flash().Add("success", T.Translate(c, "{{.opts.Model.VarCaseSingle}}.destroyed.success"))
+  {{ if .opts.App.AsWeb -}}
+  // If there are no errors set a flash message
+  c.Flash().Add("success", T.Translate(c, "{{.opts.Model.VarCaseSingle}}.destroyed.success"))
 
-    // Redirect to the index page
-    return c.Redirect(http.StatusSeeOther, "/{{.opts.Name.URL}}")
-  }).Wants("json", func (c buffalo.Context) error {
-    return c.Render(http.StatusOK, r.JSON(widget))
-  }).Respond(c) 
+  // Redirect to the index page
+  return c.Redirect(http.StatusSeeOther, "/{{.opts.Name.URL}}")
+  {{- else if .opts.App.AsAPI -}}
+  return c.Render(http.StatusOK, r.JSON(widget))
+  {{ end -}}
 }
