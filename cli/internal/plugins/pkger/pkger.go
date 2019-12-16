@@ -13,13 +13,13 @@ import (
 )
 
 var _ plugins.Plugin = &Buffalo{}
-var _ plugprint.WithPlugins = &Buffalo{}
+var _ plugprint.Plugins = &Buffalo{}
 
 const outPath = "pkged.go"
 
 type Buffalo struct {
-	OutPath string
-	Plugins func() []plugins.Plugin
+	OutPath   string
+	PluginsFn func() []plugins.Plugin
 }
 
 func (b *Buffalo) AfterBuild(ctx context.Context, args []string, err error) error {
@@ -35,10 +35,10 @@ type Decler interface {
 	PkgerDecls() (parser.Decls, error)
 }
 
-func (b *Buffalo) WithPlugins() []plugins.Plugin {
+func (b *Buffalo) Plugins() []plugins.Plugin {
 	var plugs []plugins.Plugin
-	if b.Plugins != nil {
-		plugs = b.Plugins()
+	if b.PluginsFn != nil {
+		plugs = b.PluginsFn()
 	}
 
 	var builders []plugins.Plugin
@@ -78,7 +78,7 @@ func (b *Buffalo) Package(ctx context.Context, root string) error {
 		return err
 	}
 
-	for _, p := range b.WithPlugins() {
+	for _, p := range b.Plugins() {
 		pd, ok := p.(Decler)
 		if !ok {
 			continue

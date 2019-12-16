@@ -24,12 +24,12 @@ import (
 var _ plugins.Plugin = &Buffalo{}
 var _ plugprint.SubCommander = &Buffalo{}
 var _ plugprint.Describer = &Buffalo{}
-var _ plugprint.WithPlugins = &Buffalo{}
+var _ plugprint.Plugins = &Buffalo{}
 
 // Buffalo represents the `buffalo` cli.
 type Buffalo struct {
 	plugins.IO
-	Plugins []plugins.Plugin
+	Plugs []plugins.Plugin
 }
 
 func New() (*Buffalo, error) {
@@ -38,27 +38,27 @@ func New() (*Buffalo, error) {
 	}
 
 	pfn := func() []plugins.Plugin {
-		return b.Plugins
+		return b.Plugs
 	}
-	b.Plugins = append(b.Plugins,
+	b.Plugs = append(b.Plugs,
 		&flect.Flect{},
 		&pop.Pop{},
 		&assets.Builder{
 			IO: b,
 		},
 		&buildcmd.BuildCmd{
-			IO:      b,
-			Plugins: pfn,
+			IO:        b,
+			PluginsFn: pfn,
 		},
 		&fixcmd.FixCmd{
-			IO:      b,
-			Parent:  b,
-			Plugins: pfn,
+			IO:        b,
+			Parent:    b,
+			PluginsFn: pfn,
 		},
 		&infocmd.InfoCmd{
-			IO:      b,
-			Parent:  b,
-			Plugins: pfn,
+			IO:        b,
+			Parent:    b,
+			PluginsFn: pfn,
 		},
 		&versioncmd.VersionCmd{
 			IO:     b,
@@ -68,7 +68,7 @@ func New() (*Buffalo, error) {
 		&golang.Templates{},
 		// &packr.Buffalo{},
 		&pkger.Buffalo{
-			Plugins: pfn,
+			PluginsFn: pfn,
 		},
 	)
 
@@ -78,13 +78,13 @@ func New() (*Buffalo, error) {
 	}
 
 	if _, err := os.Stat(filepath.Join(info.Root, ".git")); err == nil {
-		b.Plugins = append(b.Plugins,
+		b.Plugs = append(b.Plugs,
 			&git.Buffalo{
 				IO: b,
 			})
 	}
 	if _, err := os.Stat(filepath.Join(info.Root, ".bzr")); err == nil {
-		b.Plugins = append(b.Plugins,
+		b.Plugs = append(b.Plugs,
 			&bzr.Buffalo{
 				IO: b,
 			})
@@ -92,13 +92,13 @@ func New() (*Buffalo, error) {
 	return b, nil
 }
 
-func (b Buffalo) WithPlugins() []plugins.Plugin {
-	return b.Plugins
+func (b Buffalo) Plugins() []plugins.Plugin {
+	return b.Plugs
 }
 
 func (b Buffalo) SubCommands() []plugins.Plugin {
 	var plugs []plugins.Plugin
-	for _, p := range b.WithPlugins() {
+	for _, p := range b.Plugins() {
 		if _, ok := p.(Command); ok {
 			plugs = append(plugs, p)
 		}

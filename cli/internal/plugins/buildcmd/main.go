@@ -11,7 +11,7 @@ import (
 )
 
 func (bc *BuildCmd) beforeBuild(ctx context.Context, args []string) error {
-	builders := bc.WithPlugins()
+	builders := bc.Plugins()
 	for _, p := range builders {
 		if bb, ok := p.(BeforeBuilder); ok {
 			plugins.SetIO(bc, p)
@@ -24,7 +24,7 @@ func (bc *BuildCmd) beforeBuild(ctx context.Context, args []string) error {
 }
 
 func (bc *BuildCmd) afterBuild(ctx context.Context, args []string, err error) error {
-	builders := bc.WithPlugins()
+	builders := bc.Plugins()
 	for _, p := range builders {
 		if bb, ok := p.(AfterBuilder); ok {
 			plugins.SetIO(bc, p)
@@ -37,6 +37,18 @@ func (bc *BuildCmd) afterBuild(ctx context.Context, args []string, err error) er
 }
 
 func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
+	flags := bc.flagSet()
+	if err := flags.Parse(args); err != nil {
+		return err
+	}
+	if bc.verbose {
+		bc.BuildFlags = append(bc.BuildFlags, "-v")
+	}
+
+	if bc.help {
+		return plugprint.Print(bc.Stdout(), bc)
+	}
+
 	info, err := there.Current()
 	if err != nil {
 		return err
@@ -54,19 +66,7 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 		bc.afterBuild(ctx, args, err)
 	}()
 
-	flags := bc.flagSet()
-	if err := flags.Parse(args); err != nil {
-		return err
-	}
-	if bc.verbose {
-		bc.BuildFlags = append(bc.BuildFlags, "-v")
-	}
-
-	if bc.help {
-		return plugprint.Print(bc.Stdout(), bc)
-	}
-
-	plugs := bc.WithPlugins()
+	plugs := bc.Plugins()
 
 	if len(flags.Args()) > 0 {
 		n := flags.Args()[0]

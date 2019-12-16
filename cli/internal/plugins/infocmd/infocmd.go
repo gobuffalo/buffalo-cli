@@ -19,13 +19,13 @@ import (
 var _ plugins.Plugin = &InfoCmd{}
 var _ plugprint.Describer = &InfoCmd{}
 var _ plugprint.FlagPrinter = &InfoCmd{}
-var _ plugprint.WithPlugins = &InfoCmd{}
+var _ plugprint.Plugins = &InfoCmd{}
 
 type InfoCmd struct {
 	plugins.IO
-	Parent  plugins.Plugin
-	Plugins func() []plugins.Plugin
-	help    bool
+	Parent    plugins.Plugin
+	PluginsFn func() []plugins.Plugin
+	help      bool
 }
 
 func (ic *InfoCmd) PrintFlags(w io.Writer) error {
@@ -54,7 +54,7 @@ func (i InfoCmd) String() string {
 // Info runs all of the plugins that implement the
 // `Informer` interface in order.
 func (ic *InfoCmd) plugins(ctx context.Context, args []string) error {
-	for _, p := range ic.WithPlugins() {
+	for _, p := range ic.Plugins() {
 		i, ok := p.(Informer)
 		if !ok {
 			continue
@@ -66,13 +66,13 @@ func (ic *InfoCmd) plugins(ctx context.Context, args []string) error {
 	return nil
 }
 
-func (ic *InfoCmd) WithPlugins() []plugins.Plugin {
+func (ic *InfoCmd) Plugins() []plugins.Plugin {
 	var plugs []plugins.Plugin
 
-	if ic.Plugins == nil {
+	if ic.PluginsFn == nil {
 		return plugs
 	}
-	for _, p := range ic.Plugins() {
+	for _, p := range ic.PluginsFn() {
 		if i, ok := p.(Informer); ok {
 			plugs = append(plugs, i)
 		}

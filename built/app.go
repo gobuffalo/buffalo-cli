@@ -20,7 +20,7 @@ type App struct {
 }
 
 func (b *App) Main(ctx context.Context, args []string) error {
-	for _, p := range b.Plugins {
+	for _, p := range b.Plugins() {
 		bl, ok := p.(Initer)
 		if !ok {
 			continue

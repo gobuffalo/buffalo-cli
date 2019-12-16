@@ -10,11 +10,11 @@ var _ plugprint.Aliases = &BuildCmd{}
 var _ plugprint.SubCommander = &BuildCmd{}
 var _ plugprint.Describer = &BuildCmd{}
 var _ plugprint.FlagPrinter = &BuildCmd{}
-var _ plugprint.WithPlugins = &BuildCmd{}
+var _ plugprint.Plugins = &BuildCmd{}
 
 type BuildCmd struct {
 	plugins.IO
-	Plugins func() []plugins.Plugin
+	PluginsFn func() []plugins.Plugin
 	// Mod is the -mod flag
 	Mod string
 	// Static sets the following flags for the final `go build` command:
@@ -54,7 +54,7 @@ func (BuildCmd) Description() string {
 
 func (bc *BuildCmd) SubCommands() []plugins.Plugin {
 	var plugs []plugins.Plugin
-	for _, p := range bc.WithPlugins() {
+	for _, p := range bc.Plugins() {
 		if _, ok := p.(Builder); ok {
 			plugs = append(plugs, p)
 		}
@@ -62,10 +62,10 @@ func (bc *BuildCmd) SubCommands() []plugins.Plugin {
 	return plugs
 }
 
-func (bc *BuildCmd) WithPlugins() []plugins.Plugin {
+func (bc *BuildCmd) Plugins() []plugins.Plugin {
 	var plugs []plugins.Plugin
-	if bc.Plugins != nil {
-		plugs = bc.Plugins()
+	if bc.PluginsFn != nil {
+		plugs = bc.PluginsFn()
 	}
 
 	var builders []plugins.Plugin

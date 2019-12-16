@@ -15,12 +15,12 @@ import (
 var _ plugins.Plugin = &FixCmd{}
 var _ plugprint.SubCommander = &FixCmd{}
 var _ plugprint.Describer = &FixCmd{}
-var _ plugprint.WithPlugins = &FixCmd{}
+var _ plugprint.Plugins = &FixCmd{}
 
 type FixCmd struct {
 	plugins.IO
-	Parent  plugins.Plugin
-	Plugins func() []plugins.Plugin
+	Parent    plugins.Plugin
+	PluginsFn func() []plugins.Plugin
 }
 
 func (fc *FixCmd) Name() string {
@@ -46,10 +46,7 @@ func (f FixCmd) String() string {
 // 	buffalo fix plush pop
 // 	buffalo fix -h
 func (fc *FixCmd) plugins(ctx context.Context, args []string) error {
-	if fc.Plugins == nil {
-		return nil
-	}
-	plugs := fc.WithPlugins()
+	plugs := fc.Plugins()
 	if len(args) > 0 {
 		fixers := map[string]Fixer{}
 		for _, p := range plugs {
@@ -116,13 +113,13 @@ func (fc *FixCmd) Main(ctx context.Context, args []string) error {
 }
 
 func (fc *FixCmd) SubCommands() []plugins.Plugin {
-	return fc.WithPlugins()
+	return fc.Plugins()
 }
 
-func (fc *FixCmd) WithPlugins() []plugins.Plugin {
+func (fc *FixCmd) Plugins() []plugins.Plugin {
 	var plugs []plugins.Plugin
-	if fc.Plugins != nil {
-		for _, p := range fc.Plugins() {
+	if fc.PluginsFn != nil {
+		for _, p := range fc.PluginsFn() {
 			if _, ok := p.(Fixer); ok {
 				plugs = append(plugs, p)
 			}
