@@ -6,13 +6,15 @@ import (
 	"os"
 	"time"
 
-	"github.com/gobuffalo/buffalo-cli/cli"
 	"github.com/gobuffalo/buffalo-cli/internal/garlic"
+	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/gobuffalo/buffalo/runtime"
 )
 
 type App struct {
-	*cli.Buffalo
+	plugins.IO
+	Plugger      plugprint.Plugins
 	BuildTime    string
 	BuildVersion string
 	Fallthrough  func(ctx context.Context, args []string) error
@@ -20,7 +22,10 @@ type App struct {
 }
 
 func (b *App) Main(ctx context.Context, args []string) error {
-	for _, p := range b.Plugins() {
+	if b.IO == nil {
+		b.IO = plugins.NewIO()
+	}
+	for _, p := range b.Plugger.Plugins() {
 		bl, ok := p.(Initer)
 		if !ok {
 			continue
@@ -53,7 +58,7 @@ func (b *App) Main(ctx context.Context, args []string) error {
 	c := args[0]
 	switch c {
 	case "version":
-		fmt.Println(runtime.Build().Version)
+		fmt.Fprintln(b.Stdout(), runtime.Build().Version)
 		return nil
 	}
 	if b.Fallthrough != nil {

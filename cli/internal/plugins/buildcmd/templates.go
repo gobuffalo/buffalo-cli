@@ -29,7 +29,7 @@ func main() {
 		}
 
 		b := &built.App{
-			Buffalo:      cb,
+			Plugger:      cb,
 			BuildTime:    {{.BuildTime}},
 			BuildVersion: {{.BuildVersion}},
 			Fallthrough:  appcli.Buffalo,
