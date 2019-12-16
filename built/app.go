@@ -21,11 +21,22 @@ type App struct {
 	OriginalMain func()
 }
 
+func (b *App) Plugins() []plugins.Plugin {
+	var plugs []plugins.Plugin
+	if b.Plugger == nil {
+		return plugs
+	}
+	return b.Plugger.Plugins()
+}
+
 func (b *App) Main(ctx context.Context, args []string) error {
 	if b.IO == nil {
 		b.IO = plugins.NewIO()
 	}
-	for _, p := range b.Plugger.Plugins() {
+
+	plugs := b.Plugins()
+
+	for _, p := range plugs {
 		bl, ok := p.(Initer)
 		if !ok {
 			continue
@@ -48,6 +59,12 @@ func (b *App) Main(ctx context.Context, args []string) error {
 		}
 	}
 	if len(args) == 0 {
+		if b.OriginalMain == nil {
+			if b.Fallthrough != nil {
+				return b.Fallthrough(ctx, args)
+			}
+			return nil
+		}
 		if len(originalArgs) != 0 {
 			os.Args = originalArgs
 		}
@@ -58,7 +75,7 @@ func (b *App) Main(ctx context.Context, args []string) error {
 	c := args[0]
 	switch c {
 	case "version":
-		fmt.Fprintln(b.Stdout(), runtime.Build().Version)
+		fmt.Fprintln(b.Stdout(), b.BuildVersion)
 		return nil
 	}
 	if b.Fallthrough != nil {

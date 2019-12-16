@@ -7,3 +7,17 @@ type Plugin interface {
 	// 	"pop" | "heroku" | "auth" | etc...
 	Name() string
 }
+
+type Plugins []Plugin
+
+func (p Plugins) Plugins() []Plugin {
+	return []Plugin(p)
+}
+
+var _ Plugin = Background("")
+
+type Background string
+
+func (b Background) Name() string {
+	return string(b)
+}
