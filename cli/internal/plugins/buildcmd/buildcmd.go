@@ -14,7 +14,7 @@ var _ plugprint.WithPlugins = &BuildCmd{}
 
 type BuildCmd struct {
 	plugins.IO
-	Plugins func() plugins.Plugins
+	Plugins func() []plugins.Plugin
 	// Mod is the -mod flag
 	Mod string
 	// Static sets the following flags for the final `go build` command:
@@ -52,8 +52,8 @@ func (BuildCmd) Description() string {
 	return "Build the application binary, including bundling of assets (packr & webpack)"
 }
 
-func (bc *BuildCmd) SubCommands() plugins.Plugins {
-	var plugs plugins.Plugins
+func (bc *BuildCmd) SubCommands() []plugins.Plugin {
+	var plugs []plugins.Plugin
 	for _, p := range bc.WithPlugins() {
 		if _, ok := p.(Builder); ok {
 			plugs = append(plugs, p)
@@ -62,13 +62,13 @@ func (bc *BuildCmd) SubCommands() plugins.Plugins {
 	return plugs
 }
 
-func (bc *BuildCmd) WithPlugins() plugins.Plugins {
-	var plugs plugins.Plugins
+func (bc *BuildCmd) WithPlugins() []plugins.Plugin {
+	var plugs []plugins.Plugin
 	if bc.Plugins != nil {
 		plugs = bc.Plugins()
 	}
 
-	var builders plugins.Plugins
+	var builders []plugins.Plugin
 	for _, p := range plugs {
 		switch p.(type) {
 		case Builder:

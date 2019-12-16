@@ -25,7 +25,7 @@ const mainBuildFile = "main.build.go"
 
 type mainFile struct {
 	plugins.IO
-	plugins func() plugins.Plugins
+	plugins func() []plugins.Plugin
 }
 
 func (mainFile) Name() string {

@@ -29,7 +29,7 @@ var _ plugprint.WithPlugins = &Buffalo{}
 // Buffalo represents the `buffalo` cli.
 type Buffalo struct {
 	plugins.IO
-	Plugins plugins.Plugins
+	Plugins []plugins.Plugin
 }
 
 func New() (*Buffalo, error) {
@@ -37,7 +37,7 @@ func New() (*Buffalo, error) {
 		IO: plugins.NewIO(),
 	}
 
-	pfn := func() plugins.Plugins {
+	pfn := func() []plugins.Plugin {
 		return b.Plugins
 	}
 	b.Plugins = append(b.Plugins,
@@ -92,12 +92,12 @@ func New() (*Buffalo, error) {
 	return b, nil
 }
 
-func (b Buffalo) WithPlugins() plugins.Plugins {
+func (b Buffalo) WithPlugins() []plugins.Plugin {
 	return b.Plugins
 }
 
-func (b Buffalo) SubCommands() plugins.Plugins {
-	var plugs plugins.Plugins
+func (b Buffalo) SubCommands() []plugins.Plugin {
+	var plugs []plugins.Plugin
 	for _, p := range b.WithPlugins() {
 		if _, ok := p.(Command); ok {
 			plugs = append(plugs, p)

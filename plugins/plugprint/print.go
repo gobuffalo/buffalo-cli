@@ -104,7 +104,9 @@ func printCommands(w io.Writer, main plugins.Plugin) error {
 		return nil
 	}
 
-	sort.Sort(plugs)
+	sort.Slice(plugs, func(i, j int) bool {
+		return plugs[i].Name() < plugs[j].Name()
+	})
 
 	const ac = "\nAvailable Commands:\n"
 	fmt.Fprint(w, ac)

@@ -20,7 +20,7 @@ var _ plugprint.WithPlugins = &FixCmd{}
 type FixCmd struct {
 	plugins.IO
 	Parent  plugins.Plugin
-	Plugins func() plugins.Plugins
+	Plugins func() []plugins.Plugin
 }
 
 func (fc *FixCmd) Name() string {
@@ -115,12 +115,12 @@ func (fc *FixCmd) Main(ctx context.Context, args []string) error {
 	return fc.plugins(ctx, args)
 }
 
-func (fc *FixCmd) SubCommands() plugins.Plugins {
+func (fc *FixCmd) SubCommands() []plugins.Plugin {
 	return fc.WithPlugins()
 }
 
-func (fc *FixCmd) WithPlugins() plugins.Plugins {
-	var plugs plugins.Plugins
+func (fc *FixCmd) WithPlugins() []plugins.Plugin {
+	var plugs []plugins.Plugin
 	if fc.Plugins != nil {
 		for _, p := range fc.Plugins() {
 			if _, ok := p.(Fixer); ok {

@@ -19,7 +19,7 @@ const outPath = "pkged.go"
 
 type Buffalo struct {
 	OutPath string
-	Plugins func() plugins.Plugins
+	Plugins func() []plugins.Plugin
 }
 
 func (b *Buffalo) AfterBuild(ctx context.Context, args []string, err error) error {
@@ -35,13 +35,13 @@ type Decler interface {
 	PkgerDecls() (parser.Decls, error)
 }
 
-func (b *Buffalo) WithPlugins() plugins.Plugins {
-	var plugs plugins.Plugins
+func (b *Buffalo) WithPlugins() []plugins.Plugin {
+	var plugs []plugins.Plugin
 	if b.Plugins != nil {
 		plugs = b.Plugins()
 	}
 
-	var builders plugins.Plugins
+	var builders []plugins.Plugin
 	for _, p := range plugs {
 		switch p.(type) {
 		case Decler:

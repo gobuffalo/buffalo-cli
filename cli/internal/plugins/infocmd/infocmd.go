@@ -24,7 +24,7 @@ var _ plugprint.WithPlugins = &InfoCmd{}
 type InfoCmd struct {
 	plugins.IO
 	Parent  plugins.Plugin
-	Plugins func() plugins.Plugins
+	Plugins func() []plugins.Plugin
 	help    bool
 }
 
@@ -66,8 +66,8 @@ func (ic *InfoCmd) plugins(ctx context.Context, args []string) error {
 	return nil
 }
 
-func (ic *InfoCmd) WithPlugins() plugins.Plugins {
-	var plugs plugins.Plugins
+func (ic *InfoCmd) WithPlugins() []plugins.Plugin {
+	var plugs []plugins.Plugin
 
 	if ic.Plugins == nil {
 		return plugs
