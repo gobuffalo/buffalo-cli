@@ -42,7 +42,6 @@ type Builder struct {
 	// places ./public/assets into ./bin/assets.zip.
 	ExtractAssets bool
 	SkipAssets    bool
-	flagSet       *pflag.FlagSet
 }
 
 func (a *Builder) Build(ctx context.Context, args []string) error {
@@ -132,18 +131,13 @@ func (a *Builder) BuildFlags() []*pflag.Flag {
 }
 
 func (a *Builder) PflagSet() *pflag.FlagSet {
-	if a.flagSet != nil {
-		return a.flagSet
-	}
-
 	flags := pflag.NewFlagSet(a.String(), pflag.ContinueOnError)
 	flags.SetOutput(ioutil.Discard)
 	flags.BoolVar(&a.CleanAssets, "clean-assets", false, "will delete public/assets before calling webpack")
 	flags.BoolVarP(&a.ExtractAssets, "extract-assets", "e", false, "extract the assets and put them in a distinct archive")
 	flags.BoolVarP(&a.SkipAssets, "skip-assets", "k", false, "skip running webpack and building assets")
 
-	a.flagSet = flags
-	return a.flagSet
+	return flags
 }
 
 func (a *Builder) PrintFlags(w io.Writer) error {

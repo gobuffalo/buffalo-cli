@@ -2,7 +2,6 @@ package pop
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/gobuffalo/pop"
 	"github.com/markbates/pkger"
@@ -36,7 +35,6 @@ func (Pop) Name() string {
 }
 
 func (p *Pop) BuiltInit(ctx context.Context, args []string) error {
-	fmt.Println("loading database.yml")
 	f, err := pkger.Open("/database.yml")
 	if err != nil {
 		return err

@@ -18,7 +18,7 @@ type BeforeBuilder interface {
 }
 
 type AfterBuilder interface {
-	AfterBuild(ctx context.Context, args []string) error
+	AfterBuild(ctx context.Context, args []string, err error) error
 }
 
 type BuildFlagger interface {

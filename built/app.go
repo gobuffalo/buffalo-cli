@@ -16,7 +16,6 @@ type App struct {
 	BuildTime    string
 	BuildVersion string
 	Fallthrough  func(ctx context.Context, args []string) error
-	Name         string
 	OriginalMain func()
 }
 
@@ -54,7 +53,7 @@ func (b *App) Main(ctx context.Context, args []string) error {
 	c := args[0]
 	switch c {
 	case "version":
-		fmt.Printf("%s version %s\n", b.Name, runtime.Build())
+		fmt.Println(runtime.Build().Version)
 		return nil
 	}
 	if b.Fallthrough != nil {

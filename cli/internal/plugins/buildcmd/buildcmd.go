@@ -85,5 +85,9 @@ func (bc *BuildCmd) WithPlugins() plugins.Plugins {
 			builders = append(builders, p)
 		}
 	}
+	builders = append(builders, &mainFile{
+		IO:      bc,
+		plugins: bc.Plugins,
+	})
 	return builders
 }

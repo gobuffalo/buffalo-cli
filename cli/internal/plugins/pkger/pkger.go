@@ -15,8 +15,20 @@ import (
 var _ plugins.Plugin = &Buffalo{}
 var _ plugprint.WithPlugins = &Buffalo{}
 
+const outPath = "pkged.go"
+
 type Buffalo struct {
+	OutPath string
 	Plugins func() plugins.Plugins
+}
+
+func (b *Buffalo) AfterBuild(ctx context.Context, args []string, err error) error {
+	p := b.OutPath
+	if len(p) == 0 {
+		p = outPath
+	}
+	os.RemoveAll(p)
+	return nil
 }
 
 type Decler interface {
@@ -44,11 +56,6 @@ func (b *Buffalo) Build(ctx context.Context, args []string) error {
 }
 
 func (b *Buffalo) Package(ctx context.Context, root string) error {
-	defer func() {
-		if err := recover(); err != nil {
-			os.RemoveAll("pkged.go")
-		}
-	}()
 	thar, err := there.Current()
 	if err != nil {
 		return err

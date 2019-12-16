@@ -36,7 +36,6 @@ func (Flect) Name() string {
 }
 
 func (fl *Flect) BuiltInit(ctx context.Context, args []string) error {
-	fmt.Println("loading inflections.json")
 	f, err := pkger.Open(filePath)
 	if err != nil {
 		return fmt.Errorf("failed to load inflections %w", err)

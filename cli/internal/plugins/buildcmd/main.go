@@ -4,15 +4,37 @@ import (
 	"context"
 	"fmt"
 	"path/filepath"
-	"strings"
-	"time"
 
-	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/build"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/gobuffalo/here/there"
-	"github.com/gobuffalo/meta"
 )
+
+func (bc *BuildCmd) beforeBuild(ctx context.Context, args []string) error {
+	builders := bc.WithPlugins()
+	for _, p := range builders {
+		if bb, ok := p.(BeforeBuilder); ok {
+			plugins.SetIO(bc, p)
+			if err := bb.BeforeBuild(ctx, args); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func (bc *BuildCmd) afterBuild(ctx context.Context, args []string, err error) error {
+	builders := bc.WithPlugins()
+	for _, p := range builders {
+		if bb, ok := p.(AfterBuilder); ok {
+			plugins.SetIO(bc, p)
+			if err := bb.AfterBuild(ctx, args, err); err != nil {
+				return err
+			}
+		}
+	}
+	return err
+}
 
 func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 	info, err := there.Current()
@@ -20,13 +42,24 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 		return err
 	}
 
-	opts := &build.Options{
-		App: meta.New(info.Root),
-	}
+	defer func() {
+		var err error
+		if e := recover(); e != nil {
+			var ok bool
+			err, ok = e.(error)
+			if !ok {
+				err = fmt.Errorf("%s", e)
+			}
+		}
+		bc.afterBuild(ctx, args, err)
+	}()
 
-	flags := bc.flagSet(opts)
-	if err = flags.Parse(args); err != nil {
+	flags := bc.flagSet()
+	if err := flags.Parse(args); err != nil {
 		return err
+	}
+	if bc.verbose {
+		bc.BuildFlags = append(bc.BuildFlags, "-v")
 	}
 
 	if bc.help {
@@ -49,18 +82,13 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 		return fmt.Errorf("unknown command %q", n)
 	}
 
-	builders := bc.WithPlugins()
-	for _, p := range builders {
+	for _, p := range plugs {
 		if bb, ok := p.(BeforeBuilder); ok {
 			plugins.SetIO(bc, p)
 			if err := bb.BeforeBuild(ctx, args); err != nil {
 				return err
 			}
 		}
-	}
-
-	if bc.verbose {
-		bc.BuildFlags = append(bc.BuildFlags, "-v")
 	}
 
 	if !bc.skipTemplateValidation {
@@ -87,35 +115,5 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 		}
 	}
 
-	version := time.Now().Format(time.RFC3339)
-	for _, p := range plugs {
-		bv, ok := p.(BuildVersioner)
-		if !ok {
-			continue
-		}
-		plugins.SetIO(bc, p)
-		s, err := bv.BuildVersion(ctx, info.Root)
-		if err != nil {
-			return err
-		}
-		if len(s) == 0 {
-			continue
-		}
-		version = strings.TrimSpace(s)
-	}
-	fmt.Println("version: ", version)
-
-	if err := bc.build(ctx); err != nil {
-		return err
-	}
-
-	for _, p := range builders {
-		if bb, ok := p.(AfterBuilder); ok {
-			plugins.SetIO(bc, p)
-			if err := bb.AfterBuild(ctx, args); err != nil {
-				return err
-			}
-		}
-	}
-	return nil
+	return bc.build(ctx) // go build ...
 }

@@ -2,22 +2,20 @@ package buildcmd
 
 import (
 	"io"
-	"io/ioutil"
 
-	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/build"
 	"github.com/spf13/pflag"
 )
 
 func (bc *BuildCmd) PrintFlags(w io.Writer) error {
-	flags := bc.flagSet(&build.Options{})
+	flags := bc.flagSet()
 	flags.SetOutput(w)
 	flags.PrintDefaults()
 	return nil
 }
 
-func (bc *BuildCmd) flagSet(opts *build.Options) *pflag.FlagSet {
+func (bc *BuildCmd) flagSet() *pflag.FlagSet {
 	flags := pflag.NewFlagSet(bc.String(), pflag.ContinueOnError)
-	flags.SetOutput(ioutil.Discard)
+	flags.SetOutput(bc.Stdout())
 
 	flags.BoolVar(&bc.skipTemplateValidation, "skip-template-validation", false, "skip validating templates")
 	flags.BoolVarP(&bc.help, "help", "h", false, "print this help")
@@ -26,7 +24,7 @@ func (bc *BuildCmd) flagSet(opts *build.Options) *pflag.FlagSet {
 
 	flags.StringVar(&bc.LDFlags, "ldflags", "", "set any ldflags to be passed to the go build")
 	flags.StringVar(&bc.Mod, "mod", "", "-mod flag for go build")
-	flags.StringVarP(&bc.Bin, "output", "o", opts.Bin, "set the name of the binary")
+	flags.StringVarP(&bc.Bin, "output", "o", bc.Bin, "set the name of the binary")
 	flags.StringVarP(&bc.Environment, "environment", "", "development", "set the environment for the binary")
 	flags.StringVarP(&bc.Tags, "tags", "t", "", "compile with specific build tags")
 

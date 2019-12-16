@@ -12,7 +12,6 @@ import (
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/git"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/golang"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/infocmd"
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/packr"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/pkger"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/plush"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/pop"
@@ -67,7 +66,7 @@ func New() (*Buffalo, error) {
 		},
 		&plush.Buffalo{},
 		&golang.Templates{},
-		&packr.Buffalo{},
+		// &packr.Buffalo{},
 		&pkger.Buffalo{
 			Plugins: pfn,
 		},
