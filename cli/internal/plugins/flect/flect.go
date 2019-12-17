@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"github.com/gobuffalo/flect"
+	"github.com/gobuffalo/here/there"
 	"github.com/markbates/pkger"
-	"github.com/markbates/pkger/here"
 	"github.com/markbates/pkger/parser"
 )
 
@@ -15,7 +15,7 @@ const filePath = "/inflections.json"
 type Flect struct{}
 
 func (f *Flect) PkgerDecls() (parser.Decls, error) {
-	info, err := here.Current()
+	info, err := there.Current()
 	if err != nil {
 		return nil, err
 	}

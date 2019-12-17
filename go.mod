@@ -10,7 +10,7 @@ require (
 	github.com/gobuffalo/buffalo-pop v1.23.1
 	github.com/gobuffalo/clara v0.10.1
 	github.com/gobuffalo/events v1.4.0
-	github.com/gobuffalo/flect v0.1.7
+	github.com/gobuffalo/flect v0.2.0
 	github.com/gobuffalo/genny v0.4.1
 	github.com/gobuffalo/here v0.6.0
 	github.com/gobuffalo/licenser v1.4.0
@@ -29,7 +29,7 @@ require (
 	github.com/markbates/haste v0.0.0-20191129201013-5d5b37040fba
 	github.com/markbates/jim v0.3.3
 	github.com/markbates/oncer v1.0.0
-	github.com/markbates/pkger v0.12.10
+	github.com/markbates/pkger v0.13.0
 	github.com/markbates/refresh v1.8.0
 	github.com/markbates/safe v1.0.1
 	github.com/sirupsen/logrus v1.4.2

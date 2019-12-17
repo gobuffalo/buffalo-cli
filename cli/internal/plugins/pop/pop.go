@@ -3,9 +3,9 @@ package pop
 import (
 	"context"
 
+	"github.com/gobuffalo/here/there"
 	"github.com/gobuffalo/pop"
 	"github.com/markbates/pkger"
-	"github.com/markbates/pkger/here"
 	"github.com/markbates/pkger/parser"
 )
 
@@ -14,7 +14,7 @@ const filePath = "/database.yml"
 type Pop struct{}
 
 func (p *Pop) PkgerDecls() (parser.Decls, error) {
-	info, err := here.Current()
+	info, err := there.Current()
 	if err != nil {
 		return nil, err
 	}
