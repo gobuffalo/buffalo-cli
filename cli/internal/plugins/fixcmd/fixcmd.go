@@ -18,7 +18,6 @@ var _ plugprint.Describer = &FixCmd{}
 var _ plugprint.Plugins = &FixCmd{}
 
 type FixCmd struct {
-	plugins.IO
 	Parent    plugins.Plugin
 	PluginsFn func() []plugins.Plugin
 }
@@ -55,7 +54,6 @@ func (fc *FixCmd) plugins(ctx context.Context, args []string) error {
 				continue
 			}
 
-			plugins.SetIO(fc, p)
 			fixers[p.Name()] = f
 		}
 
@@ -77,7 +75,6 @@ func (fc *FixCmd) plugins(ctx context.Context, args []string) error {
 			continue
 		}
 
-		plugins.SetIO(fc, p)
 		if err := f.Fix(ctx, args); err != nil {
 			return err
 		}
@@ -96,7 +93,8 @@ func (fc *FixCmd) Main(ctx context.Context, args []string) error {
 		return err
 	}
 
-	out := fc.Stdout()
+	ioe := plugins.CtxIO(ctx)
+	out := ioe.Stdout()
 
 	if help {
 		return plugprint.Print(out, fc)

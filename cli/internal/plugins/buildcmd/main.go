@@ -14,7 +14,6 @@ func (bc *BuildCmd) beforeBuild(ctx context.Context, args []string) error {
 	builders := bc.Plugins()
 	for _, p := range builders {
 		if bb, ok := p.(BeforeBuilder); ok {
-			plugins.SetIO(bc, p)
 			if err := bb.BeforeBuild(ctx, args); err != nil {
 				return err
 			}
@@ -27,7 +26,6 @@ func (bc *BuildCmd) afterBuild(ctx context.Context, args []string, err error) er
 	builders := bc.Plugins()
 	for _, p := range builders {
 		if bb, ok := p.(AfterBuilder); ok {
-			plugins.SetIO(bc, p)
 			if err := bb.AfterBuild(ctx, args, err); err != nil {
 				return err
 			}
@@ -45,8 +43,9 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 		bc.BuildFlags = append(bc.BuildFlags, "-v")
 	}
 
+	ioe := plugins.CtxIO(ctx)
 	if bc.help {
-		return plugprint.Print(bc.Stdout(), bc)
+		return plugprint.Print(ioe.Stdout(), bc)
 	}
 
 	info, err := there.Current()
@@ -84,7 +83,6 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 
 	for _, p := range plugs {
 		if bb, ok := p.(BeforeBuilder); ok {
-			plugins.SetIO(bc, p)
 			if err := bb.BeforeBuild(ctx, args); err != nil {
 				return err
 			}
@@ -97,7 +95,6 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 			if !ok {
 				continue
 			}
-			plugins.SetIO(bc, p)
 			if err := tv.ValidateTemplates(filepath.Join(info.Root, "templates")); err != nil {
 				return err
 			}
@@ -109,7 +106,6 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 		if !ok {
 			continue
 		}
-		plugins.SetIO(bc, p)
 		if err := pkg.Package(ctx, info.Root); err != nil {
 			return err
 		}

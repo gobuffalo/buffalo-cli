@@ -6,6 +6,8 @@ import (
 	"os/exec"
 	"runtime"
 	"strings"
+
+	"github.com/gobuffalo/buffalo-cli/plugins"
 )
 
 func (bc *BuildCmd) GoBuildArgs() []string {
@@ -49,10 +51,11 @@ func (bc *BuildCmd) GoBuildArgs() []string {
 }
 
 func (bc *BuildCmd) build(ctx context.Context) error {
+	ioe := plugins.CtxIO(ctx)
 	cmd := exec.CommandContext(ctx, "go", bc.GoBuildArgs()...)
-	cmd.Stdout = bc.Stdout()
-	cmd.Stderr = bc.Stderr()
-	cmd.Stdin = bc.Stdin()
-	fmt.Fprintln(bc.Stdout(), cmd.Args)
+	cmd.Stdout = ioe.Stdout()
+	cmd.Stderr = ioe.Stderr()
+	cmd.Stdin = ioe.Stdin()
+	fmt.Fprintln(ioe.Stdout(), cmd.Args)
 	return cmd.Run()
 }

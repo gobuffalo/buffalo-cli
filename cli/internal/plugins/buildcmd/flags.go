@@ -15,7 +15,6 @@ func (bc *BuildCmd) PrintFlags(w io.Writer) error {
 
 func (bc *BuildCmd) flagSet() *pflag.FlagSet {
 	flags := pflag.NewFlagSet(bc.String(), pflag.ContinueOnError)
-	flags.SetOutput(bc.Stdout())
 
 	flags.BoolVar(&bc.skipTemplateValidation, "skip-template-validation", false, "skip validating templates")
 	flags.BoolVarP(&bc.help, "help", "h", false, "print this help")

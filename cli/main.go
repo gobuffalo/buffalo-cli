@@ -22,11 +22,11 @@ func (b *Buffalo) Main(ctx context.Context, args []string) error {
 		}
 	}
 
+	ioe := plugins.CtxIO(ctx)
 	if len(args) == 0 || (len(flags.Args()) == 0 && help) {
-		return plugprint.Print(b.Stdout(), b)
+		return plugprint.Print(ioe.Stdout(), b)
 	}
 	if c, err := cmds.Find(args[0]); err == nil {
-		plugins.SetIO(b, c)
 		return c.Main(ctx, args[1:])
 	}
 

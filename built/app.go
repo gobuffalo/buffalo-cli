@@ -13,7 +13,6 @@ import (
 )
 
 type App struct {
-	plugins.IO
 	Plugger      plugprint.Plugins
 	BuildTime    string
 	BuildVersion string
@@ -30,10 +29,6 @@ func (b *App) Plugins() []plugins.Plugin {
 }
 
 func (b *App) Main(ctx context.Context, args []string) error {
-	if b.IO == nil {
-		b.IO = plugins.NewIO()
-	}
-
 	plugs := b.Plugins()
 
 	for _, p := range plugs {
@@ -72,10 +67,11 @@ func (b *App) Main(ctx context.Context, args []string) error {
 		return nil
 	}
 
+	ioe := plugins.CtxIO(ctx)
 	c := args[0]
 	switch c {
 	case "version":
-		fmt.Fprintln(b.Stdout(), b.BuildVersion)
+		fmt.Fprintln(ioe.Stdout(), b.BuildVersion)
 		return nil
 	}
 	if b.Fallthrough != nil {

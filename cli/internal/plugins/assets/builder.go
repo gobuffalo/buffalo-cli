@@ -35,7 +35,6 @@ func (b Builder) webpackBin() string {
 }
 
 type Builder struct {
-	plugins.IO
 	Environment string
 	// CleanAssets will remove the public/assets folder build compiling
 	CleanAssets bool
@@ -49,8 +48,9 @@ func (a *Builder) Build(ctx context.Context, args []string) error {
 	flags.StringVarP(&a.Environment, "environment", "", "development", "set the environment for the binary")
 	flags.Parse(args)
 
+	ioe := plugins.CtxIO(ctx)
 	if a.SkipAssets {
-		fmt.Fprintln(a.Stdout(), "skipping assets")
+		fmt.Fprintln(ioe.Stdout(), "skipping assets")
 		return nil
 	}
 

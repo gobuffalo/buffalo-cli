@@ -13,7 +13,6 @@ var _ plugprint.FlagPrinter = &BuildCmd{}
 var _ plugprint.Plugins = &BuildCmd{}
 
 type BuildCmd struct {
-	plugins.IO
 	PluginsFn func() []plugins.Plugin
 	// Mod is the -mod flag
 	Mod string
@@ -86,7 +85,6 @@ func (bc *BuildCmd) Plugins() []plugins.Plugin {
 		}
 	}
 	builders = append(builders, &mainFile{
-		IO:      bc,
 		plugins: bc.Plugins,
 	})
 	return builders

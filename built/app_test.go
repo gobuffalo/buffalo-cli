@@ -127,13 +127,12 @@ func Test_App_Version(t *testing.T) {
 	r := require.New(t)
 
 	app := &App{
-		IO:           plugins.NewIO(),
 		BuildVersion: "v1",
 	}
-	stdout := &bytes.Buffer{}
-	app.SetStdout(stdout)
-
 	ctx := context.Background()
+	stdout := &bytes.Buffer{}
+	ctx = plugins.WithStdout(ctx, stdout)
+
 	err := app.Main(ctx, []string{"version"})
 	r.NoError(err)
 

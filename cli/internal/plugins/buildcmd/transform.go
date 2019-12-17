@@ -24,7 +24,6 @@ import (
 const mainBuildFile = "main.build.go"
 
 type mainFile struct {
-	plugins.IO
 	plugins func() []plugins.Plugin
 }
 
@@ -53,7 +52,6 @@ func (bc *mainFile) Version(ctx context.Context, root string) (string, error) {
 		if !ok {
 			continue
 		}
-		plugins.SetIO(bc, p)
 		s, err := bv.BuildVersion(ctx, root)
 		if err != nil {
 			return "", err

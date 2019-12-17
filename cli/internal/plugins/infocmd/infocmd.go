@@ -22,7 +22,6 @@ var _ plugprint.FlagPrinter = &InfoCmd{}
 var _ plugprint.Plugins = &InfoCmd{}
 
 type InfoCmd struct {
-	plugins.IO
 	Parent    plugins.Plugin
 	PluginsFn func() []plugins.Plugin
 	help      bool
@@ -92,12 +91,14 @@ func (ic *InfoCmd) flagSet() *pflag.FlagSet {
 // are run first, then any plugins that implement plugins.Informer
 // will be run in order at the end.
 func (ic *InfoCmd) Main(ctx context.Context, args []string) error {
-	out := ic.Stdout()
 
 	flags := ic.flagSet()
 	if err := flags.Parse(args); err != nil {
 		return err
 	}
+
+	ioe := plugins.CtxIO(ctx)
+	out := ioe.Stdout()
 
 	if ic.help {
 		return plugprint.Print(out, ic)

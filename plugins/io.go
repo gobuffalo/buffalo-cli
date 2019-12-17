@@ -1,29 +1,15 @@
 package plugins
 
 import (
+	"context"
 	"io"
 	"os"
 )
 
 type IO interface {
 	StderrGetter
-	StderrSetter
-	StdinGetter
-	StdinSetter
-	StdoutGetter
-	StdoutSetter
-}
-
-type IOGetters interface {
-	StderrGetter
 	StdinGetter
 	StdoutGetter
-}
-
-type IOSetters interface {
-	StderrSetter
-	StdinSetter
-	StdoutSetter
 }
 
 type StdinGetter interface {
@@ -38,18 +24,6 @@ type StderrGetter interface {
 	Stderr() io.Writer
 }
 
-type StdinSetter interface {
-	SetStdin(r io.Reader)
-}
-
-type StdoutSetter interface {
-	SetStdout(w io.Writer)
-}
-
-type StderrSetter interface {
-	SetStderr(w io.Writer)
-}
-
 func NewIO() IO {
 	return &stdIO{
 		stdin:  os.Stdin,
@@ -59,52 +33,87 @@ func NewIO() IO {
 }
 
 type stdIO struct {
+	context.Context
 	stdin  io.Reader
 	stdout io.Writer
 	stderr io.Writer
 }
 
-func (i *stdIO) Stdin() io.Reader {
-	if i.stdin == nil {
-		return os.Stdin
+func (i stdIO) Stdin() io.Reader {
+	if i.stdin != nil {
+		return i.stdin
 	}
-	return i.stdin
-}
-
-func (i *stdIO) Stdout() io.Writer {
-	if i.stdout == nil {
-		return os.Stdout
+	if x, ok := i.Context.(StdinGetter); ok {
+		return x.Stdin()
 	}
-	return i.stdout
+	return os.Stdin
 }
 
-func (i *stdIO) Stderr() io.Writer {
-	if i.stderr == nil {
-		return os.Stderr
+func (i stdIO) Stdout() io.Writer {
+	if i.stdout != nil {
+		return i.stdout
 	}
-	return i.stderr
-}
-
-func (i *stdIO) SetStdin(r io.Reader) {
-	i.stdin = r
-}
-
-func (i *stdIO) SetStdout(w io.Writer) {
-	i.stdout = w
-}
-
-func (i *stdIO) SetStderr(w io.Writer) {
-	i.stderr = w
-}
-
-func SetIO(in IO, p Plugin) {
-	if stdin, ok := p.(StdinSetter); ok {
-		stdin.SetStdin(in.Stdin())
+	if x, ok := i.Context.(StdoutGetter); ok {
+		return x.Stdout()
 	}
-	if stdout, ok := p.(StdoutSetter); ok {
-		stdout.SetStdout(in.Stdout())
+	return os.Stdout
+}
+
+func (i stdIO) Stderr() io.Writer {
+	if i.stderr != nil {
+		return i.stderr
 	}
-	if stderr, ok := p.(StderrSetter); ok {
-		stderr.SetStderr(in.Stderr())
+	if x, ok := i.Context.(StderrGetter); ok {
+		return x.Stderr()
+	}
+	return os.Stderr
+}
+
+func CtxIO(ctx context.Context) IO {
+	if i, ok := ctx.(IO); ok {
+		return i
+	}
+	if i, ok := ctx.Value("io").(IO); ok {
+		return i
+	}
+	return NewIO()
+}
+
+func WithIO(ctx context.Context, i IO) context.Context {
+	return stdIO{
+		Context: ctx,
+		stdout:  i.Stdout(),
+		stderr:  i.Stderr(),
+		stdin:   i.Stdin(),
+	}
+}
+
+func WithStdin(ctx context.Context, stdin io.Reader) context.Context {
+	i := CtxIO(ctx)
+	return stdIO{
+		Context: ctx,
+		stdout:  i.Stdout(),
+		stderr:  i.Stderr(),
+		stdin:   stdin,
+	}
+}
+
+func WithStdout(ctx context.Context, stdout io.Writer) context.Context {
+	i := CtxIO(ctx)
+	return stdIO{
+		Context: ctx,
+		stdout:  stdout,
+		stderr:  i.Stderr(),
+		stdin:   i.Stdin(),
+	}
+}
+
+func WithStderr(ctx context.Context, stderr io.Writer) context.Context {
+	i := CtxIO(ctx)
+	return stdIO{
+		Context: ctx,
+		stdout:  i.Stdout(),
+		stderr:  stderr,
+		stdin:   i.Stdin(),
 	}
 }

@@ -5,12 +5,9 @@ import (
 	"context"
 	"os/exec"
 	"strings"
-
-	"github.com/gobuffalo/buffalo-cli/plugins"
 )
 
 type Buffalo struct {
-	plugins.IO
 }
 
 func (b *Buffalo) BuildVersion(ctx context.Context, root string) (string, error) {

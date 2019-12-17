@@ -19,7 +19,6 @@ var _ plugprint.Describer = &VersionCmd{}
 var _ plugprint.FlagPrinter = &VersionCmd{}
 
 type VersionCmd struct {
-	plugins.IO
 	Parent plugins.Plugin
 	help   bool
 	json   bool
@@ -57,12 +56,14 @@ func (vc *VersionCmd) flagSet() *pflag.FlagSet {
 }
 
 func (vc *VersionCmd) Main(ctx context.Context, args []string) error {
+
 	flags := vc.flagSet()
 	if err := flags.Parse(args); err != nil {
 		return err
 	}
 
-	out := vc.Stdout()
+	ioe := plugins.CtxIO(ctx)
+	out := ioe.Stdout()
 	if vc.help {
 		return plugprint.Print(out, vc)
 	}
