@@ -25,10 +25,11 @@ type StderrGetter interface {
 }
 
 func NewIO() IO {
-	return &stdIO{
-		stdin:  os.Stdin,
-		stdout: os.Stdout,
-		stderr: os.Stderr,
+	return stdIO{
+		Context: context.Background(),
+		stdin:   os.Stdin,
+		stdout:  os.Stdout,
+		stderr:  os.Stderr,
 	}
 }
 
