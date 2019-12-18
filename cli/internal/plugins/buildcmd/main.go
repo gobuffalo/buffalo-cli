@@ -11,7 +11,7 @@ import (
 )
 
 func (bc *BuildCmd) beforeBuild(ctx context.Context, args []string) error {
-	builders := bc.Plugins()
+	builders := bc.WithPlugins()
 	for _, p := range builders {
 		if bb, ok := p.(BeforeBuilder); ok {
 			if err := bb.BeforeBuild(ctx, args); err != nil {
@@ -23,7 +23,7 @@ func (bc *BuildCmd) beforeBuild(ctx context.Context, args []string) error {
 }
 
 func (bc *BuildCmd) afterBuild(ctx context.Context, args []string, err error) error {
-	builders := bc.Plugins()
+	builders := bc.WithPlugins()
 	for _, p := range builders {
 		if bb, ok := p.(AfterBuilder); ok {
 			if err := bb.AfterBuild(ctx, args, err); err != nil {
@@ -65,7 +65,7 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 		bc.afterBuild(ctx, args, err)
 	}()
 
-	plugs := bc.Plugins()
+	plugs := bc.WithPlugins()
 
 	if len(flags.Args()) > 0 {
 		n := flags.Args()[0]

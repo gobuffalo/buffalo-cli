@@ -28,16 +28,16 @@ var _ plugprint.Plugins = &Buffalo{}
 
 // Buffalo represents the `buffalo` cli.
 type Buffalo struct {
-	Plugs []plugins.Plugin
+	plugins.Plugins
 }
 
 func New() (*Buffalo, error) {
 	b := &Buffalo{}
 
 	pfn := func() []plugins.Plugin {
-		return b.Plugs
+		return b.Plugins
 	}
-	b.Plugs = append(b.Plugs,
+	b.Plugins = append(b.Plugins,
 		&flect.Flect{},
 		&pop.Pop{},
 		&assets.Builder{},
@@ -69,21 +69,21 @@ func New() (*Buffalo, error) {
 	}
 
 	if _, err := os.Stat(filepath.Join(info.Root, ".git")); err == nil {
-		b.Plugs = append(b.Plugs, &git.Buffalo{})
+		b.Plugins = append(b.Plugins, &git.Buffalo{})
 	}
 	if _, err := os.Stat(filepath.Join(info.Root, ".bzr")); err == nil {
-		b.Plugs = append(b.Plugs, &bzr.Buffalo{})
+		b.Plugins = append(b.Plugins, &bzr.Buffalo{})
 	}
 	return b, nil
 }
 
-func (b Buffalo) Plugins() []plugins.Plugin {
-	return b.Plugs
+func (b Buffalo) WithPlugins() []plugins.Plugin {
+	return b.Plugins
 }
 
 func (b Buffalo) SubCommands() []plugins.Plugin {
 	var plugs []plugins.Plugin
-	for _, p := range b.Plugins() {
+	for _, p := range b.WithPlugins() {
 		if _, ok := p.(Command); ok {
 			plugs = append(plugs, p)
 		}

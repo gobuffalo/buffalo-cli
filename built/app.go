@@ -20,16 +20,16 @@ type App struct {
 	OriginalMain func()
 }
 
-func (b *App) Plugins() []plugins.Plugin {
+func (b *App) WithPlugins() []plugins.Plugin {
 	var plugs []plugins.Plugin
 	if b.Plugger == nil {
 		return plugs
 	}
-	return b.Plugger.Plugins()
+	return b.Plugger.WithPlugins()
 }
 
 func (b *App) Main(ctx context.Context, args []string) error {
-	plugs := b.Plugins()
+	plugs := b.WithPlugins()
 
 	for _, p := range plugs {
 		bl, ok := p.(Initer)

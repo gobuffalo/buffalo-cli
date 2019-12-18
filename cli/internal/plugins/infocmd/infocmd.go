@@ -53,7 +53,7 @@ func (i InfoCmd) String() string {
 // Info runs all of the plugins that implement the
 // `Informer` interface in order.
 func (ic *InfoCmd) plugins(ctx context.Context, args []string) error {
-	for _, p := range ic.Plugins() {
+	for _, p := range ic.WithPlugins() {
 		i, ok := p.(Informer)
 		if !ok {
 			continue
@@ -65,7 +65,7 @@ func (ic *InfoCmd) plugins(ctx context.Context, args []string) error {
 	return nil
 }
 
-func (ic *InfoCmd) Plugins() []plugins.Plugin {
+func (ic *InfoCmd) WithPlugins() []plugins.Plugin {
 	var plugs []plugins.Plugin
 
 	if ic.PluginsFn == nil {

@@ -16,7 +16,7 @@ func (b *Buffalo) Main(ctx context.Context, args []string) error {
 	flags.Parse(args)
 
 	var cmds Commands
-	for _, p := range b.Plugins() {
+	for _, p := range b.WithPlugins() {
 		if c, ok := p.(Command); ok {
 			cmds = append(cmds, c)
 		}

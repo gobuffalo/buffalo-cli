@@ -53,7 +53,7 @@ func (BuildCmd) Description() string {
 
 func (bc *BuildCmd) SubCommands() []plugins.Plugin {
 	var plugs []plugins.Plugin
-	for _, p := range bc.Plugins() {
+	for _, p := range bc.WithPlugins() {
 		if _, ok := p.(Builder); ok {
 			plugs = append(plugs, p)
 		}
@@ -61,7 +61,7 @@ func (bc *BuildCmd) SubCommands() []plugins.Plugin {
 	return plugs
 }
 
-func (bc *BuildCmd) Plugins() []plugins.Plugin {
+func (bc *BuildCmd) WithPlugins() []plugins.Plugin {
 	var plugs []plugins.Plugin
 	if bc.PluginsFn != nil {
 		plugs = bc.PluginsFn()
@@ -85,7 +85,7 @@ func (bc *BuildCmd) Plugins() []plugins.Plugin {
 		}
 	}
 	builders = append(builders, &mainFile{
-		plugins: bc.Plugins,
+		plugins: bc.WithPlugins,
 	})
 	return builders
 }

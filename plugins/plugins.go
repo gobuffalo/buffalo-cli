@@ -10,7 +10,7 @@ type Plugin interface {
 
 type Plugins []Plugin
 
-func (p Plugins) Plugins() []Plugin {
+func (p Plugins) WithPlugins() []Plugin {
 	return []Plugin(p)
 }
 

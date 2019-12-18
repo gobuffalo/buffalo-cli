@@ -76,7 +76,7 @@ func printPlugins(w io.Writer, main plugins.Plugin) error {
 		return nil
 	}
 
-	plugs := wp.Plugins()
+	plugs := wp.WithPlugins()
 	if len(plugs) == 0 {
 		return nil
 	}
