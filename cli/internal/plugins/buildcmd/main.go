@@ -44,26 +44,11 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 	}
 
 	ioe := plugins.CtxIO(ctx)
-	if bc.help {
-		return plugprint.Print(ioe.Stdout(), bc)
-	}
 
 	info, err := there.Current()
 	if err != nil {
 		return err
 	}
-
-	defer func() {
-		var err error
-		if e := recover(); e != nil {
-			var ok bool
-			err, ok = e.(error)
-			if !ok {
-				err = fmt.Errorf("%s", e)
-			}
-		}
-		bc.afterBuild(ctx, args, err)
-	}()
 
 	plugs := bc.WithPlugins()
 
@@ -80,6 +65,22 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 		}
 		return fmt.Errorf("unknown command %q", n)
 	}
+
+	if bc.help {
+		return plugprint.Print(ioe.Stdout(), bc)
+	}
+
+	defer func() {
+		var err error
+		if e := recover(); e != nil {
+			var ok bool
+			err, ok = e.(error)
+			if !ok {
+				err = fmt.Errorf("%s", e)
+			}
+		}
+		bc.afterBuild(ctx, args, err)
+	}()
 
 	for _, p := range plugs {
 		if bb, ok := p.(BeforeBuilder); ok {

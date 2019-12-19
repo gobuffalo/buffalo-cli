@@ -22,9 +22,13 @@ type Builder struct {
 	// CleanAssets will remove the public/assets folder build compiling
 	Clean bool
 	// places ./public/assets into ./bin/assets.zip.
-	Extract bool
-	Skip    bool
-	Tool    string // default is npm
+	Extract   bool
+	ExtractTo string // ./bin
+
+	AssetPaths []string
+
+	Skip bool
+	Tool string // default is npm
 }
 
 func (a Builder) Name() string {

@@ -3,6 +3,7 @@ package assets
 import (
 	"io"
 	"io/ioutil"
+	"path/filepath"
 
 	"github.com/spf13/pflag"
 )
@@ -23,6 +24,7 @@ func (a *Builder) Flags() *pflag.FlagSet {
 	flags.BoolVarP(&a.Extract, "extract-assets", "e", false, "extract the assets and put them in a distinct archive")
 	flags.BoolVarP(&a.Skip, "skip-assets", "k", false, "skip running webpack and building assets")
 
+	flags.StringVar(&a.ExtractTo, "extract-assets-to", filepath.Join("bin", "assets.zip"), "extract the assets and put them in a distinct archive")
 	return flags
 }
 

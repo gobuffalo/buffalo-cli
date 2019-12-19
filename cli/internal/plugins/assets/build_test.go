@@ -3,47 +3,27 @@ package assets
 import (
 	"bytes"
 	"context"
-	"encoding/json"
-	"io/ioutil"
 	"os"
-	"path/filepath"
 	"testing"
 
 	"github.com/gobuffalo/buffalo-cli/plugins"
-	"github.com/gobuffalo/here"
 	"github.com/gobuffalo/here/there"
 	"github.com/stretchr/testify/require"
 )
 
-func tempApp(t *testing.T, scripts map[string]string) here.Info {
-	t.Helper()
-	dir, err := ioutil.TempDir("", "")
-	if err != nil {
-		t.Fatal(err)
-	}
+func Test_Builder_Build_Help(t *testing.T) {
+	r := require.New(t)
 
-	f, err := os.Create(filepath.Join(dir, "package.json"))
-	if err != nil {
-		t.Fatal(err)
-	}
+	bc := &Builder{}
+	ctx := context.Background()
 
-	sc := packageJSON{
-		Scripts: scripts,
-	}
+	stdout := &bytes.Buffer{}
+	ctx = plugins.WithStdout(ctx, stdout)
+	args := []string{"-h"}
 
-	err = json.NewEncoder(f).Encode(sc)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if err := f.Close(); err != nil {
-		t.Fatal(err)
-	}
-
-	return here.Info{
-		Root: dir,
-		Dir:  dir,
-	}
+	err := bc.Build(ctx, args)
+	r.NoError(err)
+	r.Contains(stdout.String(), bc.Description())
 }
 
 func Test_Builder_Build(t *testing.T) {

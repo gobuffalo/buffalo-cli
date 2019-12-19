@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/gobuffalo/here"
 	"github.com/gobuffalo/here/there"
 )
@@ -25,9 +26,16 @@ func (a *Builder) BeforeBuild(ctx context.Context, args []string) error {
 // Build implements the buildcmd.Builder interface to so it can be run
 // as `buffalo build assets`.
 func (bc *Builder) Build(ctx context.Context, args []string) error {
+	var help bool
 	flags := bc.Flags()
 	flags.StringVarP(&bc.Environment, "environment", "", "development", "set the environment for the binary")
+	flags.BoolVarP(&help, "help", "h", false, "print this help")
 	flags.Parse(args)
+
+	if help {
+		ioe := plugins.CtxIO(ctx)
+		return plugprint.Print(ioe.Stdout(), bc)
+	}
 
 	if bc.Skip {
 		return nil
@@ -53,7 +61,7 @@ func (bc *Builder) Build(ctx context.Context, args []string) error {
 		return err
 	}
 
-	if err := bc.archive(ctx, args); err != nil {
+	if err := bc.archive(info.Root, ctx, args); err != nil {
 		return err
 	}
 

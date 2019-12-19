@@ -7,30 +7,22 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-
-	"github.com/gobuffalo/here/there"
-	"github.com/gobuffalo/meta/v2"
 )
 
-func (a *Builder) archive(ctx context.Context, args []string) error {
+func (a *Builder) archive(root string, ctx context.Context, args []string) error {
 	if !a.Extract {
 		return nil
 	}
 
-	info, err := there.Current()
-	if err != nil {
-		return err
+	outputDir := a.ExtractTo
+	if len(a.ExtractTo) == 0 {
+		outputDir = filepath.Dir(filepath.Join(root, "bin"))
 	}
-
-	app, err := meta.New(info)
-	if err != nil {
-		return err
-	}
-
-	outputDir := filepath.Dir(filepath.Join(app.Info.Root, app.Bin))
+	outputDir = filepath.Join(root, outputDir)
 	os.MkdirAll(outputDir, 0755)
+
 	target := filepath.Join(outputDir, "assets.zip")
-	source := filepath.Join(app.Info.Root, "public", "assets")
+	source := filepath.Join(root, "public", "assets")
 
 	f, err := os.Create(target)
 	if err != nil {
