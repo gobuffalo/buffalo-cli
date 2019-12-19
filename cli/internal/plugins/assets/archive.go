@@ -2,17 +2,29 @@ package assets
 
 import (
 	"archive/zip"
+	"context"
 	"io"
 	"os"
 	"path/filepath"
 	"strings"
 
+	"github.com/gobuffalo/here/there"
 	"github.com/gobuffalo/meta/v2"
 )
 
-func (a *Builder) archive(app *meta.App) error {
+func (a *Builder) archive(ctx context.Context, args []string) error {
 	if !a.ExtractAssets {
 		return nil
+	}
+
+	info, err := there.Current()
+	if err != nil {
+		return err
+	}
+
+	app, err := meta.New(info)
+	if err != nil {
+		return err
 	}
 
 	outputDir := filepath.Dir(filepath.Join(app.Info.Root, app.Bin))
