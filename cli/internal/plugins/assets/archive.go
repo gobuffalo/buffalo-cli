@@ -13,7 +13,7 @@ import (
 )
 
 func (a *Builder) archive(ctx context.Context, args []string) error {
-	if !a.ExtractAssets {
+	if !a.Extract {
 		return nil
 	}
 

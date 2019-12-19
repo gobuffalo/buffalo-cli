@@ -20,10 +20,11 @@ var _ plugprint.FlagPrinter = &Builder{}
 type Builder struct {
 	Environment string
 	// CleanAssets will remove the public/assets folder build compiling
-	CleanAssets bool
+	Clean bool
 	// places ./public/assets into ./bin/assets.zip.
-	ExtractAssets bool
-	SkipAssets    bool
+	Extract bool
+	Skip    bool
+	Tool    string // default is npm
 }
 
 func (a Builder) Name() string {

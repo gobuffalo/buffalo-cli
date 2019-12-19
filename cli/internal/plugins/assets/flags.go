@@ -19,9 +19,9 @@ func (a *Builder) BuildFlags() []*pflag.Flag {
 func (a *Builder) Flags() *pflag.FlagSet {
 	flags := pflag.NewFlagSet(a.String(), pflag.ContinueOnError)
 	flags.SetOutput(ioutil.Discard)
-	flags.BoolVar(&a.CleanAssets, "clean-assets", false, "will delete public/assets before calling webpack")
-	flags.BoolVarP(&a.ExtractAssets, "extract-assets", "e", false, "extract the assets and put them in a distinct archive")
-	flags.BoolVarP(&a.SkipAssets, "skip-assets", "k", false, "skip running webpack and building assets")
+	flags.BoolVar(&a.Clean, "clean-assets", false, "will delete public/assets before calling webpack")
+	flags.BoolVarP(&a.Extract, "extract-assets", "e", false, "extract the assets and put them in a distinct archive")
+	flags.BoolVarP(&a.Skip, "skip-assets", "k", false, "skip running webpack and building assets")
 
 	return flags
 }

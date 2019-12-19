@@ -10,7 +10,6 @@ import (
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/here"
 	"github.com/gobuffalo/here/there"
-	"github.com/gobuffalo/meta/v2"
 )
 
 type packageJSON struct {
@@ -30,7 +29,7 @@ func (bc *Builder) Build(ctx context.Context, args []string) error {
 	flags.StringVarP(&bc.Environment, "environment", "", "development", "set the environment for the binary")
 	flags.Parse(args)
 
-	if bc.SkipAssets {
+	if bc.Skip {
 		return nil
 	}
 
@@ -45,12 +44,7 @@ func (bc *Builder) Build(ctx context.Context, args []string) error {
 		info = i
 	}
 
-	app, err := meta.New(info)
-	if err != nil {
-		return err
-	}
-
-	c, err := bc.Cmd(app, ctx, args)
+	c, err := bc.Cmd(info.Root, ctx, args)
 	if err != nil {
 		return err
 	}
@@ -66,9 +60,9 @@ func (bc *Builder) Build(ctx context.Context, args []string) error {
 	return nil
 }
 
-func (bc *Builder) Cmd(app *meta.App, ctx context.Context, args []string) (*exec.Cmd, error) {
-	tool := "yarnpkg"
-	if !app.With["yarn"] {
+func (bc *Builder) Cmd(root string, ctx context.Context, args []string) (*exec.Cmd, error) {
+	tool := bc.Tool
+	if len(tool) == 0 {
 		tool = "npm"
 	}
 
@@ -77,7 +71,7 @@ func (bc *Builder) Cmd(app *meta.App, ctx context.Context, args []string) (*exec
 
 	// parse package.json looking for a custom build script
 	scripts := packageJSON{}
-	if pf, err := os.Open(filepath.Join(app.Info.Root, "package.json")); err == nil {
+	if pf, err := os.Open(filepath.Join(root, "package.json")); err == nil {
 		if err = json.NewDecoder(pf).Decode(&scripts); err != nil {
 			return nil, err
 		}
