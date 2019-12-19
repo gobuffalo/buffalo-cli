@@ -55,6 +55,8 @@ func (v AdminWidgetsResource) List(c buffalo.Context) error {
     return c.Render(http.StatusOK, r.HTML("/admin/widgets/index.plush.html"))
   }).Wants("json", func (c buffalo.Context) error {
     return c.Render(200, r.JSON(widgets))
+  }).Wants("xml", func (c buffalo.Context) error {
+    return c.Render(200, r.XML(widgets))
   }).Respond(c)
 }
 
@@ -81,6 +83,8 @@ func (v AdminWidgetsResource) Show(c buffalo.Context) error {
     return c.Render(http.StatusOK, r.HTML("/admin/widgets/show.plush.html"))
   }).Wants("json", func (c buffalo.Context) error {
     return c.Render(200, r.JSON(widget))
+  }).Wants("xml", func (c buffalo.Context) error {
+    return c.Render(200, r.XML(widget))
   }).Respond(c)
 }
 
@@ -127,6 +131,8 @@ func (v AdminWidgetsResource) Create(c buffalo.Context) error {
       return c.Render(http.StatusUnprocessableEntity, r.HTML("/admin/widgets/new.plush.html"))
     }).Wants("json", func (c buffalo.Context) error {
       return c.Error(http.StatusUnprocessableEntity, r.JSON(widget))
+    }).Wants("xml", func (c buffalo.Context) error {
+      return c.Error(http.StatusUnprocessableEntity, r.XML(widget))
     }).Respond(c)
   }
 
@@ -138,6 +144,8 @@ func (v AdminWidgetsResource) Create(c buffalo.Context) error {
     return c.Redirect(http.StatusSeeOther, "/admin/widgets/%v", widget.ID)
   }).Wants("json", func (c buffalo.Context) error {
     return c.Render(http.StatusCreated, r.JSON(widget))
+  }).Wants("xml", func (c buffalo.Context) error {
+    return c.Render(http.StatusCreated, r.XML(widget))
   }).Respond(c)
 }
 
@@ -199,7 +207,9 @@ func (v AdminWidgetsResource) Update(c buffalo.Context) error {
       return c.Render(http.StatusUnprocessableEntity, r.HTML("/admin/widgets/edit.plush.html"))
     }).Wants("json", func (c buffalo.Context) error {
       return c.Error(http.StatusUnprocessableEntity, r.JSON(widget))
-    }).Respond(c) 
+    }).Wants("xml", func (c buffalo.Context) error {
+      return c.Error(http.StatusUnprocessableEntity, r.XML(widget))
+    }).Respond(c)
   }
 
   return responder.Wants("html", func (c buffalo.Context) error {
@@ -210,7 +220,9 @@ func (v AdminWidgetsResource) Update(c buffalo.Context) error {
     return c.Redirect(http.StatusSeeOther, "/admin/widgets/%v", widget.ID)
   }).Wants("json", func (c buffalo.Context) error {
     return c.Render(http.StatusOK, r.JSON(widget))
-  }).Respond(c) 
+  }).Wants("xml", func (c buffalo.Context) error {
+    return c.Render(http.StatusOK, r.XML(widget))
+  }).Respond(c)
 }
 
 // Destroy deletes a Widget from the DB. This function is mapped
@@ -242,5 +254,7 @@ func (v AdminWidgetsResource) Destroy(c buffalo.Context) error {
     return c.Redirect(http.StatusSeeOther, "/admin/widgets")
   }).Wants("json", func (c buffalo.Context) error {
     return c.Render(http.StatusOK, r.JSON(widget))
-  }).Respond(c) 
+  }).Wants("xml", func (c buffalo.Context) error {
+    return c.Render(http.StatusOK, r.XML(widget))
+  }).Respond(c)
 }

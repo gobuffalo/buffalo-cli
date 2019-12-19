@@ -55,6 +55,8 @@ func (v {{.opts.Name.Resource}}Resource) List(c buffalo.Context) error {
     return c.Render(http.StatusOK, r.HTML("/{{.opts.Name.File.Pluralize}}/index.plush.html"))
   }).Wants("json", func (c buffalo.Context) error {
     return c.Render(200, r.JSON({{.opts.Model.VarCasePlural}}))
+  }).Wants("xml", func (c buffalo.Context) error {
+    return c.Render(200, r.XML({{.opts.Model.VarCasePlural}}))
   }).Respond(c)
 }
 
@@ -81,6 +83,8 @@ func (v {{.opts.Name.Resource}}Resource) Show(c buffalo.Context) error {
     return c.Render(http.StatusOK, r.HTML("/{{.opts.Name.File.Pluralize}}/show.plush.html"))
   }).Wants("json", func (c buffalo.Context) error {
     return c.Render(200, r.JSON({{.opts.Model.VarCaseSingle}}))
+  }).Wants("xml", func (c buffalo.Context) error {
+    return c.Render(200, r.XML({{.opts.Model.VarCaseSingle}}))
   }).Respond(c)
 }
 
@@ -129,6 +133,8 @@ func (v {{.opts.Name.Resource}}Resource) Create(c buffalo.Context) error {
       return c.Render(http.StatusUnprocessableEntity, r.HTML("/{{.opts.Name.File.Pluralize}}/new.plush.html"))
     }).Wants("json", func (c buffalo.Context) error {
       return c.Error(http.StatusUnprocessableEntity, r.JSON({{.opts.Model.VarCaseSingle}}))
+    }).Wants("xml", func (c buffalo.Context) error {
+      return c.Error(http.StatusUnprocessableEntity, r.XML({{.opts.Model.VarCaseSingle}}))
     }).Respond(c)
   }
 
@@ -140,6 +146,8 @@ func (v {{.opts.Name.Resource}}Resource) Create(c buffalo.Context) error {
     return c.Redirect(http.StatusSeeOther, "/{{.opts.Name.URL}}/%v", {{.opts.Model.VarCaseSingle}}.ID)
   }).Wants("json", func (c buffalo.Context) error {
     return c.Render(http.StatusCreated, r.JSON({{.opts.Model.VarCaseSingle}}))
+  }).Wants("xml", func (c buffalo.Context) error {
+    return c.Render(http.StatusCreated, r.XML({{.opts.Model.VarCaseSingle}}))
   }).Respond(c)
 }
 
@@ -203,7 +211,9 @@ func (v {{.opts.Name.Resource}}Resource) Update(c buffalo.Context) error {
       return c.Render(http.StatusUnprocessableEntity, r.HTML("/{{.opts.Name.File.Pluralize}}/edit.plush.html"))
     }).Wants("json", func (c buffalo.Context) error {
       return c.Error(http.StatusUnprocessableEntity, r.JSON({{.opts.Model.VarCaseSingle}}))
-    }).Respond(c) 
+    }).Wants("xml", func (c buffalo.Context) error {
+      return c.Error(http.StatusUnprocessableEntity, r.XML({{.opts.Model.VarCaseSingle}}))
+    }).Respond(c)
   }
 
   return responder.Wants("html", func (c buffalo.Context) error {
@@ -214,7 +224,9 @@ func (v {{.opts.Name.Resource}}Resource) Update(c buffalo.Context) error {
     return c.Redirect(http.StatusSeeOther, "/{{.opts.Name.URL}}/%v", {{.opts.Model.VarCaseSingle}}.ID)
   }).Wants("json", func (c buffalo.Context) error {
     return c.Render(http.StatusOK, r.JSON({{.opts.Model.VarCaseSingle}}))
-  }).Respond(c) 
+  }).Wants("xml", func (c buffalo.Context) error {
+    return c.Render(http.StatusOK, r.XML({{.opts.Model.VarCaseSingle}}))
+  }).Respond(c)
 }
 
 // Destroy deletes a {{.opts.Model.Proper}} from the DB. This function is mapped
@@ -245,6 +257,8 @@ func (v {{.opts.Name.Resource}}Resource) Destroy(c buffalo.Context) error {
     // Redirect to the index page
     return c.Redirect(http.StatusSeeOther, "/{{.opts.Name.URL}}")
   }).Wants("json", func (c buffalo.Context) error {
-    return c.Render(http.StatusOK, r.JSON(widget))
-  }).Respond(c) 
+    return c.Render(http.StatusOK, r.JSON({{.opts.Model.VarCaseSingle}}))
+  }).Wants("xml", func (c buffalo.Context) error {
+    return c.Render(http.StatusOK, r.XML({{.opts.Model.VarCaseSingle}}))
+  }).Respond(c)
 }
