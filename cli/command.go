@@ -18,22 +18,6 @@ type Command interface {
 // Commands is a slice of type `Command`
 type Commands []Command
 
-// Len is the number of elements in the collection.
-func (commands Commands) Len() int {
-	return len(commands)
-}
-
-// Less reports whether the element with
-// index i should sort before the element with index j.
-func (commands Commands) Less(i int, j int) bool {
-	return commands[i].Name() < commands[j].Name()
-}
-
-// Swap swaps the elements with indexes i and j.
-func (commands Commands) Swap(i int, j int) {
-	commands[i], commands[j] = commands[j], commands[i]
-}
-
 // Find will try and find the given command in the slice
 // by it's `Aliases()` or `Name()` method.
 // If it can't be found an error is returned.

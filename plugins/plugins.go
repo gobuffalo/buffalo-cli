@@ -16,8 +16,12 @@ func (p Plugins) WithPlugins() []Plugin {
 
 var _ Plugin = Background("")
 
-type Background string
+func Background(name string) Plugin {
+	return background(name)
+}
 
-func (b Background) Name() string {
+type background string
+
+func (b background) Name() string {
 	return string(b)
 }
