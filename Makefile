@@ -4,3 +4,7 @@ install:
 
 test:
 	go test -short -cover ./...
+
+cov:
+	go test -short -coverprofile cover.out ./...
+	go tool cover -html cover.out

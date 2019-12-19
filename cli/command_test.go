@@ -7,24 +7,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type cp struct {
-	aliases []string
-	args    []string
-}
-
-func (c *cp) Name() string {
-	return "commander"
-}
-
-func (c *cp) Main(ctx context.Context, args []string) error {
-	c.args = args
-	return nil
-}
-
-func (c *cp) Aliases() []string {
-	return c.aliases
-}
-
 func Test_Commands_Find(t *testing.T) {
 	r := require.New(t)
 
