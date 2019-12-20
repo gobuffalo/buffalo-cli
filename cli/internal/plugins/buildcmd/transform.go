@@ -20,25 +20,39 @@ import (
 	"time"
 
 	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/gobuffalo/here"
 	"golang.org/x/tools/go/ast/astutil"
 )
 
 const mainBuildFile = "main.build.go"
 
+var _ AfterBuilder = &mainFile{}
+var _ BeforeBuilder = &mainFile{}
+var _ plugins.Plugin = &mainFile{}
+var _ plugins.PluginNeeder = &mainFile{}
+var _ plugins.PluginScoper = &mainFile{}
+var _ plugprint.Hider = &mainFile{}
+
 type mainFile struct {
-	PluginsFn func() []plugins.Plugin
+	pluginsFn plugins.PluginFeeder
 }
+
+func (bc *mainFile) WithPlugins(f plugins.PluginFeeder) {
+	bc.pluginsFn = f
+}
+
+func (mainFile) HidePlugin() {}
 
 func (mainFile) Name() string {
 	return "main"
 }
 
 func (bc *mainFile) ScopedPlugins() []plugins.Plugin {
-	if bc.PluginsFn == nil {
+	if bc.pluginsFn == nil {
 		return nil
 	}
-	return bc.PluginsFn()
+	return bc.pluginsFn()
 }
 
 func (bc *mainFile) Version(ctx context.Context, root string) (string, error) {

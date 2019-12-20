@@ -91,9 +91,9 @@ func Test_BuildCmd_ScopedPlugins(t *testing.T) {
 	plugs := bc.ScopedPlugins()
 	r.NotEqual(all, plugs)
 
-	for _, p := range plugs {
-		r.NotEqual(p.Name(), "foo")
-		r.NotEqual(p.Name(), "bar")
-	}
+	ep := plugins.Plugins(plugs).ExposedPlugins()
+
+	tot := len(all) - 2
+	r.Equal(tot, len(ep))
 
 }

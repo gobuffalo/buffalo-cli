@@ -26,7 +26,7 @@ func Test_mainFile_Version(t *testing.T) {
 	r.NoError(err)
 	r.Contains(s, `"time":`)
 
-	bc.PluginsFn = func() []plugins.Plugin {
+	bc.pluginsFn = func() []plugins.Plugin {
 		return plugins.Plugins{
 			&buildVersioner{version: "v1"},
 		}
@@ -53,7 +53,7 @@ func Test_mainFile_generateNewMain(t *testing.T) {
 		},
 	}
 	bc := &mainFile{
-		PluginsFn: plugs.ScopedPlugins,
+		pluginsFn: plugs.ScopedPlugins,
 	}
 
 	ctx := context.Background()
@@ -83,7 +83,7 @@ func Test_mainFile_generateNewMain_noCli(t *testing.T) {
 		},
 	}
 	bc := &mainFile{
-		PluginsFn: plugs.ScopedPlugins,
+		pluginsFn: plugs.ScopedPlugins,
 	}
 
 	ctx := context.Background()

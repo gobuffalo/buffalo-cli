@@ -94,7 +94,7 @@ func (bc *BuildCmd) ScopedPlugins() []plugins.Plugin {
 		}
 	}
 	builders = append(builders, &mainFile{
-		PluginsFn: bc.ScopedPlugins,
+		pluginsFn: bc.ScopedPlugins,
 	})
 	return builders
 }

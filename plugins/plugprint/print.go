@@ -86,6 +86,9 @@ func printPlugins(w io.Writer, main plugins.Plugin) error {
 	fmt.Fprintf(tw, "\t%s\t%s\t%s\n", "Type", "Name", "Description")
 	fmt.Fprintf(tw, "\t%s\t%s\t%s\n", "----", "----", "-----------")
 	for _, p := range plugs {
+		if _, ok := p.(Hider); ok {
+			continue
+		}
 		fmt.Fprintf(tw, "\t%T\t%s\t%s\n", p, p.Name(), desc(p))
 	}
 
