@@ -17,9 +17,9 @@ import (
 )
 
 var _ plugins.Plugin = &InfoCmd{}
+var _ plugins.PluginScoper = &InfoCmd{}
 var _ plugprint.Describer = &InfoCmd{}
 var _ plugprint.FlagPrinter = &InfoCmd{}
-var _ plugprint.Plugins = &InfoCmd{}
 
 type InfoCmd struct {
 	Parent    plugins.Plugin
@@ -53,7 +53,7 @@ func (i InfoCmd) String() string {
 // Info runs all of the plugins that implement the
 // `Informer` interface in order.
 func (ic *InfoCmd) plugins(ctx context.Context, args []string) error {
-	for _, p := range ic.WithPlugins() {
+	for _, p := range ic.ScopedPlugins() {
 		i, ok := p.(Informer)
 		if !ok {
 			continue
@@ -65,7 +65,7 @@ func (ic *InfoCmd) plugins(ctx context.Context, args []string) error {
 	return nil
 }
 
-func (ic *InfoCmd) WithPlugins() []plugins.Plugin {
+func (ic *InfoCmd) ScopedPlugins() []plugins.Plugin {
 	var plugs []plugins.Plugin
 
 	if ic.PluginsFn == nil {

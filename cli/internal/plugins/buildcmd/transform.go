@@ -34,7 +34,7 @@ func (mainFile) Name() string {
 	return "main"
 }
 
-func (bc *mainFile) WithPlugins() []plugins.Plugin {
+func (bc *mainFile) ScopedPlugins() []plugins.Plugin {
 	if bc.PluginsFn == nil {
 		return nil
 	}
@@ -53,7 +53,7 @@ func (bc *mainFile) Version(ctx context.Context, root string) (string, error) {
 		return string(b), nil
 	}
 
-	for _, p := range bc.WithPlugins() {
+	for _, p := range bc.ScopedPlugins() {
 		bv, ok := p.(BuildVersioner)
 		if !ok {
 			continue
@@ -74,7 +74,7 @@ func (bc *mainFile) generateNewMain(ctx context.Context, info here.Info, version
 	fmt.Println("version --> ", version)
 
 	var imports []string
-	for _, p := range bc.WithPlugins() {
+	for _, p := range bc.ScopedPlugins() {
 		bi, ok := p.(BuildImporter)
 		if !ok {
 			continue

@@ -8,28 +8,27 @@ import (
 
 	"github.com/gobuffalo/buffalo-cli/internal/garlic"
 	"github.com/gobuffalo/buffalo-cli/plugins"
-	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/gobuffalo/buffalo/runtime"
 )
 
 type App struct {
-	Plugger      plugprint.Plugins
+	Plugger      plugins.PluginScoper
 	BuildTime    string
 	BuildVersion string
 	Fallthrough  func(ctx context.Context, args []string) error
 	OriginalMain func()
 }
 
-func (b *App) WithPlugins() []plugins.Plugin {
+func (b *App) ScopedPlugins() []plugins.Plugin {
 	var plugs []plugins.Plugin
 	if b.Plugger == nil {
 		return plugs
 	}
-	return b.Plugger.WithPlugins()
+	return b.Plugger.ScopedPlugins()
 }
 
 func (b *App) Main(ctx context.Context, args []string) error {
-	plugs := b.WithPlugins()
+	plugs := b.ScopedPlugins()
 
 	for _, p := range plugs {
 		bl, ok := p.(Initer)

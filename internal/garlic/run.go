@@ -9,6 +9,10 @@ import (
 	"github.com/markbates/jim"
 )
 
+type tasker interface {
+	Task() *jim.Task
+}
+
 func Run(ctx context.Context, args []string) error {
 	info, err := here.Dir(".")
 	if err != nil {
@@ -28,12 +32,11 @@ func Run(ctx context.Context, args []string) error {
 	if err == nil {
 		return nil
 	}
-	type tasker interface {
-		Task() *jim.Task
-	}
+
 	if _, ok := err.(tasker); !ok {
 		return err
 	}
+
 	b, err := cli.New()
 	if err != nil {
 		return err

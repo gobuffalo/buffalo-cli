@@ -6,10 +6,10 @@ import (
 )
 
 var _ plugins.Plugin = &BuildCmd{}
+var _ plugins.PluginScoper = &BuildCmd{}
 var _ plugprint.Aliases = &BuildCmd{}
 var _ plugprint.Describer = &BuildCmd{}
 var _ plugprint.FlagPrinter = &BuildCmd{}
-var _ plugprint.Plugins = &BuildCmd{}
 var _ plugprint.SubCommander = &BuildCmd{}
 
 type BuildCmd struct {
@@ -51,7 +51,7 @@ func (BuildCmd) Description() string {
 
 func (bc *BuildCmd) SubCommands() []plugins.Plugin {
 	var plugs []plugins.Plugin
-	for _, p := range bc.WithPlugins() {
+	for _, p := range bc.ScopedPlugins() {
 		if _, ok := p.(Builder); ok {
 			plugs = append(plugs, p)
 		}
@@ -59,7 +59,7 @@ func (bc *BuildCmd) SubCommands() []plugins.Plugin {
 	return plugs
 }
 
-func (bc *BuildCmd) WithPlugins() []plugins.Plugin {
+func (bc *BuildCmd) ScopedPlugins() []plugins.Plugin {
 	var plugs []plugins.Plugin
 	if bc.PluginsFn != nil {
 		plugs = bc.PluginsFn()
@@ -89,7 +89,7 @@ func (bc *BuildCmd) WithPlugins() []plugins.Plugin {
 		}
 	}
 	builders = append(builders, &mainFile{
-		PluginsFn: bc.WithPlugins,
+		PluginsFn: bc.ScopedPlugins,
 	})
 	return builders
 }

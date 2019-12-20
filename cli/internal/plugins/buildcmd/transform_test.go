@@ -53,7 +53,7 @@ func Test_mainFile_generateNewMain(t *testing.T) {
 		},
 	}
 	bc := &mainFile{
-		PluginsFn: plugs.WithPlugins,
+		PluginsFn: plugs.ScopedPlugins,
 	}
 
 	ctx := context.Background()
@@ -83,7 +83,7 @@ func Test_mainFile_generateNewMain_noCli(t *testing.T) {
 		},
 	}
 	bc := &mainFile{
-		PluginsFn: plugs.WithPlugins,
+		PluginsFn: plugs.ScopedPlugins,
 	}
 
 	ctx := context.Background()

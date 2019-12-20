@@ -71,12 +71,12 @@ func Print(w io.Writer, main plugins.Plugin) error {
 }
 
 func printPlugins(w io.Writer, main plugins.Plugin) error {
-	wp, ok := main.(Plugins)
+	wp, ok := main.(plugins.PluginScoper)
 	if !ok {
 		return nil
 	}
 
-	plugs := wp.WithPlugins()
+	plugs := wp.ScopedPlugins()
 	if len(plugs) == 0 {
 		return nil
 	}

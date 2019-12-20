@@ -10,7 +10,7 @@ type Plugin interface {
 
 type Plugins []Plugin
 
-func (p Plugins) WithPlugins() []Plugin {
+func (p Plugins) ScopedPlugins() []Plugin {
 	return []Plugin(p)
 }
 
@@ -24,4 +24,8 @@ type background string
 
 func (b background) Name() string {
 	return string(b)
+}
+
+type PluginScoper interface {
+	ScopedPlugins() []Plugin
 }

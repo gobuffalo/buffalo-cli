@@ -61,7 +61,7 @@ func Test_BuildCmd_Subcommands(t *testing.T) {
 	}
 
 	bc := &BuildCmd{
-		PluginsFn: all.WithPlugins,
+		PluginsFn: all.ScopedPlugins,
 	}
 
 	plugs := bc.SubCommands()
@@ -69,7 +69,7 @@ func Test_BuildCmd_Subcommands(t *testing.T) {
 	r.Equal(b, plugs[0])
 }
 
-func Test_BuildCmd_WithPlugins(t *testing.T) {
+func Test_BuildCmd_ScopedPlugins(t *testing.T) {
 	r := require.New(t)
 
 	all := plugins.Plugins{
@@ -85,10 +85,10 @@ func Test_BuildCmd_WithPlugins(t *testing.T) {
 	}
 
 	bc := &BuildCmd{
-		PluginsFn: all.WithPlugins,
+		PluginsFn: all.ScopedPlugins,
 	}
 
-	plugs := bc.WithPlugins()
+	plugs := bc.ScopedPlugins()
 	r.NotEqual(all, plugs)
 
 	for _, p := range plugs {

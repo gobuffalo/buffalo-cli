@@ -27,7 +27,7 @@ func (bc *BuildCmd) Flags() *pflag.FlagSet {
 	flags.StringVarP(&bc.Environment, "environment", "", "development", "set the environment for the binary")
 	flags.StringVarP(&bc.Tags, "tags", "t", "", "compile with specific build tags")
 
-	plugs := bc.WithPlugins()
+	plugs := bc.ScopedPlugins()
 
 	for _, p := range plugs {
 		switch t := p.(type) {

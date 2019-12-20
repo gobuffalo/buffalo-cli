@@ -5,14 +5,13 @@ import (
 	"os"
 
 	"github.com/gobuffalo/buffalo-cli/plugins"
-	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/gobuffalo/here"
 	"github.com/markbates/pkger/cmd/pkger/cmds"
 	"github.com/markbates/pkger/parser"
 )
 
 var _ plugins.Plugin = &Buffalo{}
-var _ plugprint.Plugins = &Buffalo{}
+var _ plugins.PluginScoper = &Buffalo{}
 
 const outPath = "pkged.go"
 
@@ -34,7 +33,7 @@ type Decler interface {
 	PkgerDecls() (parser.Decls, error)
 }
 
-func (b *Buffalo) WithPlugins() []plugins.Plugin {
+func (b *Buffalo) ScopedPlugins() []plugins.Plugin {
 	var plugs []plugins.Plugin
 	if b.PluginsFn != nil {
 		plugs = b.PluginsFn()
@@ -65,7 +64,7 @@ func (b *Buffalo) Package(ctx context.Context, root string) error {
 		return err
 	}
 
-	for _, p := range b.WithPlugins() {
+	for _, p := range b.ScopedPlugins() {
 		pd, ok := p.(Decler)
 		if !ok {
 			continue

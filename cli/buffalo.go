@@ -23,9 +23,9 @@ import (
 )
 
 var _ plugins.Plugin = &Buffalo{}
-var _ plugprint.SubCommander = &Buffalo{}
+var _ plugins.PluginScoper = &Buffalo{}
 var _ plugprint.Describer = &Buffalo{}
-var _ plugprint.Plugins = &Buffalo{}
+var _ plugprint.SubCommander = &Buffalo{}
 
 // Buffalo represents the `buffalo` cli.
 type Buffalo struct {
@@ -79,13 +79,13 @@ func New() (*Buffalo, error) {
 	return b, nil
 }
 
-func (b Buffalo) WithPlugins() []plugins.Plugin {
+func (b Buffalo) ScopedPlugins() []plugins.Plugin {
 	return b.Plugins
 }
 
 func (b Buffalo) SubCommands() []plugins.Plugin {
 	var plugs []plugins.Plugin
-	for _, p := range b.WithPlugins() {
+	for _, p := range b.ScopedPlugins() {
 		if _, ok := p.(Command); ok {
 			plugs = append(plugs, p)
 		}
