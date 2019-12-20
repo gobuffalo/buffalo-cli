@@ -61,7 +61,7 @@ func Test_BuildCmd_Subcommands(t *testing.T) {
 	}
 
 	bc := &BuildCmd{
-		PluginsFn: all.ScopedPlugins,
+		pluginsFn: all.ScopedPlugins,
 	}
 
 	plugs := bc.SubCommands()
@@ -85,7 +85,7 @@ func Test_BuildCmd_ScopedPlugins(t *testing.T) {
 	}
 
 	bc := &BuildCmd{
-		PluginsFn: all.ScopedPlugins,
+		pluginsFn: all.ScopedPlugins,
 	}
 
 	plugs := bc.ScopedPlugins()

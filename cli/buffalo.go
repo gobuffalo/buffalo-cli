@@ -43,26 +43,14 @@ func New() (*Buffalo, error) {
 		&pop.Buffalo{},
 		&grifts.Buffalo{},
 		&assets.Builder{},
-		&buildcmd.BuildCmd{
-			PluginsFn: pfn,
-		},
-		&fixcmd.FixCmd{
-			Parent:    b,
-			PluginsFn: pfn,
-		},
-		&infocmd.InfoCmd{
-			Parent:    b,
-			PluginsFn: pfn,
-		},
-		&versioncmd.VersionCmd{
-			Parent: b,
-		},
+		&buildcmd.BuildCmd{},
+		&fixcmd.FixCmd{},
+		&infocmd.InfoCmd{},
+		&versioncmd.VersionCmd{},
 		&plush.Buffalo{},
 		&golang.Templates{},
 		// &packr.Buffalo{},
-		&pkger.Buffalo{
-			PluginsFn: pfn,
-		},
+		&pkger.Buffalo{},
 	)
 
 	info, err := here.Current()
@@ -75,6 +63,17 @@ func New() (*Buffalo, error) {
 	}
 	if _, err := os.Stat(filepath.Join(info.Root, ".bzr")); err == nil {
 		b.Plugins = append(b.Plugins, &bzr.Buffalo{})
+	}
+
+	pfn = func() []plugins.Plugin {
+		return b.Plugins
+	}
+	for _, b := range b.Plugins {
+		f, ok := b.(plugins.PluginNeeder)
+		if !ok {
+			continue
+		}
+		f.WithPlugins(pfn)
 	}
 	return b, nil
 }

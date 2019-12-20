@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"strings"
 
 	bufcli "github.com/gobuffalo/buffalo-cli"
 	"github.com/gobuffalo/buffalo-cli/plugins"
@@ -20,9 +19,8 @@ var _ plugprint.FlagPrinter = &VersionCmd{}
 
 // VersionCmd is responsible for the `buffalo version` command.
 type VersionCmd struct {
-	Parent plugins.Plugin
-	help   bool
-	json   bool
+	help bool
+	json bool
 }
 
 func (vc *VersionCmd) PrintFlags(w io.Writer) error {
@@ -41,11 +39,7 @@ func (vc *VersionCmd) Description() string {
 }
 
 func (i VersionCmd) String() string {
-	s := i.Name()
-	if i.Parent != nil {
-		s = fmt.Sprintf("%s %s", i.Parent.Name(), i.Name())
-	}
-	return strings.TrimSpace(s)
+	return i.Name()
 }
 
 func (vc *VersionCmd) flagSet() *pflag.FlagSet {

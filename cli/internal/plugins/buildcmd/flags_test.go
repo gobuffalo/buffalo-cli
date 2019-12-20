@@ -29,7 +29,7 @@ func Test_BuildCmd_Flags(t *testing.T) {
 	var plugs plugins.Plugins
 
 	bc := &BuildCmd{
-		PluginsFn: func() []plugins.Plugin {
+		pluginsFn: func() []plugins.Plugin {
 			return plugs
 		},
 	}

@@ -4,20 +4,27 @@ import (
 	"context"
 	"os"
 
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/here"
 	"github.com/markbates/pkger/cmd/pkger/cmds"
 	"github.com/markbates/pkger/parser"
 )
 
+var _ buildcmd.AfterBuilder = &Buffalo{}
 var _ plugins.Plugin = &Buffalo{}
+var _ plugins.PluginNeeder = &Buffalo{}
 var _ plugins.PluginScoper = &Buffalo{}
 
 const outPath = "pkged.go"
 
 type Buffalo struct {
 	OutPath   string
-	PluginsFn func() []plugins.Plugin
+	pluginsFn plugins.PluginFeeder
+}
+
+func (b *Buffalo) WithPlugins(f plugins.PluginFeeder) {
+	b.pluginsFn = f
 }
 
 func (b *Buffalo) AfterBuild(ctx context.Context, args []string, err error) error {
@@ -35,8 +42,8 @@ type Decler interface {
 
 func (b *Buffalo) ScopedPlugins() []plugins.Plugin {
 	var plugs []plugins.Plugin
-	if b.PluginsFn != nil {
-		plugs = b.PluginsFn()
+	if b.pluginsFn != nil {
+		plugs = b.pluginsFn()
 	}
 
 	var builders []plugins.Plugin

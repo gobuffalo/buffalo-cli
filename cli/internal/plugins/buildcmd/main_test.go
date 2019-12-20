@@ -37,7 +37,7 @@ func Test_BuildCmd_Main_SubCommand(t *testing.T) {
 	plugs := plugins.Plugins{p}
 
 	bc := &BuildCmd{
-		PluginsFn: plugs.ScopedPlugins,
+		pluginsFn: plugs.ScopedPlugins,
 	}
 
 	ctx := context.Background()
@@ -59,7 +59,7 @@ func Test_BuildCmd_Main_SubCommand_err(t *testing.T) {
 	plugs := plugins.Plugins{p}
 
 	bc := &BuildCmd{
-		PluginsFn: plugs.ScopedPlugins,
+		pluginsFn: plugs.ScopedPlugins,
 	}
 
 	ctx := context.Background()
@@ -80,7 +80,7 @@ func Test_BuildCmd_Main_ValidateTemplates(t *testing.T) {
 	plugs := plugins.Plugins{p}
 
 	bc := &BuildCmd{
-		PluginsFn: plugs.ScopedPlugins,
+		pluginsFn: plugs.ScopedPlugins,
 	}
 
 	ctx := context.Background()
@@ -102,7 +102,7 @@ func Test_BuildCmd_Main_ValidateTemplates_err(t *testing.T) {
 	plugs := plugins.Plugins{p}
 
 	bc := &BuildCmd{
-		PluginsFn: plugs.ScopedPlugins,
+		pluginsFn: plugs.ScopedPlugins,
 	}
 
 	ctx := context.Background()
@@ -123,7 +123,7 @@ func Test_BuildCmd_Main_BeforeBuilders(t *testing.T) {
 	plugs := plugins.Plugins{p}
 
 	bc := &BuildCmd{
-		PluginsFn: plugs.ScopedPlugins,
+		pluginsFn: plugs.ScopedPlugins,
 	}
 
 	ctx := context.Background()
@@ -144,7 +144,7 @@ func Test_BuildCmd_Main_BeforeBuilders_err(t *testing.T) {
 	plugs := plugins.Plugins{p}
 
 	bc := &BuildCmd{
-		PluginsFn: plugs.ScopedPlugins,
+		pluginsFn: plugs.ScopedPlugins,
 	}
 
 	ctx := context.Background()
@@ -165,7 +165,7 @@ func Test_BuildCmd_Main_AfterBuilders(t *testing.T) {
 	plugs := plugins.Plugins{p}
 
 	bc := &BuildCmd{
-		PluginsFn: plugs.ScopedPlugins,
+		pluginsFn: plugs.ScopedPlugins,
 	}
 
 	ctx := context.Background()
@@ -187,7 +187,7 @@ func Test_BuildCmd_Main_AfterBuilders_err(t *testing.T) {
 	plugs := plugins.Plugins{a, b}
 
 	bc := &BuildCmd{
-		PluginsFn: plugs.ScopedPlugins,
+		pluginsFn: plugs.ScopedPlugins,
 	}
 
 	ctx := context.Background()

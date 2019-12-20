@@ -29,3 +29,9 @@ func (b background) Name() string {
 type PluginScoper interface {
 	ScopedPlugins() []Plugin
 }
+
+type PluginFeeder func() []Plugin
+
+type PluginNeeder interface {
+	WithPlugins(PluginFeeder)
+}

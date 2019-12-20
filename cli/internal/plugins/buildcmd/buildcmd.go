@@ -6,6 +6,7 @@ import (
 )
 
 var _ plugins.Plugin = &BuildCmd{}
+var _ plugins.PluginNeeder = &BuildCmd{}
 var _ plugins.PluginScoper = &BuildCmd{}
 var _ plugprint.Aliases = &BuildCmd{}
 var _ plugprint.Describer = &BuildCmd{}
@@ -13,7 +14,7 @@ var _ plugprint.FlagPrinter = &BuildCmd{}
 var _ plugprint.SubCommander = &BuildCmd{}
 
 type BuildCmd struct {
-	PluginsFn func() []plugins.Plugin
+	pluginsFn plugins.PluginFeeder
 	// Mod is the -mod flag
 	Mod string
 	// Static sets the following flags for the final `go build` command:
@@ -31,6 +32,10 @@ type BuildCmd struct {
 	help                   bool
 	skipTemplateValidation bool
 	verbose                bool
+}
+
+func (b *BuildCmd) WithPlugins(f plugins.PluginFeeder) {
+	b.pluginsFn = f
 }
 
 func (*BuildCmd) Aliases() []string {
@@ -61,8 +66,8 @@ func (bc *BuildCmd) SubCommands() []plugins.Plugin {
 
 func (bc *BuildCmd) ScopedPlugins() []plugins.Plugin {
 	var plugs []plugins.Plugin
-	if bc.PluginsFn != nil {
-		plugs = bc.PluginsFn()
+	if bc.pluginsFn != nil {
+		plugs = bc.pluginsFn()
 	}
 
 	var builders []plugins.Plugin

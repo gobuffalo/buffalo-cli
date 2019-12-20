@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
-	"strings"
 
 	"github.com/gobuffalo/buffalo-cli/internal/v1/cmd/fix"
 	"github.com/gobuffalo/buffalo-cli/plugins"
@@ -13,13 +12,17 @@ import (
 )
 
 var _ plugins.Plugin = &FixCmd{}
+var _ plugins.PluginNeeder = &FixCmd{}
 var _ plugins.PluginScoper = &FixCmd{}
 var _ plugprint.Describer = &FixCmd{}
 var _ plugprint.SubCommander = &FixCmd{}
 
 type FixCmd struct {
-	Parent    plugins.Plugin
-	PluginsFn func() []plugins.Plugin
+	pluginsFn plugins.PluginFeeder
+}
+
+func (fc *FixCmd) WithPlugins(f plugins.PluginFeeder) {
+	fc.pluginsFn = f
 }
 
 func (fc *FixCmd) Name() string {
@@ -31,11 +34,7 @@ func (fc *FixCmd) Description() string {
 }
 
 func (f FixCmd) String() string {
-	s := f.Name()
-	if f.Parent != nil {
-		s = fmt.Sprintf("%s %s", f.Parent.Name(), f.Name())
-	}
-	return strings.TrimSpace(s)
+	return f.Name()
 }
 
 // Fix runs any Fixers that are in the Plugins.
@@ -116,8 +115,8 @@ func (fc *FixCmd) SubCommands() []plugins.Plugin {
 
 func (fc *FixCmd) ScopedPlugins() []plugins.Plugin {
 	var plugs []plugins.Plugin
-	if fc.PluginsFn != nil {
-		for _, p := range fc.PluginsFn() {
+	if fc.pluginsFn != nil {
+		for _, p := range fc.pluginsFn() {
 			if _, ok := p.(Fixer); ok {
 				plugs = append(plugs, p)
 			}

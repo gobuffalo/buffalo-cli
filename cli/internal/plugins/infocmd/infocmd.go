@@ -2,10 +2,8 @@ package infocmd
 
 import (
 	"context"
-	"fmt"
 	"io"
 	"io/ioutil"
-	"strings"
 	"time"
 
 	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/info"
@@ -17,14 +15,18 @@ import (
 )
 
 var _ plugins.Plugin = &InfoCmd{}
+var _ plugins.PluginNeeder = &InfoCmd{}
 var _ plugins.PluginScoper = &InfoCmd{}
 var _ plugprint.Describer = &InfoCmd{}
 var _ plugprint.FlagPrinter = &InfoCmd{}
 
 type InfoCmd struct {
-	Parent    plugins.Plugin
-	PluginsFn func() []plugins.Plugin
+	pluginsFn plugins.PluginFeeder
 	help      bool
+}
+
+func (ic *InfoCmd) WithPlugins(f plugins.PluginFeeder) {
+	ic.pluginsFn = f
 }
 
 func (ic *InfoCmd) PrintFlags(w io.Writer) error {
@@ -43,11 +45,7 @@ func (ic *InfoCmd) Description() string {
 }
 
 func (i InfoCmd) String() string {
-	s := i.Name()
-	if i.Parent != nil {
-		s = fmt.Sprintf("%s %s", i.Parent.Name(), i.Name())
-	}
-	return strings.TrimSpace(s)
+	return i.Name()
 }
 
 // Info runs all of the plugins that implement the
@@ -68,10 +66,10 @@ func (ic *InfoCmd) plugins(ctx context.Context, args []string) error {
 func (ic *InfoCmd) ScopedPlugins() []plugins.Plugin {
 	var plugs []plugins.Plugin
 
-	if ic.PluginsFn == nil {
+	if ic.pluginsFn == nil {
 		return plugs
 	}
-	for _, p := range ic.PluginsFn() {
+	for _, p := range ic.pluginsFn() {
 		if i, ok := p.(Informer); ok {
 			plugs = append(plugs, i)
 		}
