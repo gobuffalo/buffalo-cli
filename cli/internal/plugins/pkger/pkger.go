@@ -6,7 +6,7 @@ import (
 
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
-	"github.com/gobuffalo/here/there"
+	"github.com/gobuffalo/here"
 	"github.com/markbates/pkger/cmd/pkger/cmds"
 	"github.com/markbates/pkger/parser"
 )
@@ -55,7 +55,7 @@ func (b *Buffalo) Build(ctx context.Context, args []string) error {
 }
 
 func (b *Buffalo) Package(ctx context.Context, root string) error {
-	info, err := there.Current()
+	info, err := here.Current()
 	if err != nil {
 		return err
 	}

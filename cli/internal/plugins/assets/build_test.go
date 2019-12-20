@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/gobuffalo/buffalo-cli/plugins"
-	"github.com/gobuffalo/here/there"
+	"github.com/gobuffalo/here"
 	"github.com/stretchr/testify/require"
 )
 
@@ -132,7 +132,7 @@ func Test_Builder_Cmd_Webpack_Fallthrough(t *testing.T) {
 	ctx := context.Background()
 	args := []string{}
 
-	info, err := there.Current()
+	info, err := here.Current()
 	r.NoError(err)
 
 	c, err := bc.Cmd(info.Root, ctx, args)

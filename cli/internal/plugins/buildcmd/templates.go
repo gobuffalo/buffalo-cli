@@ -8,14 +8,13 @@ import (
 	"log"
 	"os"
 
-	appcli "coke/cli"
+  {{if .WithFallthrough -}}
+	appcli "{{.Info.Module.Path}}/cli"
+	{{end -}}
 
-	// import all application packages
-	_ "coke/actions"
-	_ "coke/grifts"
-	_ "coke/models"
-
-	// etc...
+	{{range $imp := .Imports -}}
+	_ "{{$imp}}"
+	{{end -}}
 
 	"github.com/gobuffalo/buffalo-cli/built"
 	"github.com/gobuffalo/buffalo-cli/cli"
@@ -32,7 +31,11 @@ func main() {
 			Plugger:      cb,
 			BuildTime:    {{.BuildTime}},
 			BuildVersion: {{.BuildVersion}},
+		  {{if .WithFallthrough -}}
 			Fallthrough:  appcli.Buffalo,
+			{{else -}}
+			Fallthrough:  cb.Main,
+	    {{end -}}
 			OriginalMain: originalMain,
 		}
 

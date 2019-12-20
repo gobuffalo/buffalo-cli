@@ -7,10 +7,10 @@ import (
 
 var _ plugins.Plugin = &BuildCmd{}
 var _ plugprint.Aliases = &BuildCmd{}
-var _ plugprint.SubCommander = &BuildCmd{}
 var _ plugprint.Describer = &BuildCmd{}
 var _ plugprint.FlagPrinter = &BuildCmd{}
 var _ plugprint.Plugins = &BuildCmd{}
+var _ plugprint.SubCommander = &BuildCmd{}
 
 type BuildCmd struct {
 	PluginsFn func() []plugins.Plugin
@@ -28,9 +28,7 @@ type BuildCmd struct {
 	BuildFlags             []string
 	Tags                   string
 	Bin                    string
-	dryRun                 bool
 	help                   bool
-	skipAssets             bool
 	skipTemplateValidation bool
 	verbose                bool
 }
@@ -82,10 +80,16 @@ func (bc *BuildCmd) WithPlugins() []plugins.Plugin {
 			builders = append(builders, p)
 		case Packager:
 			builders = append(builders, p)
+		case BuildFlagger:
+			builders = append(builders, p)
+		case BuildPflagger:
+			builders = append(builders, p)
+		case BuildImporter:
+			builders = append(builders, p)
 		}
 	}
 	builders = append(builders, &mainFile{
-		plugins: bc.WithPlugins,
+		PluginsFn: bc.WithPlugins,
 	})
 	return builders
 }

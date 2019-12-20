@@ -11,6 +11,7 @@ import (
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/flect"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/git"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/golang"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/grifts"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/infocmd"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/pkger"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/plush"
@@ -18,7 +19,7 @@ import (
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/versioncmd"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
-	"github.com/gobuffalo/here/there"
+	"github.com/gobuffalo/here"
 )
 
 var _ plugins.Plugin = &Buffalo{}
@@ -39,7 +40,8 @@ func New() (*Buffalo, error) {
 	}
 	b.Plugins = append(b.Plugins,
 		&flect.Flect{},
-		&pop.Pop{},
+		&pop.Buffalo{},
+		&grifts.Buffalo{},
 		&assets.Builder{},
 		&buildcmd.BuildCmd{
 			PluginsFn: pfn,
@@ -63,7 +65,7 @@ func New() (*Buffalo, error) {
 		},
 	)
 
-	info, err := there.Current()
+	info, err := here.Current()
 	if err != nil {
 		return nil, err
 	}

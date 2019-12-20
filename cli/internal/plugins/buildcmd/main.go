@@ -7,7 +7,7 @@ import (
 
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
-	"github.com/gobuffalo/here/there"
+	"github.com/gobuffalo/here"
 )
 
 func (bc *BuildCmd) beforeBuild(ctx context.Context, args []string) error {
@@ -35,7 +35,7 @@ func (bc *BuildCmd) afterBuild(ctx context.Context, args []string, err error) er
 }
 
 func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
-	flags := bc.flagSet()
+	flags := bc.Flags()
 	if err := flags.Parse(args); err != nil {
 		return err
 	}
@@ -45,7 +45,7 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 
 	ioe := plugins.CtxIO(ctx)
 
-	info, err := there.Current()
+	info, err := here.Current()
 	if err != nil {
 		return err
 	}
@@ -82,12 +82,8 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 		bc.afterBuild(ctx, args, err)
 	}()
 
-	for _, p := range plugs {
-		if bb, ok := p.(BeforeBuilder); ok {
-			if err := bb.BeforeBuild(ctx, args); err != nil {
-				return err
-			}
-		}
+	if err := bc.beforeBuild(ctx, args); err != nil {
+		return err
 	}
 
 	if !bc.skipTemplateValidation {

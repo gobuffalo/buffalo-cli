@@ -8,8 +8,12 @@ import (
 	"go/parser"
 	"go/printer"
 	"go/token"
+	"io"
 	"os"
+	"os/exec"
+	"path"
 	"path/filepath"
+	"sort"
 	"strconv"
 	"strings"
 	"text/template"
@@ -17,18 +21,24 @@ import (
 
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/here"
-	"github.com/gobuffalo/here/there"
 	"golang.org/x/tools/go/ast/astutil"
 )
 
 const mainBuildFile = "main.build.go"
 
 type mainFile struct {
-	plugins func() []plugins.Plugin
+	PluginsFn func() []plugins.Plugin
 }
 
 func (mainFile) Name() string {
 	return "main"
+}
+
+func (bc *mainFile) WithPlugins() []plugins.Plugin {
+	if bc.PluginsFn == nil {
+		return nil
+	}
+	return bc.PluginsFn()
 }
 
 func (bc *mainFile) Version(ctx context.Context, root string) (string, error) {
@@ -43,11 +53,7 @@ func (bc *mainFile) Version(ctx context.Context, root string) (string, error) {
 		return string(b), nil
 	}
 
-	if bc.plugins == nil {
-		return m()
-	}
-
-	for _, p := range bc.plugins() {
+	for _, p := range bc.WithPlugins() {
 		bv, ok := p.(BuildVersioner)
 		if !ok {
 			continue
@@ -64,15 +70,46 @@ func (bc *mainFile) Version(ctx context.Context, root string) (string, error) {
 	return m()
 }
 
-func (bc *mainFile) generateNewMain(info here.Info, version string) error {
+func (bc *mainFile) generateNewMain(ctx context.Context, info here.Info, version string, ws ...io.Writer) error {
 	fmt.Println("version --> ", version)
-	bt := struct {
-		BuildTime    string
-		BuildVersion string
-	}{
-		BuildVersion: strconv.Quote(version),
-		BuildTime:    strconv.Quote(time.Now().Format(time.RFC3339)),
+
+	var imports []string
+	for _, p := range bc.WithPlugins() {
+		bi, ok := p.(BuildImporter)
+		if !ok {
+			continue
+		}
+		i, err := bi.BuildImports(ctx, info.Root)
+		if err != nil {
+			return err
+		}
+		imports = append(imports, i...)
 	}
+
+	if i, err := here.Dir(filepath.Join(info.Dir, "actions")); err == nil {
+		imports = append(imports, i.ImportPath)
+	}
+
+	sort.Strings(imports)
+
+	bt := struct {
+		BuildTime       string
+		BuildVersion    string
+		Imports         []string
+		Info            here.Info
+		WithFallthrough bool
+	}{
+		BuildTime:    strconv.Quote(time.Now().Format(time.RFC3339)),
+		BuildVersion: strconv.Quote(version),
+		Imports:      imports,
+		Info:         info,
+	}
+
+	bt.WithFallthrough = func() bool {
+		c := exec.CommandContext(ctx, "go", "doc", path.Join(info.ImportPath, "cli")+".Buffalo")
+		err := c.Run()
+		return err == nil
+	}()
 
 	t, err := template.New(mainBuildFile).Parse(mainBuildTmpl)
 	if err != nil {
@@ -85,14 +122,14 @@ func (bc *mainFile) generateNewMain(info here.Info, version string) error {
 	}
 	defer f.Close()
 
-	if err := t.Execute(f, bt); err != nil {
+	if err := t.Execute(io.MultiWriter(append(ws, f)...), bt); err != nil {
 		return err
 	}
 	return nil
 }
 
 func (bc *mainFile) BeforeBuild(ctx context.Context, args []string) error {
-	info, err := there.Current()
+	info, err := here.Current()
 	if err != nil {
 		return err
 	}
@@ -107,7 +144,7 @@ func (bc *mainFile) BeforeBuild(ctx context.Context, args []string) error {
 		return err
 	}
 
-	if err := bc.generateNewMain(info, version); err != nil {
+	if err := bc.generateNewMain(ctx, info, version, os.Stdout); err != nil {
 		return err
 	}
 	return nil
@@ -116,7 +153,7 @@ func (bc *mainFile) BeforeBuild(ctx context.Context, args []string) error {
 var _ AfterBuilder = &mainFile{}
 
 func (bc *mainFile) AfterBuild(ctx context.Context, args []string, err error) error {
-	info, err := there.Current()
+	info, err := here.Current()
 	if err != nil {
 		return err
 	}

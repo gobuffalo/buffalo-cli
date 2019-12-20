@@ -2,19 +2,26 @@ package pop
 
 import (
 	"context"
+	"path/filepath"
 
-	"github.com/gobuffalo/here/there"
-	"github.com/gobuffalo/pop"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
+	"github.com/gobuffalo/here"
+	"github.com/gobuffalo/pop/v5"
+	"github.com/gobuffalo/pop/v5/soda/cmd"
 	"github.com/markbates/pkger"
 	"github.com/markbates/pkger/parser"
 )
 
 const filePath = "/database.yml"
 
-type Pop struct{}
+type Buffalo struct{}
 
-func (p *Pop) PkgerDecls() (parser.Decls, error) {
-	info, err := there.Current()
+func (b *Buffalo) BuildVersion(ctx context.Context, root string) (string, error) {
+	return cmd.Version, nil
+}
+
+func (p *Buffalo) PkgerDecls() (parser.Decls, error) {
+	info, err := here.Current()
 	if err != nil {
 		return nil, err
 	}
@@ -30,11 +37,11 @@ func (p *Pop) PkgerDecls() (parser.Decls, error) {
 	return decls, nil
 }
 
-func (Pop) Name() string {
+func (Buffalo) Name() string {
 	return "pop"
 }
 
-func (p *Pop) BuiltInit(ctx context.Context, args []string) error {
+func (p *Buffalo) BuiltInit(ctx context.Context, args []string) error {
 	f, err := pkger.Open("/database.yml")
 	if err != nil {
 		return err
@@ -46,4 +53,15 @@ func (p *Pop) BuiltInit(ctx context.Context, args []string) error {
 		return err
 	}
 	return nil
+}
+
+var _ buildcmd.BuildImporter = Buffalo{}
+
+func (Buffalo) BuildImports(ctx context.Context, root string) ([]string, error) {
+	dir := filepath.Join(root, "models")
+	info, err := here.Dir(dir)
+	if err != nil {
+		return nil, nil
+	}
+	return []string{info.ImportPath}, nil
 }

@@ -18,6 +18,7 @@ var _ plugins.Plugin = &VersionCmd{}
 var _ plugprint.Describer = &VersionCmd{}
 var _ plugprint.FlagPrinter = &VersionCmd{}
 
+// VersionCmd is responsible for the `buffalo version` command.
 type VersionCmd struct {
 	Parent plugins.Plugin
 	help   bool
@@ -56,7 +57,6 @@ func (vc *VersionCmd) flagSet() *pflag.FlagSet {
 }
 
 func (vc *VersionCmd) Main(ctx context.Context, args []string) error {
-
 	flags := vc.flagSet()
 	if err := flags.Parse(args); err != nil {
 		return err

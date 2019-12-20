@@ -4,14 +4,37 @@ import (
 	"context"
 	"fmt"
 	"os/exec"
+	"path"
+	"path/filepath"
 	"runtime"
 	"strings"
 
 	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/here"
 )
 
-func (bc *BuildCmd) GoBuildArgs() []string {
+func (bc *BuildCmd) GoBuildCmd(ctx context.Context) (*exec.Cmd, error) {
 	buildArgs := []string{"build"}
+
+	info, err := here.Current()
+	if err != nil {
+		return nil, err
+	}
+
+	bin := bc.Bin
+	if len(bin) == 0 {
+		bin = filepath.Join("bin", path.Base(info.Module.Path))
+	}
+
+	if runtime.GOOS == "windows" {
+		if !strings.HasSuffix(bin, ".exe") {
+			bin += ".exe"
+		}
+		bin = strings.Replace(bin, "/", "\\", -1)
+	} else {
+		bin = strings.TrimSuffix(bin, ".exe")
+	}
+	buildArgs = append(buildArgs, "-o", bin)
 
 	if len(bc.Mod) != 0 {
 		buildArgs = append(buildArgs, "-mod", bc.Mod)
@@ -22,17 +45,6 @@ func (bc *BuildCmd) GoBuildArgs() []string {
 	if len(bc.Tags) > 0 {
 		buildArgs = append(buildArgs, "-tags", bc.Tags)
 	}
-
-	bin := bc.Bin
-	if runtime.GOOS == "windows" {
-		if !strings.HasSuffix(bin, ".exe") {
-			bin += ".exe"
-		}
-		bin = strings.Replace(bin, "/", "\\", -1)
-	} else {
-		bin = strings.TrimSuffix(bin, ".exe")
-	}
-	buildArgs = append(buildArgs, "-o", bin)
 
 	flags := []string{}
 
@@ -47,15 +59,23 @@ func (bc *BuildCmd) GoBuildArgs() []string {
 	if len(flags) > 0 {
 		buildArgs = append(buildArgs, "-ldflags", strings.Join(flags, " "))
 	}
-	return buildArgs
-}
 
-func (bc *BuildCmd) build(ctx context.Context) error {
+	cmd := exec.CommandContext(ctx, "go", buildArgs...)
+
 	ioe := plugins.CtxIO(ctx)
-	cmd := exec.CommandContext(ctx, "go", bc.GoBuildArgs()...)
 	cmd.Stdout = ioe.Stdout()
 	cmd.Stderr = ioe.Stderr()
 	cmd.Stdin = ioe.Stdin()
+
 	fmt.Fprintln(ioe.Stdout(), cmd.Args)
+
+	return cmd, nil
+}
+
+func (bc *BuildCmd) build(ctx context.Context) error {
+	cmd, err := bc.GoBuildCmd(ctx)
+	if err != nil {
+		return err
+	}
 	return cmd.Run()
 }

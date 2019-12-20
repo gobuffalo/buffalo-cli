@@ -16,18 +16,17 @@ require (
 	github.com/gobuffalo/licenser v1.4.0
 	github.com/gobuffalo/logger v1.0.3
 	github.com/gobuffalo/meta v0.2.1
-	github.com/gobuffalo/meta/v2 v2.0.0
 	github.com/gobuffalo/packd v0.3.0
 	github.com/gobuffalo/packr/v2 v2.7.1
 	github.com/gobuffalo/plush v3.8.3+incompatible
-	github.com/gobuffalo/pop v4.13.0+incompatible
+	github.com/gobuffalo/pop v4.13.0+incompatible // indirect
+	github.com/gobuffalo/pop/v5 v5.0.4
 	github.com/gobuffalo/release v1.15.0
 	github.com/google/go-cmp v0.3.1
 	github.com/karrick/godirwalk v1.13.1
 	github.com/markbates/errx v1.1.0
 	github.com/markbates/grift v1.5.0
-	github.com/markbates/haste v0.0.0-20191129201013-5d5b37040fba
-	github.com/markbates/jim v0.3.3
+	github.com/markbates/jim v0.4.0
 	github.com/markbates/oncer v1.0.0
 	github.com/markbates/pkger v0.13.0
 	github.com/markbates/refresh v1.8.0

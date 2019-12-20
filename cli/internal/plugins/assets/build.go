@@ -10,7 +10,6 @@ import (
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/gobuffalo/here"
-	"github.com/gobuffalo/here/there"
 )
 
 type packageJSON struct {
@@ -43,7 +42,7 @@ func (bc *Builder) Build(ctx context.Context, args []string) error {
 
 	os.Setenv("NODE_ENV", bc.Environment)
 
-	info, err := there.Current()
+	info, err := here.Current()
 	if err != nil {
 		return err
 	}
