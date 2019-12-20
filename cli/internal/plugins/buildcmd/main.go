@@ -3,7 +3,6 @@ package buildcmd
 import (
 	"context"
 	"fmt"
-	"path/filepath"
 
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
@@ -60,7 +59,7 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 				continue
 			}
 			if p.Name() == n {
-				return b.Build(ctx, args)
+				return b.Build(ctx, args[1:])
 			}
 		}
 		return fmt.Errorf("unknown command %q", n)
@@ -71,7 +70,6 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 	}
 
 	defer func() {
-		var err error
 		if e := recover(); e != nil {
 			var ok bool
 			err, ok = e.(error)
@@ -82,7 +80,7 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 		bc.afterBuild(ctx, args, err)
 	}()
 
-	if err := bc.beforeBuild(ctx, args); err != nil {
+	if err = bc.beforeBuild(ctx, args); err != nil {
 		return err
 	}
 
@@ -92,7 +90,7 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 			if !ok {
 				continue
 			}
-			if err := tv.ValidateTemplates(filepath.Join(info.Root, "templates")); err != nil {
+			if err = tv.ValidateTemplates(info.Root); err != nil {
 				return err
 			}
 		}
@@ -103,7 +101,7 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 		if !ok {
 			continue
 		}
-		if err := pkg.Package(ctx, info.Root); err != nil {
+		if err = pkg.Package(ctx, info.Root); err != nil {
 			return err
 		}
 	}
