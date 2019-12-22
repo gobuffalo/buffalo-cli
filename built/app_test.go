@@ -11,6 +11,23 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+type IniterFn func(ctx context.Context, args []string) error
+
+func (i IniterFn) BuiltInit(ctx context.Context, args []string) error {
+	return i(ctx, args)
+}
+
+func WithIniter(p plugins.Plugin, fn IniterFn) plugins.Plugin {
+	type wi struct {
+		IniterFn
+		plugins.Plugin
+	}
+	return wi{
+		Plugin:   p,
+		IniterFn: fn,
+	}
+}
+
 func Test_App_No_Args(t *testing.T) {
 	r := require.New(t)
 

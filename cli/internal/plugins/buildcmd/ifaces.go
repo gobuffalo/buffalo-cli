@@ -25,12 +25,12 @@ type AfterBuilder interface {
 	AfterBuild(ctx context.Context, args []string, err error) error
 }
 
-type BuildFlagger interface {
+type Flagger interface {
 	plugins.Plugin
 	BuildFlags() []*flag.Flag
 }
 
-type BuildPflagger interface {
+type Pflagger interface {
 	plugins.Plugin
 	BuildFlags() []*pflag.Flag
 }
@@ -42,15 +42,20 @@ type TemplatesValidator interface {
 
 type Packager interface {
 	plugins.Plugin
-	Package(ctx context.Context, root string) error
+	Package(ctx context.Context, root string, files []string) error
 }
 
-type BuildVersioner interface {
+type PackFiler interface {
+	plugins.Plugin
+	PackageFiles(ctx context.Context, root string) ([]string, error)
+}
+
+type Versioner interface {
 	plugins.Plugin
 	BuildVersion(ctx context.Context, root string) (string, error)
 }
 
-type BuildImporter interface {
+type Importer interface {
 	plugins.Plugin
 	BuildImports(ctx context.Context, root string) ([]string, error)
 }

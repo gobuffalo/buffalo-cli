@@ -43,7 +43,7 @@ func (f FixCmd) String() string {
 // 	buffalo fix
 // 	buffalo fix plush pop
 // 	buffalo fix -h
-func (fc *FixCmd) plugins(ctx context.Context, args []string) error {
+func (fc *FixCmd) fixPlugins(ctx context.Context, args []string) error {
 	plugs := fc.ScopedPlugins()
 	if len(args) > 0 {
 		fixers := map[string]Fixer{}
@@ -100,13 +100,13 @@ func (fc *FixCmd) Main(ctx context.Context, args []string) error {
 	}
 
 	if len(args) > 0 {
-		return fc.plugins(ctx, args)
+		return fc.fixPlugins(ctx, args)
 	}
 
 	if err := fix.Run(); err != nil {
 		return err
 	}
-	return fc.plugins(ctx, args)
+	return fc.fixPlugins(ctx, args)
 }
 
 func (fc *FixCmd) SubCommands() []plugins.Plugin {

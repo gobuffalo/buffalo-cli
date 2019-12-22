@@ -19,7 +19,7 @@ func (Buffalo) Name() string {
 	return "grifts"
 }
 
-var _ buildcmd.BuildImporter = Buffalo{}
+var _ buildcmd.Importer = Buffalo{}
 
 func (Buffalo) BuildImports(ctx context.Context, root string) ([]string, error) {
 	dir := filepath.Join(root, "grifts")

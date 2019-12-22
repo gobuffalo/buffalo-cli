@@ -39,18 +39,18 @@ func New() (*Buffalo, error) {
 		return b.Plugins
 	}
 	b.Plugins = append(b.Plugins,
-		&flect.Flect{},
-		&pop.Buffalo{},
-		&grifts.Buffalo{},
 		&assets.Builder{},
 		&buildcmd.BuildCmd{},
 		&fixcmd.FixCmd{},
-		&infocmd.InfoCmd{},
-		&versioncmd.VersionCmd{},
-		&plush.Buffalo{},
+		&flect.Buffalo{},
 		&golang.Templates{},
-		// &packr.Buffalo{},
+		&grifts.Buffalo{},
+		&infocmd.InfoCmd{},
 		&pkger.Buffalo{},
+		&plush.Buffalo{},
+		&pop.Buffalo{},
+		&versioncmd.VersionCmd{},
+		// &packr.Buffalo{},
 	)
 
 	info, err := here.Current()

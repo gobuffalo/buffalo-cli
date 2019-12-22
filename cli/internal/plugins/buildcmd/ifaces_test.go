@@ -68,7 +68,7 @@ func (b *afterBuilder) AfterBuild(ctx context.Context, args []string, err error)
 	return err
 }
 
-var _ BuildFlagger = &buildFlagger{}
+var _ Flagger = &buildFlagger{}
 
 type buildFlagger struct {
 	name  string
@@ -86,7 +86,7 @@ func (b *buildFlagger) BuildFlags() []*flag.Flag {
 	return b.flags
 }
 
-var _ BuildPflagger = &buildPflagger{}
+var _ Pflagger = &buildPflagger{}
 
 type buildPflagger struct {
 	name  string
@@ -127,9 +127,10 @@ func (b *templatesValidator) ValidateTemplates(root string) error {
 var _ Packager = &packager{}
 
 type packager struct {
-	name string
-	root string
-	err  error
+	name  string
+	root  string
+	files []string
+	err   error
 }
 
 func (b *packager) Name() string {
@@ -139,12 +140,34 @@ func (b *packager) Name() string {
 	return b.name
 }
 
-func (b *packager) Package(ctx context.Context, root string) error {
+func (b *packager) Package(ctx context.Context, root string, files []string) error {
 	b.root = root
+	b.files = files
 	return b.err
 }
 
-var _ BuildVersioner = &buildVersioner{}
+var _ PackFiler = &packFiler{}
+
+type packFiler struct {
+	name  string
+	root  string
+	files []string
+	err   error
+}
+
+func (b *packFiler) PackageFiles(ctx context.Context, root string) ([]string, error) {
+	b.root = root
+	return b.files, b.err
+}
+
+func (b *packFiler) Name() string {
+	if len(b.name) == 0 {
+		return "packFiler"
+	}
+	return b.name
+}
+
+var _ Versioner = &buildVersioner{}
 
 type buildVersioner struct {
 	name    string
@@ -165,7 +188,7 @@ func (b *buildVersioner) BuildVersion(ctx context.Context, root string) (string,
 	return b.version, b.err
 }
 
-var _ BuildImporter = &buildImporter{}
+var _ Importer = &buildImporter{}
 
 type buildImporter struct {
 	name    string

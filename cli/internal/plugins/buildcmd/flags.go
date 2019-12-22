@@ -31,11 +31,11 @@ func (bc *BuildCmd) Flags() *pflag.FlagSet {
 
 	for _, p := range plugs {
 		switch t := p.(type) {
-		case BuildFlagger:
+		case Flagger:
 			for _, f := range t.BuildFlags() {
 				flags.AddGoFlag(f)
 			}
-		case BuildPflagger:
+		case Pflagger:
 			for _, f := range t.BuildFlags() {
 				flags.AddFlag(f)
 			}

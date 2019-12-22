@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	pkgerplug "github.com/gobuffalo/buffalo-cli/cli/internal/plugins/pkger"
+	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/flect"
 	"github.com/gobuffalo/here"
 	"github.com/markbates/pkger"
@@ -12,9 +14,12 @@ import (
 
 const filePath = "/inflections.json"
 
-type Flect struct{}
+var _ plugins.Plugin = &Buffalo{}
+var _ pkgerplug.Decler = &Buffalo{}
 
-func (f *Flect) PkgerDecls() (parser.Decls, error) {
+type Buffalo struct{}
+
+func (f *Buffalo) PkgerDecls() (parser.Decls, error) {
 	info, err := here.Current()
 	if err != nil {
 		return nil, err
@@ -31,11 +36,11 @@ func (f *Flect) PkgerDecls() (parser.Decls, error) {
 	return decls, nil
 }
 
-func (Flect) Name() string {
+func (Buffalo) Name() string {
 	return "flect"
 }
 
-func (fl *Flect) BuiltInit(ctx context.Context, args []string) error {
+func (fl *Buffalo) BuiltInit(ctx context.Context, args []string) error {
 	f, err := pkger.Open(filePath)
 	if err != nil {
 		return fmt.Errorf("failed to load inflections %w", err)

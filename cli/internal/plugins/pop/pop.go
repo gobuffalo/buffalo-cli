@@ -16,10 +16,24 @@ const filePath = "/database.yml"
 
 type Buffalo struct{}
 
+func (Buffalo) Aliases() []string {
+	return []string{"db"}
+}
+
+// Main adds the `buffalo pop` sub-command.
+func (b *Buffalo) Main(ctx context.Context, args []string) error {
+	cmd.RootCmd.SetArgs(args)
+	return cmd.RootCmd.Execute()
+}
+
+var _ buildcmd.Versioner = &Buffalo{}
+
 func (b *Buffalo) BuildVersion(ctx context.Context, root string) (string, error) {
 	return cmd.Version, nil
 }
 
+// PkgerDecls() tells Pkger to include Pop related files such as database.yml
+// when the buildcmd.Packager interface is called
 func (p *Buffalo) PkgerDecls() (parser.Decls, error) {
 	info, err := here.Current()
 	if err != nil {
@@ -55,7 +69,7 @@ func (p *Buffalo) BuiltInit(ctx context.Context, args []string) error {
 	return nil
 }
 
-var _ buildcmd.BuildImporter = Buffalo{}
+var _ buildcmd.Importer = Buffalo{}
 
 func (Buffalo) BuildImports(ctx context.Context, root string) ([]string, error) {
 	dir := filepath.Join(root, "models")

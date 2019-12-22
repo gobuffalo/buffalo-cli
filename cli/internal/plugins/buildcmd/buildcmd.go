@@ -79,17 +79,19 @@ func (bc *BuildCmd) ScopedPlugins() []plugins.Plugin {
 			builders = append(builders, p)
 		case AfterBuilder:
 			builders = append(builders, p)
-		case BuildVersioner:
+		case Versioner:
 			builders = append(builders, p)
 		case TemplatesValidator:
 			builders = append(builders, p)
 		case Packager:
 			builders = append(builders, p)
-		case BuildFlagger:
+		case PackFiler:
 			builders = append(builders, p)
-		case BuildPflagger:
+		case Flagger:
 			builders = append(builders, p)
-		case BuildImporter:
+		case Pflagger:
+			builders = append(builders, p)
+		case Importer:
 			builders = append(builders, p)
 		}
 	}

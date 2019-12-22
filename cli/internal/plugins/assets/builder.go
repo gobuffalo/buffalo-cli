@@ -10,7 +10,7 @@ import (
 )
 
 var _ buildcmd.BeforeBuilder = &Builder{}
-var _ buildcmd.BuildPflagger = &Builder{}
+var _ buildcmd.Pflagger = &Builder{}
 var _ plugins.Plugin = &Builder{}
 var _ plugprint.Describer = &Builder{}
 var _ plugprint.FlagPrinter = &Builder{}

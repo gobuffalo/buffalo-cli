@@ -96,14 +96,8 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 		}
 	}
 
-	for _, p := range plugs {
-		pkg, ok := p.(Packager)
-		if !ok {
-			continue
-		}
-		if err = pkg.Package(ctx, info.Root); err != nil {
-			return err
-		}
+	if err := bc.pack(ctx, info, plugs); err != nil {
+		return err
 	}
 
 	return bc.build(ctx) // go build ...

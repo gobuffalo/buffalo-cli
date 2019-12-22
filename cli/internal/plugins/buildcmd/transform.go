@@ -68,7 +68,7 @@ func (bc *mainFile) Version(ctx context.Context, root string) (string, error) {
 	}
 
 	for _, p := range bc.ScopedPlugins() {
-		bv, ok := p.(BuildVersioner)
+		bv, ok := p.(Versioner)
 		if !ok {
 			continue
 		}
@@ -89,7 +89,7 @@ func (bc *mainFile) generateNewMain(ctx context.Context, info here.Info, version
 
 	var imports []string
 	for _, p := range bc.ScopedPlugins() {
-		bi, ok := p.(BuildImporter)
+		bi, ok := p.(Importer)
 		if !ok {
 			continue
 		}
