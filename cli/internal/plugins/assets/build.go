@@ -52,9 +52,12 @@ func (bc *Builder) Build(ctx context.Context, args []string) error {
 	}
 
 	var fn func() error = c.Run
-	if tc, ok := ctx.(AssetBuilderContext); ok {
-		fn = func() error {
-			return tc.BuildAssets(c)
+	for _, p := range bc.ScopedPlugins() {
+		if br, ok := p.(AssetBuilder); ok {
+			fn = func() error {
+				return br.BuildAssets(ctx, c)
+			}
+			break
 		}
 	}
 

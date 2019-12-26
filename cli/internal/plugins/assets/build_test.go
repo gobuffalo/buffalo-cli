@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"os"
-	"os/exec"
 	"testing"
 
 	"github.com/gobuffalo/buffalo-cli/plugins"
@@ -45,38 +44,30 @@ func Test_Builder_Build(t *testing.T) {
 	bc := &Builder{}
 	bc.WithHereInfo(info)
 
+	br := &bladeRunner{}
+	bc.WithPlugins(func() []plugins.Plugin {
+		return []plugins.Plugin{br}
+	})
+
 	exp := []string{"npm", "run", "build"}
-	var act []string
 
 	ctx := context.Background()
-	ctx = WithBuilderContext(ctx, func(cmd *exec.Cmd) error {
-		act = make([]string, len(cmd.Args))
-		copy(act, cmd.Args)
-		return nil
-	})
 
 	args := []string{}
 
 	err = bc.Build(ctx, args)
 	r.NoError(err)
-	r.Equal(exp, act)
+	r.Equal(exp, br.cmd.Args)
 }
 
 func Test_Builder_Build_Skip(t *testing.T) {
 	r := require.New(t)
 
-	info := tempApp(t, map[string]string{})
-
-	defer os.RemoveAll(info.Root)
-
-	pwd, err := os.Getwd()
-	r.NoError(err)
-	defer os.Chdir(pwd)
-
-	os.Chdir(info.Root)
-
 	bc := &Builder{}
-	bc.WithHereInfo(info)
+	br := &bladeRunner{}
+	bc.WithPlugins(func() []plugins.Plugin {
+		return []plugins.Plugin{br}
+	})
 
 	ctx := context.Background()
 
@@ -85,7 +76,7 @@ func Test_Builder_Build_Skip(t *testing.T) {
 
 	args := []string{"--skip-assets"}
 
-	err = bc.Build(ctx, args)
+	err := bc.Build(ctx, args)
 	r.NoError(err)
 	r.Empty(stdout.String())
 }

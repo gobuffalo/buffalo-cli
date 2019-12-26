@@ -13,6 +13,8 @@ import (
 var _ buildcmd.BeforeBuilder = &Builder{}
 var _ buildcmd.Pflagger = &Builder{}
 var _ plugins.Plugin = &Builder{}
+var _ plugins.PluginScoper = &Builder{}
+var _ plugins.PluginNeeder = &Builder{}
 var _ plugprint.Describer = &Builder{}
 var _ plugprint.FlagPrinter = &Builder{}
 
@@ -32,6 +34,28 @@ type Builder struct {
 
 	Skip bool
 	Tool string // default is npm
+
+	pluginsFn plugins.PluginFeeder
+}
+
+func (bc *Builder) WithPlugins(f plugins.PluginFeeder) {
+	bc.pluginsFn = f
+}
+
+func (bc *Builder) ScopedPlugins() []plugins.Plugin {
+	var plugs []plugins.Plugin
+	if bc.pluginsFn != nil {
+		plugs = bc.pluginsFn()
+	}
+
+	var builders []plugins.Plugin
+	for _, p := range plugs {
+		switch p.(type) {
+		case AssetBuilder:
+			builders = append(builders, p)
+		}
+	}
+	return builders
 }
 
 func (a *Builder) WithHereInfo(i here.Info) {
