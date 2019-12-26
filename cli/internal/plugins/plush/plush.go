@@ -7,15 +7,20 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
+	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/plush"
 )
 
-type Buffalo struct {
-}
+type Buffalo struct{}
+
+var _ plugins.Plugin = Buffalo{}
 
 func (b Buffalo) Name() string {
 	return "plush"
 }
+
+var _ buildcmd.TemplatesValidator = &Buffalo{}
 
 func (b *Buffalo) ValidateTemplates(root string) error {
 	root = filepath.Join(root, "templates")

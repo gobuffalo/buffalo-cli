@@ -71,7 +71,7 @@ func Print(w io.Writer, main plugins.Plugin) error {
 }
 
 func printPlugins(w io.Writer, main plugins.Plugin) error {
-	wp, ok := main.(plugins.PluginScoper)
+	wp, ok := main.(PluginScoper)
 	if !ok {
 		return nil
 	}

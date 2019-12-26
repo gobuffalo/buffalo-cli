@@ -6,6 +6,16 @@ import (
 	"github.com/gobuffalo/buffalo-cli/plugins"
 )
 
+type PluginScoper = plugins.PluginScoper
+
+type Robust interface {
+	Describer
+	FlagPrinter
+	NamedCommand
+	UsagePrinter
+	plugins.Plugin
+}
+
 type SubCommander interface {
 	SubCommands() []plugins.Plugin
 }

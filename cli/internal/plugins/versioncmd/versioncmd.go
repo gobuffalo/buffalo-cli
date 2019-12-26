@@ -13,26 +13,28 @@ import (
 	"github.com/spf13/pflag"
 )
 
-var _ plugins.Plugin = &VersionCmd{}
-var _ plugprint.Describer = &VersionCmd{}
-var _ plugprint.FlagPrinter = &VersionCmd{}
-
 // VersionCmd is responsible for the `buffalo version` command.
 type VersionCmd struct {
 	help bool
 	json bool
 }
 
+var _ plugprint.FlagPrinter = &VersionCmd{}
+
 func (vc *VersionCmd) PrintFlags(w io.Writer) error {
-	flags := vc.flagSet()
+	flags := vc.Flags()
 	flags.SetOutput(w)
 	flags.PrintDefaults()
 	return nil
 }
 
+var _ plugins.Plugin = &VersionCmd{}
+
 func (vc *VersionCmd) Name() string {
 	return "version"
 }
+
+var _ plugprint.Describer = &VersionCmd{}
 
 func (vc *VersionCmd) Description() string {
 	return "Print the version information"
@@ -42,7 +44,7 @@ func (i VersionCmd) String() string {
 	return i.Name()
 }
 
-func (vc *VersionCmd) flagSet() *pflag.FlagSet {
+func (vc *VersionCmd) Flags() *pflag.FlagSet {
 	flags := pflag.NewFlagSet(vc.String(), pflag.ContinueOnError)
 	flags.SetOutput(ioutil.Discard)
 	flags.BoolVarP(&vc.help, "help", "h", false, "print this help")
@@ -51,7 +53,7 @@ func (vc *VersionCmd) flagSet() *pflag.FlagSet {
 }
 
 func (vc *VersionCmd) Main(ctx context.Context, args []string) error {
-	flags := vc.flagSet()
+	flags := vc.Flags()
 	if err := flags.Parse(args); err != nil {
 		return err
 	}

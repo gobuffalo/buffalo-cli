@@ -5,20 +5,25 @@ import (
 	"path/filepath"
 
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
+	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/gobuffalo/here"
 	"github.com/gobuffalo/pop/v5"
 	"github.com/gobuffalo/pop/v5/soda/cmd"
 	"github.com/markbates/pkger"
-	"github.com/markbates/pkger/parser"
 )
 
 const filePath = "/database.yml"
 
 type Buffalo struct{}
 
+var _ plugins.Plugin = Buffalo{}
+
 func (Buffalo) Name() string {
 	return "buffalo-pop"
 }
+
+var _ plugprint.NamedCommand = Buffalo{}
 
 func (Buffalo) CmdName() string {
 	return "pop"
@@ -30,6 +35,8 @@ func (b *Buffalo) Main(ctx context.Context, args []string) error {
 	return cmd.RootCmd.Execute()
 }
 
+var _ plugprint.Aliases = Buffalo{}
+
 func (Buffalo) Aliases() []string {
 	return []string{"db"}
 }
@@ -40,23 +47,12 @@ func (b *Buffalo) BuildVersion(ctx context.Context, root string) (string, error)
 	return cmd.Version, nil
 }
 
-// PkgerDecls() tells Pkger to include Pop related files such as database.yml
-// when the buildcmd.Packager interface is called
-func (p *Buffalo) PkgerDecls() (parser.Decls, error) {
-	info, err := here.Current()
-	if err != nil {
-		return nil, err
-	}
+var _ buildcmd.PackFiler = &Buffalo{}
 
-	var decls parser.Decls
-
-	d, err := parser.NewInclude(info, filePath)
-	if err != nil {
-		return nil, err
-	}
-	decls = append(decls, d)
-
-	return decls, nil
+func (b *Buffalo) PackageFiles(ctx context.Context, root string) ([]string, error) {
+	return []string{
+		filepath.Join(root, filePath),
+	}, nil
 }
 
 func (p *Buffalo) BuiltInit(ctx context.Context, args []string) error {

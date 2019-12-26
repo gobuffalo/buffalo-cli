@@ -11,11 +11,6 @@ import (
 	"github.com/markbates/pkger/parser"
 )
 
-var _ buildcmd.AfterBuilder = &Buffalo{}
-var _ plugins.Plugin = &Buffalo{}
-var _ plugins.PluginNeeder = &Buffalo{}
-var _ plugins.PluginScoper = &Buffalo{}
-
 const outPath = "pkged.go"
 
 type Buffalo struct {
@@ -23,9 +18,13 @@ type Buffalo struct {
 	pluginsFn plugins.PluginFeeder
 }
 
+var _ plugins.PluginNeeder = &Buffalo{}
+
 func (b *Buffalo) WithPlugins(f plugins.PluginFeeder) {
 	b.pluginsFn = f
 }
+
+var _ buildcmd.AfterBuilder = &Buffalo{}
 
 func (b *Buffalo) AfterBuild(ctx context.Context, args []string, err error) error {
 	p := b.OutPath
@@ -36,9 +35,7 @@ func (b *Buffalo) AfterBuild(ctx context.Context, args []string, err error) erro
 	return nil
 }
 
-type Decler interface {
-	PkgerDecls() (parser.Decls, error)
-}
+var _ plugins.PluginScoper = &Buffalo{}
 
 func (b *Buffalo) ScopedPlugins() []plugins.Plugin {
 	var plugs []plugins.Plugin
@@ -46,21 +43,18 @@ func (b *Buffalo) ScopedPlugins() []plugins.Plugin {
 		plugs = b.pluginsFn()
 	}
 
-	var builders []plugins.Plugin
-	for _, p := range plugs {
-		switch p.(type) {
-		case Decler:
-			builders = append(builders, p)
-		}
-	}
-	return builders
+	return plugs
 }
+
+var _ buildcmd.Builder = &Buffalo{}
 
 func (b *Buffalo) Build(ctx context.Context, args []string) error {
-	return b.Package(ctx, ".")
+	return b.Package(ctx, ".", nil)
 }
 
-func (b *Buffalo) Package(ctx context.Context, root string) error {
+var _ buildcmd.Packager = &Buffalo{}
+
+func (b *Buffalo) Package(ctx context.Context, root string, files []string) error {
 	info, err := here.Current()
 	if err != nil {
 		return err
@@ -70,17 +64,12 @@ func (b *Buffalo) Package(ctx context.Context, root string) error {
 	if err != nil {
 		return err
 	}
-
-	for _, p := range b.ScopedPlugins() {
-		pd, ok := p.(Decler)
-		if !ok {
-			continue
-		}
-		ds, err := pd.PkgerDecls()
+	for _, f := range files {
+		d, err := parser.NewInclude(info, f)
 		if err != nil {
 			return err
 		}
-		decls = append(decls, ds...)
+		decls = append(decls, d)
 	}
 
 	os.RemoveAll("pkged.go")
@@ -90,6 +79,8 @@ func (b *Buffalo) Package(ctx context.Context, root string) error {
 
 	return nil
 }
+
+var _ plugins.Plugin = &Buffalo{}
 
 func (b Buffalo) Name() string {
 	return "pkger"

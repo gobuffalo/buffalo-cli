@@ -10,31 +10,33 @@ import (
 	"github.com/spf13/pflag"
 )
 
-var _ plugins.Plugin = &InfoCmd{}
-var _ plugins.PluginNeeder = &InfoCmd{}
-var _ plugins.PluginScoper = &InfoCmd{}
-var _ plugprint.Describer = &InfoCmd{}
-var _ plugprint.FlagPrinter = &InfoCmd{}
-
 type InfoCmd struct {
 	pluginsFn plugins.PluginFeeder
 	help      bool
 }
 
+var _ plugins.PluginNeeder = &InfoCmd{}
+
 func (ic *InfoCmd) WithPlugins(f plugins.PluginFeeder) {
 	ic.pluginsFn = f
 }
 
+var _ plugprint.FlagPrinter = &InfoCmd{}
+
 func (ic *InfoCmd) PrintFlags(w io.Writer) error {
-	flags := ic.flagSet()
+	flags := ic.Flags()
 	flags.SetOutput(w)
 	flags.PrintDefaults()
 	return nil
 }
 
+var _ plugins.Plugin = &InfoCmd{}
+
 func (ic *InfoCmd) Name() string {
 	return "info"
 }
+
+var _ plugprint.Describer = &InfoCmd{}
 
 func (ic *InfoCmd) Description() string {
 	return "Print diagnostic information (useful for debugging)"
@@ -59,6 +61,8 @@ func (ic *InfoCmd) plugins(ctx context.Context, args []string) error {
 	return nil
 }
 
+var _ plugins.PluginScoper = &InfoCmd{}
+
 func (ic *InfoCmd) ScopedPlugins() []plugins.Plugin {
 	var plugs []plugins.Plugin
 
@@ -74,7 +78,7 @@ func (ic *InfoCmd) ScopedPlugins() []plugins.Plugin {
 	return plugs
 }
 
-func (ic *InfoCmd) flagSet() *pflag.FlagSet {
+func (ic *InfoCmd) Flags() *pflag.FlagSet {
 	flags := pflag.NewFlagSet(ic.String(), pflag.ContinueOnError)
 	flags.SetOutput(ioutil.Discard)
 	flags.BoolVarP(&ic.help, "help", "h", false, "print this help")
