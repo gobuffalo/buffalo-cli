@@ -3,37 +3,25 @@ package flect
 import (
 	"context"
 	"fmt"
+	"path/filepath"
 
-	pkgerplug "github.com/gobuffalo/buffalo-cli/cli/internal/plugins/pkger"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/flect"
-	"github.com/gobuffalo/here"
 	"github.com/markbates/pkger"
-	"github.com/markbates/pkger/parser"
 )
 
 const filePath = "/inflections.json"
 
 var _ plugins.Plugin = &Buffalo{}
-var _ pkgerplug.Decler = &Buffalo{}
+var _ buildcmd.PackFiler = &Buffalo{}
 
 type Buffalo struct{}
 
-func (f *Buffalo) PkgerDecls() (parser.Decls, error) {
-	info, err := here.Current()
-	if err != nil {
-		return nil, err
-	}
-
-	var decls parser.Decls
-
-	d, err := parser.NewInclude(info, filePath)
-	if err != nil {
-		return nil, err
-	}
-	decls = append(decls, d)
-
-	return decls, nil
+func (f *Buffalo) PackageFiles(ctx context.Context, root string) ([]string, error) {
+	return []string{
+		filepath.Join(root, filePath),
+	}, nil
 }
 
 func (Buffalo) Name() string {
