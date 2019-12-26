@@ -68,7 +68,7 @@ func Test_MainFile_generateNewMain(t *testing.T) {
 func Test_MainFile_generateNewMain_noCli(t *testing.T) {
 	r := require.New(t)
 
-	ctx, ref := newRefCtx(t, "")
+	ref := newRef(t, "")
 	defer os.RemoveAll(filepath.Join(ref.Dir, mainBuildFile))
 
 	plugs := plugins.Plugins{
@@ -84,7 +84,7 @@ func Test_MainFile_generateNewMain_noCli(t *testing.T) {
 	}
 
 	bb := &bytes.Buffer{}
-	err := bc.generateNewMain(ctx, ref, "v1", bb)
+	err := bc.generateNewMain(context.Background(), ref, "v1", bb)
 	r.NoError(err)
 
 	out := bb.String()

@@ -21,13 +21,13 @@ func Test_BuildCmd_Package(t *testing.T) {
 	plugs := plugins.Plugins{
 		pkg,
 		pf,
+		&bladeRunner{},
 	}
 
 	bc := &BuildCmd{}
 	bc.WithPlugins(plugs.ScopedPlugins)
 
-	ctx := WithBuilderContext(context.Background(), nil)
-	err := bc.Main(ctx, nil)
+	err := bc.Main(context.Background(), nil)
 	r.NoError(err)
 
 	r.Len(pkg.files, 2)

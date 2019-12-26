@@ -108,6 +108,8 @@ func (bc *BuildCmd) ScopedPlugins() []plugins.Plugin {
 			builders = append(builders, p)
 		case Importer:
 			builders = append(builders, p)
+		case Runner:
+			builders = append(builders, p)
 		}
 	}
 	return builders

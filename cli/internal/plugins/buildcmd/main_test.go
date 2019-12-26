@@ -1,8 +1,8 @@
 package buildcmd
 
 import (
+	"context"
 	"fmt"
-	"os/exec"
 	"testing"
 
 	"github.com/gobuffalo/buffalo-cli/plugins"
@@ -12,40 +12,38 @@ import (
 func Test_BuildCmd_Main(t *testing.T) {
 	r := require.New(t)
 
-	ctx, info := newRefCtx(t, "")
+	info := newRef(t, "")
 
 	bc := &BuildCmd{}
 	bc.WithHereInfo(info)
 
 	exp := []string{"go", "build", "-o", "bin/coke"}
-	var act []string
 
-	ctx = WithBuilderContext(ctx, func(cmd *exec.Cmd) error {
-		act = make([]string, len(cmd.Args))
-		copy(act, cmd.Args)
-		return nil
+	br := &bladeRunner{}
+	bc.WithPlugins(func() []plugins.Plugin {
+		return []plugins.Plugin{br}
 	})
 
 	var args []string
-	err := bc.Main(ctx, args)
+	err := bc.Main(context.Background(), args)
 	r.NoError(err)
-	r.Equal(exp, act)
+	r.NotNil(br.cmd)
+	r.Equal(exp, br.cmd.Args)
 }
 
 func Test_BuildCmd_Main_SubCommand(t *testing.T) {
 	r := require.New(t)
 
 	p := &builder{name: "foo"}
-	plugs := plugins.Plugins{p}
+	plugs := plugins.Plugins{p, &bladeRunner{}}
 
 	bc := &BuildCmd{
 		pluginsFn: plugs.ScopedPlugins,
 	}
 
-	ctx, _ := newRefCtx(t, "")
 	args := []string{p.name, "a", "b", "c"}
 
-	err := bc.Main(ctx, args)
+	err := bc.Main(context.Background(), args)
 	r.NoError(err)
 	r.Equal([]string{"a", "b", "c"}, p.args)
 }
@@ -54,16 +52,15 @@ func Test_BuildCmd_Main_SubCommand_err(t *testing.T) {
 	r := require.New(t)
 
 	p := &builder{name: "foo", err: fmt.Errorf("error")}
-	plugs := plugins.Plugins{p}
+	plugs := plugins.Plugins{p, &bladeRunner{}}
 
 	bc := &BuildCmd{
 		pluginsFn: plugs.ScopedPlugins,
 	}
 
-	ctx, _ := newRefCtx(t, "")
 	args := []string{p.name, "a", "b", "c"}
 
-	err := bc.Main(ctx, args)
+	err := bc.Main(context.Background(), args)
 	r.Error(err)
 }
 
@@ -71,9 +68,9 @@ func Test_BuildCmd_Main_ValidateTemplates(t *testing.T) {
 	r := require.New(t)
 
 	p := &templatesValidator{}
-	plugs := plugins.Plugins{p}
+	plugs := plugins.Plugins{p, &bladeRunner{}}
 
-	ctx, info := newRefCtx(t, "")
+	info := newRef(t, "")
 
 	bc := &BuildCmd{
 		Info:      info,
@@ -82,7 +79,7 @@ func Test_BuildCmd_Main_ValidateTemplates(t *testing.T) {
 
 	args := []string{}
 
-	err := bc.Main(ctx, args)
+	err := bc.Main(context.Background(), args)
 	r.NoError(err)
 	r.Equal(bc.Info.Root, p.root)
 }
@@ -91,16 +88,15 @@ func Test_BuildCmd_Main_ValidateTemplates_err(t *testing.T) {
 	r := require.New(t)
 
 	p := &templatesValidator{err: fmt.Errorf("error")}
-	plugs := plugins.Plugins{p}
+	plugs := plugins.Plugins{p, &bladeRunner{}}
 
 	bc := &BuildCmd{
 		pluginsFn: plugs.ScopedPlugins,
 	}
 
-	ctx, _ := newRefCtx(t, "")
 	args := []string{}
 
-	err := bc.Main(ctx, args)
+	err := bc.Main(context.Background(), args)
 	r.Error(err)
 }
 
@@ -108,16 +104,15 @@ func Test_BuildCmd_Main_BeforeBuilders(t *testing.T) {
 	r := require.New(t)
 
 	p := &beforeBuilder{}
-	plugs := plugins.Plugins{p}
+	plugs := plugins.Plugins{p, &bladeRunner{}}
 
 	bc := &BuildCmd{
 		pluginsFn: plugs.ScopedPlugins,
 	}
 
-	ctx, _ := newRefCtx(t, "")
 	var args []string
 
-	err := bc.Main(ctx, args)
+	err := bc.Main(context.Background(), args)
 	r.NoError(err)
 }
 
@@ -125,16 +120,15 @@ func Test_BuildCmd_Main_BeforeBuilders_err(t *testing.T) {
 	r := require.New(t)
 
 	p := &beforeBuilder{err: fmt.Errorf("error")}
-	plugs := plugins.Plugins{p}
+	plugs := plugins.Plugins{p, &bladeRunner{}}
 
 	bc := &BuildCmd{
 		pluginsFn: plugs.ScopedPlugins,
 	}
 
-	ctx, _ := newRefCtx(t, "")
 	var args []string
 
-	err := bc.Main(ctx, args)
+	err := bc.Main(context.Background(), args)
 	r.Error(err)
 }
 
@@ -142,16 +136,15 @@ func Test_BuildCmd_Main_AfterBuilders(t *testing.T) {
 	r := require.New(t)
 
 	p := &afterBuilder{}
-	plugs := plugins.Plugins{p}
+	plugs := plugins.Plugins{p, &bladeRunner{}}
 
 	bc := &BuildCmd{
 		pluginsFn: plugs.ScopedPlugins,
 	}
 
-	ctx, _ := newRefCtx(t, "")
 	var args []string
 
-	err := bc.Main(ctx, args)
+	err := bc.Main(context.Background(), args)
 	r.NoError(err)
 }
 
@@ -160,16 +153,15 @@ func Test_BuildCmd_Main_AfterBuilders_err(t *testing.T) {
 
 	b := &beforeBuilder{err: fmt.Errorf("error")}
 	a := &afterBuilder{}
-	plugs := plugins.Plugins{a, b}
+	plugs := plugins.Plugins{a, b, &bladeRunner{}}
 
 	bc := &BuildCmd{
 		pluginsFn: plugs.ScopedPlugins,
 	}
 
-	ctx, _ := newRefCtx(t, "")
 	var args []string
 
-	err := bc.Main(ctx, args)
+	err := bc.Main(context.Background(), args)
 	r.Error(err)
 	r.Equal(err, a.err)
 }

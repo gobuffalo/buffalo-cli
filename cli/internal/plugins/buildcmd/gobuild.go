@@ -80,8 +80,10 @@ func (bc *BuildCmd) build(ctx context.Context) error {
 		return err
 	}
 
-	if tc, ok := ctx.(BuilderContext); ok {
-		return tc.Build(cmd)
+	for _, p := range bc.ScopedPlugins() {
+		if br, ok := p.(Runner); ok {
+			return br.BuildRunner(ctx, cmd)
+		}
 	}
 
 	return cmd.Run()

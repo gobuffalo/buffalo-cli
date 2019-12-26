@@ -3,6 +3,7 @@ package buildcmd
 import (
 	"context"
 	"flag"
+	"os/exec"
 
 	"github.com/spf13/pflag"
 )
@@ -207,4 +208,20 @@ func (b *buildImporter) Name() string {
 func (b *buildImporter) BuildImports(ctx context.Context, root string) ([]string, error) {
 	b.root = root
 	return b.imports, b.err
+}
+
+var _ Runner = &bladeRunner{}
+
+type bladeRunner struct {
+	cmd *exec.Cmd
+	err error
+}
+
+func (bladeRunner) Name() string {
+	return "blade"
+}
+
+func (b *bladeRunner) BuildRunner(ctx context.Context, cmd *exec.Cmd) error {
+	b.cmd = cmd
+	return b.err
 }

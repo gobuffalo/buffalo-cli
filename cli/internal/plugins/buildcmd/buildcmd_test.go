@@ -1,7 +1,6 @@
 package buildcmd
 
 import (
-	"context"
 	"path/filepath"
 	"testing"
 
@@ -9,12 +8,6 @@ import (
 	"github.com/gobuffalo/here"
 	"github.com/stretchr/testify/require"
 )
-
-func newRefCtx(t *testing.T, root string) (BuilderContext, here.Info) {
-	ctx := plugins.WithIO(context.Background(), plugins.DiscardIO())
-	bctx := WithBuilderContext(ctx, nil)
-	return bctx, newRef(t, root)
-}
 
 func newRef(t *testing.T, root string) here.Info {
 	t.Helper()
@@ -48,6 +41,7 @@ func Test_BuildCmd_Subcommands(t *testing.T) {
 		&buildVersioner{},
 		&templatesValidator{},
 		&packager{},
+		&bladeRunner{},
 	}
 
 	bc := &BuildCmd{
@@ -71,6 +65,7 @@ func Test_BuildCmd_ScopedPlugins(t *testing.T) {
 		&buildVersioner{},
 		&buildImporter{},
 		&templatesValidator{},
+		&bladeRunner{},
 		&packager{},
 	}
 

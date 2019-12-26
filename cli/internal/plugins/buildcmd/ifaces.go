@@ -61,29 +61,7 @@ type Importer interface {
 	BuildImports(ctx context.Context, root string) ([]string, error)
 }
 
-// BuilderContext can be implemented to capture the `go build` command
-// before it is executed. It is up to the BuilderContext to execute, or not,
-// the command.
-type BuilderContext interface {
-	context.Context
-	Build(cmd *exec.Cmd) error
-}
-
-type buildContext struct {
-	context.Context
-	fn func(cmd *exec.Cmd) error
-}
-
-func (c *buildContext) Build(cmd *exec.Cmd) error {
-	if c.fn == nil {
-		return nil
-	}
-	return c.fn(cmd)
-}
-
-func WithBuilderContext(ctx context.Context, fn func(cmd *exec.Cmd) error) BuilderContext {
-	return &buildContext{
-		Context: ctx,
-		fn:      fn,
-	}
+type Runner interface {
+	plugins.Plugin
+	BuildRunner(ctx context.Context, cmd *exec.Cmd) error
 }
