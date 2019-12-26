@@ -4,6 +4,7 @@ go 1.13
 
 require (
 	github.com/gobuffalo/buffalo v0.15.3
+	github.com/gobuffalo/clara/v2 v2.0.0 // indirect
 	github.com/gobuffalo/flect v0.2.0
 	github.com/gobuffalo/here v0.6.0
 	github.com/gobuffalo/packr/v2 v2.7.1

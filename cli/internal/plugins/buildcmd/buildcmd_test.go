@@ -29,11 +29,19 @@ func newRef(t *testing.T, name string) ref {
 	if err != nil {
 		t.Fatal(err)
 	}
-	root := filepath.Join("testdata", name)
+	root := filepath.Join(pwd, "testdata", name)
 
-	info, err := here.Dir(root)
-	if err != nil {
-		t.Fatal(err)
+	info := here.Info{
+		Dir:        root,
+		ImportPath: "github.com/markbates/coke",
+		Name:       "main",
+		Root:       root,
+		Module: here.Module{
+			Path:  "github.com/markbates/coke",
+			Main:  true,
+			Dir:   root,
+			GoMod: filepath.Join(root, "go.mod"),
+		},
 	}
 
 	r := ref{
