@@ -18,6 +18,7 @@ import (
 
 	"github.com/gobuffalo/buffalo-cli/built"
 	"github.com/gobuffalo/buffalo-cli/cli"
+	"github.com/gobuffalo/buffalo/runtime"
 )
 
 func main() {
@@ -39,6 +40,10 @@ func main() {
 			OriginalMain: originalMain,
 		}
 
+		if err := setBuildInfo(b); err != nil {
+			return err
+		}
+
 		ctx := context.Background()
 		return b.Main(ctx, os.Args[1:])
 	}()
@@ -46,5 +51,17 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func setBuildInfo(b *built.App) error {
+	t, err := time.Parse(time.RFC3339, b.BuildTime)
+	if err != nil {
+		t = time.Now()
+	}
+	runtime.SetBuild(runtime.BuildInfo{
+		Version: b.BuildVersion,
+		Time:    t,
+	})
+	return nil
 }
 `

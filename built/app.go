@@ -38,10 +38,6 @@ func (b *App) Main(ctx context.Context, args []string) error {
 		}
 	}
 
-	if err := b.setBuildInfo(); err != nil {
-		return err
-	}
-
 	var originalArgs []string
 	for i, arg := range args {
 		if arg == "--" {
@@ -75,16 +71,4 @@ func (b *App) Main(ctx context.Context, args []string) error {
 		return b.Fallthrough(ctx, args)
 	}
 	return garlic.Run(ctx, args)
-}
-
-func (b *App) setBuildInfo() error {
-	// t, err := time.Parse(time.RFC3339, b.BuildTime)
-	// if err != nil {
-	// 	t = time.Now()
-	// }
-	// runtime.SetBuild(runtime.BuildInfo{
-	// 	Version: b.BuildVersion,
-	// 	Time:    t,
-	// })
-	return nil
 }
