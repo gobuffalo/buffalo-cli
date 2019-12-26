@@ -3,6 +3,8 @@ package buildcmd
 import (
 	"context"
 	"fmt"
+	"path/filepath"
+	"runtime"
 	"testing"
 
 	"github.com/gobuffalo/buffalo-cli/plugins"
@@ -17,7 +19,11 @@ func Test_BuildCmd_Main(t *testing.T) {
 	bc := &BuildCmd{}
 	bc.WithHereInfo(info)
 
-	exp := []string{"go", "build", "-o", "bin/coke"}
+	bn := filepath.Join("bin", "coke")
+	if runtime.GOOS == "windows" {
+		bn += ".exe"
+	}
+	exp := []string{"go", "build", "-o", bn}
 
 	br := &bladeRunner{}
 	bc.WithPlugins(func() []plugins.Plugin {
