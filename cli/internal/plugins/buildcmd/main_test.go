@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"os/exec"
 	"testing"
 
 	"github.com/gobuffalo/buffalo-cli/plugins"
@@ -19,11 +20,19 @@ func Test_BuildCmd_Main(t *testing.T) {
 
 	bc := &BuildCmd{}
 
+	exp := []string{"go", "build", "-o", "bin/coke"}
+	var act []string
 	ctx := context.Background()
-	var args []string
+	ctx = WithBuilderContext(ctx, func(cmd *exec.Cmd) error {
+		act = make([]string, len(cmd.Args))
+		copy(act, cmd.Args)
+		return nil
+	})
 
+	var args []string
 	err := bc.Main(ctx, args)
 	r.NoError(err)
+	r.Equal(exp, act)
 }
 
 func Test_BuildCmd_Main_SubCommand(t *testing.T) {
@@ -40,7 +49,7 @@ func Test_BuildCmd_Main_SubCommand(t *testing.T) {
 		pluginsFn: plugs.ScopedPlugins,
 	}
 
-	ctx := context.Background()
+	ctx := WithBuilderContext(context.Background(), nil)
 	args := []string{p.name, "a", "b", "c"}
 
 	err := bc.Main(ctx, args)
@@ -62,7 +71,7 @@ func Test_BuildCmd_Main_SubCommand_err(t *testing.T) {
 		pluginsFn: plugs.ScopedPlugins,
 	}
 
-	ctx := context.Background()
+	ctx := WithBuilderContext(context.Background(), nil)
 	args := []string{p.name, "a", "b", "c"}
 
 	err := bc.Main(ctx, args)
@@ -83,7 +92,7 @@ func Test_BuildCmd_Main_ValidateTemplates(t *testing.T) {
 		pluginsFn: plugs.ScopedPlugins,
 	}
 
-	ctx := context.Background()
+	ctx := WithBuilderContext(context.Background(), nil)
 	args := []string{}
 
 	err := bc.Main(ctx, args)
@@ -105,7 +114,7 @@ func Test_BuildCmd_Main_ValidateTemplates_err(t *testing.T) {
 		pluginsFn: plugs.ScopedPlugins,
 	}
 
-	ctx := context.Background()
+	ctx := WithBuilderContext(context.Background(), nil)
 	args := []string{}
 
 	err := bc.Main(ctx, args)
@@ -126,7 +135,7 @@ func Test_BuildCmd_Main_BeforeBuilders(t *testing.T) {
 		pluginsFn: plugs.ScopedPlugins,
 	}
 
-	ctx := context.Background()
+	ctx := WithBuilderContext(context.Background(), nil)
 	var args []string
 
 	err := bc.Main(ctx, args)
@@ -147,7 +156,7 @@ func Test_BuildCmd_Main_BeforeBuilders_err(t *testing.T) {
 		pluginsFn: plugs.ScopedPlugins,
 	}
 
-	ctx := context.Background()
+	ctx := WithBuilderContext(context.Background(), nil)
 	var args []string
 
 	err := bc.Main(ctx, args)
@@ -168,7 +177,7 @@ func Test_BuildCmd_Main_AfterBuilders(t *testing.T) {
 		pluginsFn: plugs.ScopedPlugins,
 	}
 
-	ctx := context.Background()
+	ctx := WithBuilderContext(context.Background(), nil)
 	var args []string
 
 	err := bc.Main(ctx, args)
@@ -190,7 +199,7 @@ func Test_BuildCmd_Main_AfterBuilders_err(t *testing.T) {
 		pluginsFn: plugs.ScopedPlugins,
 	}
 
-	ctx := context.Background()
+	ctx := WithBuilderContext(context.Background(), nil)
 	var args []string
 
 	err := bc.Main(ctx, args)

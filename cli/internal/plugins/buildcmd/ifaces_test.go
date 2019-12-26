@@ -142,7 +142,7 @@ func (b *packager) Name() string {
 
 func (b *packager) Package(ctx context.Context, root string, files []string) error {
 	b.root = root
-	b.files = files
+	b.files = append(b.files, files...)
 	return b.err
 }
 

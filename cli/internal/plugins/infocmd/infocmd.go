@@ -4,13 +4,9 @@ import (
 	"context"
 	"io"
 	"io/ioutil"
-	"time"
 
-	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/info"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
-	"github.com/gobuffalo/clara/genny/rx"
-	"github.com/gobuffalo/genny"
 	"github.com/spf13/pflag"
 )
 
@@ -89,43 +85,5 @@ func (ic *InfoCmd) flagSet() *pflag.FlagSet {
 // are run first, then any plugins that implement plugins.Informer
 // will be run in order at the end.
 func (ic *InfoCmd) Main(ctx context.Context, args []string) error {
-
-	flags := ic.flagSet()
-	if err := flags.Parse(args); err != nil {
-		return err
-	}
-
-	ioe := plugins.CtxIO(ctx)
-	out := ioe.Stdout()
-
-	if ic.help {
-		return plugprint.Print(out, ic)
-	}
-
-	args = flags.Args()
-
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
-	defer cancel()
-
-	run := genny.WetRunner(ctx)
-
-	opts := &rx.Options{
-		Out: rx.NewWriter(out),
-	}
-	if err := run.WithNew(rx.New(opts)); err != nil {
-		return err
-	}
-
-	iopts := &info.Options{
-		Out: rx.NewWriter(out),
-	}
-
-	if err := run.WithNew(info.New(iopts)); err != nil {
-		return err
-	}
-
-	if err := run.Run(); err != nil {
-		return err
-	}
-	return ic.plugins(ctx, args)
+	return nil
 }

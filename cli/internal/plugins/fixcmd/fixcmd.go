@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/gobuffalo/buffalo-cli/internal/v1/cmd/fix"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/spf13/pflag"
@@ -85,7 +84,6 @@ func (fc *FixCmd) Main(ctx context.Context, args []string) error {
 	var help bool
 	flags := pflag.NewFlagSet(fc.String(), pflag.ContinueOnError)
 	flags.SetOutput(ioutil.Discard)
-	flags.BoolVarP(&fix.YesToAll, "yes", "y", false, "update all without asking for confirmation")
 	flags.BoolVarP(&help, "help", "h", false, "print this help")
 
 	if err := flags.Parse(args); err != nil {
@@ -103,9 +101,6 @@ func (fc *FixCmd) Main(ctx context.Context, args []string) error {
 		return fc.fixPlugins(ctx, args)
 	}
 
-	if err := fix.Run(); err != nil {
-		return err
-	}
 	return fc.fixPlugins(ctx, args)
 }
 

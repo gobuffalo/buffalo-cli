@@ -11,14 +11,14 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func Test_mainFile_Version(t *testing.T) {
+func Test_MainFile_Version(t *testing.T) {
 	r := require.New(t)
 
 	ref := newRef(t, "ref")
 	defer ref.Close()
 	os.Chdir(ref.Root)
 
-	bc := &mainFile{}
+	bc := &MainFile{}
 
 	ctx := context.Background()
 
@@ -38,7 +38,7 @@ func Test_mainFile_Version(t *testing.T) {
 	r.Contains(s, `"buildVersioner":"v1"`)
 }
 
-func Test_mainFile_generateNewMain(t *testing.T) {
+func Test_MainFile_generateNewMain(t *testing.T) {
 	r := require.New(t)
 
 	ref := newRef(t, "ref")
@@ -52,7 +52,7 @@ func Test_mainFile_generateNewMain(t *testing.T) {
 			},
 		},
 	}
-	bc := &mainFile{
+	bc := &MainFile{
 		pluginsFn: plugs.ScopedPlugins,
 	}
 
@@ -68,7 +68,7 @@ func Test_mainFile_generateNewMain(t *testing.T) {
 	r.Contains(out, `originalMain`)
 }
 
-func Test_mainFile_generateNewMain_noCli(t *testing.T) {
+func Test_MainFile_generateNewMain_noCli(t *testing.T) {
 	r := require.New(t)
 
 	ref := newRef(t, "nocli")
@@ -82,7 +82,7 @@ func Test_mainFile_generateNewMain_noCli(t *testing.T) {
 			},
 		},
 	}
-	bc := &mainFile{
+	bc := &MainFile{
 		pluginsFn: plugs.ScopedPlugins,
 	}
 

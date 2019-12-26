@@ -3,6 +3,7 @@ package buildcmd
 import (
 	"context"
 	"flag"
+	"os/exec"
 
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/spf13/pflag"
@@ -58,4 +59,31 @@ type Versioner interface {
 type Importer interface {
 	plugins.Plugin
 	BuildImports(ctx context.Context, root string) ([]string, error)
+}
+
+// BuilderContext can be implemented to capture the `go build` command
+// before it is executed. It is up to the BuilderContext to execute, or not,
+// the command.
+type BuilderContext interface {
+	context.Context
+	Build(cmd *exec.Cmd) error
+}
+
+type buildContext struct {
+	context.Context
+	fn func(cmd *exec.Cmd) error
+}
+
+func (c *buildContext) Build(cmd *exec.Cmd) error {
+	if c.fn == nil {
+		return nil
+	}
+	return c.fn(cmd)
+}
+
+func WithBuilderContext(ctx context.Context, fn func(cmd *exec.Cmd) error) BuilderContext {
+	return &buildContext{
+		Context: ctx,
+		fn:      fn,
+	}
 }

@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"testing"
 
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/here"
@@ -67,7 +68,9 @@ func (bc *BuildCmd) GoBuildCmd(ctx context.Context) (*exec.Cmd, error) {
 	cmd.Stderr = ioe.Stderr()
 	cmd.Stdin = ioe.Stdin()
 
-	fmt.Fprintln(ioe.Stdout(), cmd.Args)
+	if testing.Verbose() {
+		fmt.Fprintln(ioe.Stdout(), cmd.Args)
+	}
 
 	return cmd, nil
 }
@@ -77,5 +80,10 @@ func (bc *BuildCmd) build(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+
+	if tc, ok := ctx.(BuilderContext); ok {
+		return tc.Build(cmd)
+	}
+
 	return cmd.Run()
 }

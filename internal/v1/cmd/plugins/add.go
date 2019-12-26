@@ -8,7 +8,7 @@ import (
 
 	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/add"
 	"github.com/gobuffalo/buffalo-cli/internal/v1/plugins/plugdeps"
-	"github.com/gobuffalo/genny"
+	"github.com/gobuffalo/genny/v2"
 	"github.com/gobuffalo/meta"
 	"github.com/markbates/errx"
 	"github.com/spf13/cobra"

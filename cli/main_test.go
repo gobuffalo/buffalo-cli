@@ -70,14 +70,3 @@ func Test_Buffalo_Main_SubCommand_Alias(t *testing.T) {
 	r.NoError(err)
 	r.Equal(exp, c.args)
 }
-
-func Test_Buffalo_Main_Calls_Old_CLI(t *testing.T) {
-	r := require.New(t)
-
-	b := &Buffalo{}
-	ctx := context.Background()
-	args := []string{"routes", "-h"}
-
-	err := b.Main(ctx, args)
-	r.NoError(err)
-}

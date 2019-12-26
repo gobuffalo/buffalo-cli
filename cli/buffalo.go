@@ -41,6 +41,7 @@ func New() (*Buffalo, error) {
 	b.Plugins = append(b.Plugins,
 		&assets.Builder{},
 		&buildcmd.BuildCmd{},
+		&buildcmd.MainFile{},
 		&fixcmd.FixCmd{},
 		&flect.Buffalo{},
 		&golang.Templates{},

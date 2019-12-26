@@ -16,14 +16,18 @@ const filePath = "/database.yml"
 
 type Buffalo struct{}
 
-func (Buffalo) Aliases() []string {
-	return []string{"db"}
+func (Buffalo) Name() string {
+	return "pop"
 }
 
 // Main adds the `buffalo pop` sub-command.
 func (b *Buffalo) Main(ctx context.Context, args []string) error {
 	cmd.RootCmd.SetArgs(args)
 	return cmd.RootCmd.Execute()
+}
+
+func (Buffalo) Aliases() []string {
+	return []string{"db"}
 }
 
 var _ buildcmd.Versioner = &Buffalo{}
@@ -49,10 +53,6 @@ func (p *Buffalo) PkgerDecls() (parser.Decls, error) {
 	decls = append(decls, d)
 
 	return decls, nil
-}
-
-func (Buffalo) Name() string {
-	return "pop"
 }
 
 func (p *Buffalo) BuiltInit(ctx context.Context, args []string) error {

@@ -2,8 +2,8 @@ package cli
 
 import (
 	"context"
+	"fmt"
 
-	"github.com/gobuffalo/buffalo-cli/internal/v1/cmd"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/spf13/pflag"
@@ -26,11 +26,10 @@ func (b *Buffalo) Main(ctx context.Context, args []string) error {
 	if len(args) == 0 || (len(flags.Args()) == 0 && help) {
 		return plugprint.Print(ioe.Stdout(), b)
 	}
-	if c, err := cmds.Find(args[0]); err == nil {
+
+	name := args[0]
+	if c, err := cmds.Find(name); err == nil {
 		return c.Main(ctx, args[1:])
 	}
-
-	c := cmd.RootCmd
-	c.SetArgs(args)
-	return c.Execute()
+	return fmt.Errorf("unknown command %s", name)
 }

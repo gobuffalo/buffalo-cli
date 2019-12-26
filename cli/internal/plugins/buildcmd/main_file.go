@@ -27,35 +27,35 @@ import (
 
 const mainBuildFile = "main.build.go"
 
-var _ AfterBuilder = &mainFile{}
-var _ BeforeBuilder = &mainFile{}
-var _ plugins.Plugin = &mainFile{}
-var _ plugins.PluginNeeder = &mainFile{}
-var _ plugins.PluginScoper = &mainFile{}
-var _ plugprint.Hider = &mainFile{}
+var _ AfterBuilder = &MainFile{}
+var _ BeforeBuilder = &MainFile{}
+var _ plugins.Plugin = &MainFile{}
+var _ plugins.PluginNeeder = &MainFile{}
+var _ plugins.PluginScoper = &MainFile{}
+var _ plugprint.Hider = &MainFile{}
 
-type mainFile struct {
+type MainFile struct {
 	pluginsFn plugins.PluginFeeder
 }
 
-func (bc *mainFile) WithPlugins(f plugins.PluginFeeder) {
+func (bc *MainFile) WithPlugins(f plugins.PluginFeeder) {
 	bc.pluginsFn = f
 }
 
-func (mainFile) HidePlugin() {}
+func (MainFile) HidePlugin() {}
 
-func (mainFile) Name() string {
+func (MainFile) Name() string {
 	return "main"
 }
 
-func (bc *mainFile) ScopedPlugins() []plugins.Plugin {
+func (bc *MainFile) ScopedPlugins() []plugins.Plugin {
 	if bc.pluginsFn == nil {
 		return nil
 	}
 	return bc.pluginsFn()
 }
 
-func (bc *mainFile) Version(ctx context.Context, root string) (string, error) {
+func (bc *MainFile) Version(ctx context.Context, root string) (string, error) {
 	versions := map[string]string{
 		"time": time.Now().Format(time.RFC3339),
 	}
@@ -84,7 +84,7 @@ func (bc *mainFile) Version(ctx context.Context, root string) (string, error) {
 	return m()
 }
 
-func (bc *mainFile) generateNewMain(ctx context.Context, info here.Info, version string, ws ...io.Writer) error {
+func (bc *MainFile) generateNewMain(ctx context.Context, info here.Info, version string, ws ...io.Writer) error {
 	fmt.Println("version --> ", version)
 
 	var imports []string
@@ -142,7 +142,7 @@ func (bc *mainFile) generateNewMain(ctx context.Context, info here.Info, version
 	return nil
 }
 
-func (bc *mainFile) BeforeBuild(ctx context.Context, args []string) error {
+func (bc *MainFile) BeforeBuild(ctx context.Context, args []string) error {
 	info, err := here.Current()
 	if err != nil {
 		return err
@@ -164,9 +164,9 @@ func (bc *mainFile) BeforeBuild(ctx context.Context, args []string) error {
 	return nil
 }
 
-var _ AfterBuilder = &mainFile{}
+var _ AfterBuilder = &MainFile{}
 
-func (bc *mainFile) AfterBuild(ctx context.Context, args []string, err error) error {
+func (bc *MainFile) AfterBuild(ctx context.Context, args []string, err error) error {
 	info, err := here.Current()
 	if err != nil {
 		return err
@@ -180,7 +180,7 @@ func (bc *mainFile) AfterBuild(ctx context.Context, args []string, err error) er
 	return nil
 }
 
-func (bc *mainFile) renameMain(info here.Info, from string, to string) error {
+func (bc *MainFile) renameMain(info here.Info, from string, to string) error {
 	if info.Name != "main" {
 		return fmt.Errorf("module %s is not a main", info.Name)
 	}
