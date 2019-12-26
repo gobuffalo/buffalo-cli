@@ -5,6 +5,7 @@ import (
 	"context"
 	"os"
 	"path"
+	"path/filepath"
 	"testing"
 
 	"github.com/gobuffalo/buffalo-cli/plugins"
@@ -14,15 +15,11 @@ import (
 func Test_MainFile_Version(t *testing.T) {
 	r := require.New(t)
 
-	ref := newRef(t, "ref")
-	defer ref.Close()
-	os.Chdir(ref.Root)
-
 	bc := &MainFile{}
 
 	ctx := context.Background()
 
-	s, err := bc.Version(ctx, ref.Root)
+	s, err := bc.Version(ctx, "")
 	r.NoError(err)
 	r.Contains(s, `"time":`)
 
@@ -32,7 +29,7 @@ func Test_MainFile_Version(t *testing.T) {
 		}
 	}
 
-	s, err = bc.Version(ctx, ref.Root)
+	s, err = bc.Version(ctx, "")
 	r.NoError(err)
 	r.Contains(s, `"time":`)
 	r.Contains(s, `"buildVersioner":"v1"`)
@@ -41,9 +38,8 @@ func Test_MainFile_Version(t *testing.T) {
 func Test_MainFile_generateNewMain(t *testing.T) {
 	r := require.New(t)
 
-	ref := newRef(t, "ref")
-	defer ref.Close()
-	os.Chdir(ref.Root)
+	ref := newRef(t, "")
+	defer os.RemoveAll(filepath.Join(ref.Dir, mainBuildFile))
 
 	plugs := plugins.Plugins{
 		&buildImporter{
@@ -53,12 +49,13 @@ func Test_MainFile_generateNewMain(t *testing.T) {
 		},
 	}
 	bc := &MainFile{
-		pluginsFn: plugs.ScopedPlugins,
+		pluginsFn:         plugs.ScopedPlugins,
+		withFallthroughFn: func() bool { return true },
 	}
 
 	ctx := context.Background()
 	bb := &bytes.Buffer{}
-	err := bc.generateNewMain(ctx, ref.Info, "v1", bb)
+	err := bc.generateNewMain(ctx, ref, "v1", bb)
 	r.NoError(err)
 
 	out := bb.String()
@@ -71,9 +68,8 @@ func Test_MainFile_generateNewMain(t *testing.T) {
 func Test_MainFile_generateNewMain_noCli(t *testing.T) {
 	r := require.New(t)
 
-	ref := newRef(t, "nocli")
-	defer ref.Close()
-	os.Chdir(ref.Root)
+	ctx, ref := newRefCtx(t, "")
+	defer os.RemoveAll(filepath.Join(ref.Dir, mainBuildFile))
 
 	plugs := plugins.Plugins{
 		&buildImporter{
@@ -83,12 +79,12 @@ func Test_MainFile_generateNewMain_noCli(t *testing.T) {
 		},
 	}
 	bc := &MainFile{
-		pluginsFn: plugs.ScopedPlugins,
+		pluginsFn:         plugs.ScopedPlugins,
+		withFallthroughFn: func() bool { return false },
 	}
 
-	ctx := context.Background()
 	bb := &bytes.Buffer{}
-	err := bc.generateNewMain(ctx, ref.Info, "v1", bb)
+	err := bc.generateNewMain(ctx, ref, "v1", bb)
 	r.NoError(err)
 
 	out := bb.String()

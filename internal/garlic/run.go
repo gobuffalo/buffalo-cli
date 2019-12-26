@@ -2,10 +2,7 @@ package garlic
 
 import (
 	"context"
-	"os"
 	"path"
-	"path/filepath"
-	"text/template"
 
 	"github.com/gobuffalo/buffalo-cli/cli"
 	"github.com/gobuffalo/here"
@@ -40,32 +37,7 @@ func Run(ctx context.Context, args []string) error {
 		return err
 	}
 
-	fp := filepath.Join(info.Root, "cli", "buffalo.go")
-	if err := os.MkdirAll(filepath.Dir(fp), 0755); err != nil {
-		return err
-	}
-
-	f, err := os.Create(fp)
-	if err != nil {
-		return err
-	}
-
-	tmpl, err := template.New(fp).Parse(cliBuffalo)
-	if err != nil {
-		return err
-	}
-
-	err = tmpl.Execute(f, struct {
-		Name string
-	}{
-		Name: path.Base(info.Module.Path),
-	})
-
-	if err != nil {
-		return err
-	}
-
-	if err := f.Close(); err != nil {
+	if err := NewApp(ctx, info.Root, args); err != nil {
 		return err
 	}
 

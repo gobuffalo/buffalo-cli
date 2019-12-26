@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"os"
+	"os/exec"
 	"testing"
 
 	"github.com/gobuffalo/buffalo-cli/plugins"
@@ -42,25 +43,29 @@ func Test_Builder_Build(t *testing.T) {
 	os.Chdir(info.Root)
 
 	bc := &Builder{}
-	ctx := context.Background()
-	ctx = context.WithValue(ctx, "here.Current", info)
+	bc.WithHereInfo(info)
 
-	stdout := &bytes.Buffer{}
-	ctx = plugins.WithStdout(ctx, stdout)
+	exp := []string{"npm", "run", "build"}
+	var act []string
+
+	ctx := context.Background()
+	ctx = WithBuilderContext(ctx, func(cmd *exec.Cmd) error {
+		act = make([]string, len(cmd.Args))
+		copy(act, cmd.Args)
+		return nil
+	})
 
 	args := []string{}
 
 	err = bc.Build(ctx, args)
 	r.NoError(err)
-	r.Contains(stdout.String(), "wolverine")
+	r.Equal(exp, act)
 }
 
 func Test_Builder_Build_Skip(t *testing.T) {
 	r := require.New(t)
 
-	info := tempApp(t, map[string]string{
-		"build": "echo wolverine",
-	})
+	info := tempApp(t, map[string]string{})
 
 	defer os.RemoveAll(info.Root)
 
@@ -71,8 +76,9 @@ func Test_Builder_Build_Skip(t *testing.T) {
 	os.Chdir(info.Root)
 
 	bc := &Builder{}
+	bc.WithHereInfo(info)
+
 	ctx := context.Background()
-	ctx = context.WithValue(ctx, "here.Current", info)
 
 	stdout := &bytes.Buffer{}
 	ctx = plugins.WithStdout(ctx, stdout)

@@ -3,6 +3,7 @@ package plugins
 import (
 	"context"
 	"io"
+	"io/ioutil"
 	"os"
 )
 
@@ -22,6 +23,15 @@ type StdoutGetter interface {
 
 type StderrGetter interface {
 	Stderr() io.Writer
+}
+
+func DiscardIO() IO {
+	return stdIO{
+		Context: context.Background(),
+		stdin:   os.Stdin,
+		stdout:  ioutil.Discard,
+		stderr:  ioutil.Discard,
+	}
 }
 
 func NewIO() IO {

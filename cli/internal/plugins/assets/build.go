@@ -9,7 +9,6 @@ import (
 
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
-	"github.com/gobuffalo/here"
 )
 
 type packageJSON struct {
@@ -42,13 +41,9 @@ func (bc *Builder) Build(ctx context.Context, args []string) error {
 
 	os.Setenv("NODE_ENV", bc.Environment)
 
-	info, err := here.Current()
+	info, err := bc.HereInfo()
 	if err != nil {
 		return err
-	}
-
-	if i, ok := ctx.Value("here.Current").(here.Info); ok {
-		info = i
 	}
 
 	c, err := bc.Cmd(info.Root, ctx, args)
@@ -56,11 +51,18 @@ func (bc *Builder) Build(ctx context.Context, args []string) error {
 		return err
 	}
 
-	if err := c.Run(); err != nil {
+	var fn func() error = c.Run
+	if tc, ok := ctx.(AssetBuilderContext); ok {
+		fn = func() error {
+			return tc.BuildAssets(c)
+		}
+	}
+
+	if err := fn(); err != nil {
 		return err
 	}
 
-	if err := bc.archive(info.Root, ctx, args); err != nil {
+	if err := bc.archive(ctx, info.Root, args); err != nil {
 		return err
 	}
 

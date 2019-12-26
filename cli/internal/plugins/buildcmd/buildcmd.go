@@ -3,6 +3,7 @@ package buildcmd
 import (
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
+	"github.com/gobuffalo/here"
 )
 
 var _ plugins.Plugin = &BuildCmd{}
@@ -14,7 +15,8 @@ var _ plugprint.FlagPrinter = &BuildCmd{}
 var _ plugprint.SubCommander = &BuildCmd{}
 
 type BuildCmd struct {
-	pluginsFn plugins.PluginFeeder
+	Info here.Info
+
 	// Mod is the -mod flag
 	Mod string
 	// Static sets the following flags for the final `go build` command:
@@ -32,6 +34,19 @@ type BuildCmd struct {
 	help                   bool
 	skipTemplateValidation bool
 	verbose                bool
+
+	pluginsFn plugins.PluginFeeder
+}
+
+func (b *BuildCmd) WithHereInfo(i here.Info) {
+	b.Info = i
+}
+
+func (b *BuildCmd) HereInfo() (here.Info, error) {
+	if !b.Info.IsZero() {
+		return b.Info, nil
+	}
+	return here.Current()
 }
 
 func (b *BuildCmd) WithPlugins(f plugins.PluginFeeder) {

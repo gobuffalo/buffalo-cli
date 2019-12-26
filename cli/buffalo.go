@@ -32,7 +32,7 @@ type Buffalo struct {
 	plugins.Plugins
 }
 
-func New() (*Buffalo, error) {
+func NewWithInfo(info here.Info) (*Buffalo, error) {
 	b := &Buffalo{}
 
 	pfn := func() []plugins.Plugin {
@@ -54,11 +54,6 @@ func New() (*Buffalo, error) {
 		// &packr.Buffalo{},
 	)
 
-	info, err := here.Current()
-	if err != nil {
-		return nil, err
-	}
-
 	if _, err := os.Stat(filepath.Join(info.Root, ".git")); err == nil {
 		b.Plugins = append(b.Plugins, &git.Buffalo{})
 	}
@@ -69,6 +64,7 @@ func New() (*Buffalo, error) {
 	pfn = func() []plugins.Plugin {
 		return b.Plugins
 	}
+
 	for _, b := range b.Plugins {
 		f, ok := b.(plugins.PluginNeeder)
 		if !ok {
@@ -76,7 +72,24 @@ func New() (*Buffalo, error) {
 		}
 		f.WithPlugins(pfn)
 	}
+
+	for _, b := range b.Plugins {
+		f, ok := b.(WithHere)
+		if !ok {
+			continue
+		}
+		f.WithHereInfo(info)
+	}
+
 	return b, nil
+}
+
+func New() (*Buffalo, error) {
+	info, err := here.Current()
+	if err != nil {
+		return nil, err
+	}
+	return NewWithInfo(info)
 }
 
 func (b Buffalo) ScopedPlugins() []plugins.Plugin {

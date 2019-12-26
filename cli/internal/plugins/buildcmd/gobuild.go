@@ -11,13 +11,12 @@ import (
 	"testing"
 
 	"github.com/gobuffalo/buffalo-cli/plugins"
-	"github.com/gobuffalo/here"
 )
 
 func (bc *BuildCmd) GoBuildCmd(ctx context.Context) (*exec.Cmd, error) {
 	buildArgs := []string{"build"}
 
-	info, err := here.Current()
+	info, err := bc.HereInfo()
 	if err != nil {
 		return nil, err
 	}

@@ -35,7 +35,8 @@ var _ plugins.PluginScoper = &MainFile{}
 var _ plugprint.Hider = &MainFile{}
 
 type MainFile struct {
-	pluginsFn plugins.PluginFeeder
+	pluginsFn         plugins.PluginFeeder
+	withFallthroughFn func() bool
 }
 
 func (bc *MainFile) WithPlugins(f plugins.PluginFeeder) {
@@ -119,11 +120,15 @@ func (bc *MainFile) generateNewMain(ctx context.Context, info here.Info, version
 		Info:         info,
 	}
 
-	bt.WithFallthrough = func() bool {
-		c := exec.CommandContext(ctx, "go", "doc", path.Join(info.ImportPath, "cli")+".Buffalo")
-		err := c.Run()
-		return err == nil
-	}()
+	ft := bc.withFallthroughFn
+	if ft == nil {
+		ft = func() bool {
+			c := exec.CommandContext(ctx, "go", "doc", path.Join(info.ImportPath, "cli")+".Buffalo")
+			err := c.Run()
+			return err == nil
+		}
+	}
+	bt.WithFallthrough = ft()
 
 	t, err := template.New(mainBuildFile).Parse(mainBuildTmpl)
 	if err != nil {

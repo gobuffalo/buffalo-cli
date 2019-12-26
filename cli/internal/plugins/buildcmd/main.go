@@ -6,7 +6,6 @@ import (
 
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
-	"github.com/gobuffalo/here"
 )
 
 func (bc *BuildCmd) beforeBuild(ctx context.Context, args []string) error {
@@ -44,7 +43,7 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 
 	ioe := plugins.CtxIO(ctx)
 
-	info, err := here.Current()
+	info, err := bc.HereInfo()
 	if err != nil {
 		return err
 	}

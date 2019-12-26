@@ -2,7 +2,6 @@ package buildcmd
 
 import (
 	"context"
-	"os"
 	"testing"
 
 	"github.com/gobuffalo/buffalo-cli/plugins"
@@ -11,10 +10,6 @@ import (
 
 func Test_BuildCmd_Package(t *testing.T) {
 	r := require.New(t)
-
-	ref := newRef(t, "ref")
-	defer ref.Close()
-	os.Chdir(ref.Root)
 
 	pkg := &packager{
 		files: []string{"A"},

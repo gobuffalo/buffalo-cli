@@ -7,6 +7,7 @@ import (
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
+	"github.com/gobuffalo/here"
 )
 
 var _ buildcmd.BeforeBuilder = &Builder{}
@@ -18,6 +19,8 @@ var _ plugprint.FlagPrinter = &Builder{}
 // Builder is responsible for building webpack
 // and other assets
 type Builder struct {
+	Info here.Info
+
 	Environment string
 	// CleanAssets will remove the public/assets folder build compiling
 	Clean bool
@@ -29,6 +32,17 @@ type Builder struct {
 
 	Skip bool
 	Tool string // default is npm
+}
+
+func (a *Builder) WithHereInfo(i here.Info) {
+	a.Info = i
+}
+
+func (a *Builder) HereInfo() (here.Info, error) {
+	if !a.Info.IsZero() {
+		return a.Info, nil
+	}
+	return here.Current()
 }
 
 func (a Builder) Name() string {

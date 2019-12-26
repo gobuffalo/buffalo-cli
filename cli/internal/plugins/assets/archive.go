@@ -9,14 +9,14 @@ import (
 	"strings"
 )
 
-func (a *Builder) archive(root string, ctx context.Context, args []string) error {
+func (a *Builder) archive(ctx context.Context, root string, args []string) error {
 	if !a.Extract {
 		return nil
 	}
 
 	outputDir := a.ExtractTo
 	if len(a.ExtractTo) == 0 {
-		outputDir = filepath.Dir(filepath.Join(root, "bin"))
+		outputDir = "bin"
 	}
 	outputDir = filepath.Join(root, outputDir)
 	os.MkdirAll(outputDir, 0755)

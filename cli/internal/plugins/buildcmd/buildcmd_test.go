@@ -1,7 +1,7 @@
 package buildcmd
 
 import (
-	"os"
+	"context"
 	"path/filepath"
 	"testing"
 
@@ -10,26 +10,14 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type ref struct {
-	here.Info
-	t   *testing.T
-	PWD string
+func newRefCtx(t *testing.T, root string) (BuilderContext, here.Info) {
+	ctx := plugins.WithIO(context.Background(), plugins.DiscardIO())
+	bctx := WithBuilderContext(ctx, nil)
+	return bctx, newRef(t, root)
 }
 
-func (r ref) Close() {
-	os.RemoveAll(filepath.Join(r.Root, "main.build.go"))
-	os.RemoveAll(filepath.Join(r.Root, "bin"))
-	os.Chdir(r.PWD)
-}
-
-func newRef(t *testing.T, name string) ref {
+func newRef(t *testing.T, root string) here.Info {
 	t.Helper()
-
-	pwd, err := os.Getwd()
-	if err != nil {
-		t.Fatal(err)
-	}
-	root := filepath.Join(pwd, "testdata", name)
 
 	info := here.Info{
 		Dir:        root,
@@ -44,13 +32,7 @@ func newRef(t *testing.T, name string) ref {
 		},
 	}
 
-	r := ref{
-		t:    t,
-		Info: info,
-		PWD:  pwd,
-	}
-	return r
-
+	return info
 }
 
 func Test_BuildCmd_Subcommands(t *testing.T) {
