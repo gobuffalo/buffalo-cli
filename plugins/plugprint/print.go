@@ -115,10 +115,10 @@ func printCommands(w io.Writer, main plugins.Plugin) error {
 	fmt.Fprint(w, ac)
 
 	tw := tabwriter.NewWriter(w, 0, 0, 2, ' ', 0)
-	fmt.Fprintf(tw, "\t%s\t%s\n", "Name", "Description")
-	fmt.Fprintf(tw, "\t%s\t%s\n", "----", "-----------")
+	fmt.Fprintf(tw, "\t%s\t%s\n", "Command", "Description")
+	fmt.Fprintf(tw, "\t%s\t%s\n", "-------", "-----------")
 	for _, c := range plugs {
-		line := fmt.Sprintf("\t%s\t%s", c.Name(), desc(c))
+		line := fmt.Sprintf("\t%s\t%s", cmdName(c), desc(c))
 		fmt.Fprintln(tw, line)
 	}
 	tw.Flush()
@@ -130,4 +130,11 @@ func desc(p plugins.Plugin) string {
 		return d.Description()
 	}
 	return ""
+}
+
+func cmdName(p plugins.Plugin) string {
+	if d, ok := p.(NamedCommand); ok {
+		return d.CmdName()
+	}
+	return p.Name()
 }

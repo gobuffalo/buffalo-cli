@@ -17,6 +17,10 @@ const filePath = "/database.yml"
 type Buffalo struct{}
 
 func (Buffalo) Name() string {
+	return "buffalo-pop"
+}
+
+func (Buffalo) CmdName() string {
 	return "pop"
 }
 

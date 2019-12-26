@@ -20,6 +20,11 @@ type Command interface {
 	Main(ctx context.Context, args []string) error
 }
 
+type NamedCommand interface {
+	Command
+	CmdName() string
+}
+
 type WithHere interface {
 	WithHereInfo(i here.Info)
 }

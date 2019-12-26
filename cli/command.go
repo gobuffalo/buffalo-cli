@@ -13,6 +13,9 @@ type Commands []Command
 func (commands Commands) Find(name string) (Command, error) {
 	for _, c := range commands {
 		names := []string{c.Name()}
+		if a, ok := c.(NamedCommand); ok {
+			names = append(names, a.CmdName())
+		}
 		if a, ok := c.(Aliases); ok {
 			names = append(names, a.Aliases()...)
 		}
