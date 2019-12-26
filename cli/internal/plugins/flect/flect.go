@@ -43,7 +43,7 @@ func (Buffalo) Name() string {
 func (fl *Buffalo) BuiltInit(ctx context.Context, args []string) error {
 	f, err := pkger.Open(filePath)
 	if err != nil {
-		return fmt.Errorf("failed to load inflections %w", err)
+		return fmt.Errorf("failed to load inflections %s", err)
 	}
 	defer f.Close()
 
