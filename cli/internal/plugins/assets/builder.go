@@ -4,19 +4,10 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
 	"github.com/gobuffalo/buffalo-cli/internal/plugins"
 	"github.com/gobuffalo/buffalo-cli/internal/plugins/plugprint"
 	"github.com/gobuffalo/here"
 )
-
-var _ buildcmd.BeforeBuilder = &Builder{}
-var _ buildcmd.Pflagger = &Builder{}
-var _ plugins.Plugin = &Builder{}
-var _ plugins.PluginNeeder = &Builder{}
-var _ plugins.PluginScoper = &Builder{}
-var _ plugprint.Describer = &Builder{}
-var _ plugprint.FlagPrinter = &Builder{}
 
 // Builder is responsible for building webpack
 // and other assets
@@ -38,9 +29,13 @@ type Builder struct {
 	pluginsFn plugins.PluginFeeder
 }
 
+var _ plugins.PluginNeeder = &Builder{}
+
 func (bc *Builder) WithPlugins(f plugins.PluginFeeder) {
 	bc.pluginsFn = f
 }
+
+var _ plugins.PluginScoper = &Builder{}
 
 func (bc *Builder) ScopedPlugins() []plugins.Plugin {
 	var plugs []plugins.Plugin
@@ -69,9 +64,13 @@ func (a *Builder) HereInfo() (here.Info, error) {
 	return here.Current()
 }
 
+var _ plugins.Plugin = &Builder{}
+
 func (a Builder) Name() string {
 	return "assets"
 }
+
+var _ plugprint.Describer = &Builder{}
 
 func (a Builder) Description() string {
 	return "Manages webpack assets during the buffalo build process."

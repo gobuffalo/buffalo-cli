@@ -10,23 +10,23 @@ import (
 	"github.com/spf13/pflag"
 )
 
-var _ plugins.Plugin = &FixCmd{}
-var _ plugins.PluginNeeder = &FixCmd{}
-var _ plugins.PluginScoper = &FixCmd{}
-var _ plugprint.Describer = &FixCmd{}
-var _ plugprint.SubCommander = &FixCmd{}
-
 type FixCmd struct {
 	pluginsFn plugins.PluginFeeder
 }
+
+var _ plugins.PluginNeeder = &FixCmd{}
 
 func (fc *FixCmd) WithPlugins(f plugins.PluginFeeder) {
 	fc.pluginsFn = f
 }
 
+var _ plugins.Plugin = &FixCmd{}
+
 func (fc *FixCmd) Name() string {
 	return "fix"
 }
+
+var _ plugprint.Describer = &FixCmd{}
 
 func (fc *FixCmd) Description() string {
 	return "Attempt to fix a Buffalo application's API to match version in go.mod"
@@ -104,9 +104,13 @@ func (fc *FixCmd) Main(ctx context.Context, args []string) error {
 	return fc.fixPlugins(ctx, args)
 }
 
+var _ plugprint.SubCommander = &FixCmd{}
+
 func (fc *FixCmd) SubCommands() []plugins.Plugin {
 	return fc.ScopedPlugins()
 }
+
+var _ plugins.PluginScoper = &FixCmd{}
 
 func (fc *FixCmd) ScopedPlugins() []plugins.Plugin {
 	var plugs []plugins.Plugin

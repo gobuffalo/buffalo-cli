@@ -6,14 +6,6 @@ import (
 	"github.com/gobuffalo/here"
 )
 
-var _ plugins.Plugin = &BuildCmd{}
-var _ plugins.PluginNeeder = &BuildCmd{}
-var _ plugins.PluginScoper = &BuildCmd{}
-var _ plugprint.Aliases = &BuildCmd{}
-var _ plugprint.Describer = &BuildCmd{}
-var _ plugprint.FlagPrinter = &BuildCmd{}
-var _ plugprint.SubCommander = &BuildCmd{}
-
 type BuildCmd struct {
 	Info here.Info
 
@@ -49,13 +41,19 @@ func (b *BuildCmd) HereInfo() (here.Info, error) {
 	return here.Current()
 }
 
+var _ plugins.PluginNeeder = &BuildCmd{}
+
 func (b *BuildCmd) WithPlugins(f plugins.PluginFeeder) {
 	b.pluginsFn = f
 }
 
+var _ plugprint.Aliases = &BuildCmd{}
+
 func (*BuildCmd) Aliases() []string {
 	return []string{"b", "install"}
 }
+
+var _ plugins.Plugin = &BuildCmd{}
 
 func (b BuildCmd) Name() string {
 	return "build"
@@ -65,9 +63,13 @@ func (b BuildCmd) String() string {
 	return b.Name()
 }
 
+var _ plugprint.Describer = &BuildCmd{}
+
 func (BuildCmd) Description() string {
 	return "Build the application binary, including bundling of assets (packr & webpack)"
 }
+
+var _ plugprint.SubCommander = &BuildCmd{}
 
 func (bc *BuildCmd) SubCommands() []plugins.Plugin {
 	var plugs []plugins.Plugin
@@ -78,6 +80,8 @@ func (bc *BuildCmd) SubCommands() []plugins.Plugin {
 	}
 	return plugs
 }
+
+var _ plugins.PluginScoper = &BuildCmd{}
 
 func (bc *BuildCmd) ScopedPlugins() []plugins.Plugin {
 	var plugs []plugins.Plugin

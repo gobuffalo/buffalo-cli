@@ -13,16 +13,17 @@ import (
 
 const filePath = "/inflections.json"
 
-var _ plugins.Plugin = &Buffalo{}
-var _ buildcmd.PackFiler = &Buffalo{}
-
 type Buffalo struct{}
+
+var _ buildcmd.PackFiler = &Buffalo{}
 
 func (f *Buffalo) PackageFiles(ctx context.Context, root string) ([]string, error) {
 	return []string{
 		filepath.Join(root, filePath),
 	}, nil
 }
+
+var _ plugins.Plugin = &Buffalo{}
 
 func (Buffalo) Name() string {
 	return "flect"

@@ -6,10 +6,15 @@ import (
 	"fmt"
 	"os/exec"
 	"strings"
+
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
+	"github.com/gobuffalo/buffalo-cli/internal/plugins"
+	"github.com/gobuffalo/buffalo-cli/internal/plugins/plugprint"
 )
 
-type Buffalo struct {
-}
+type Buffalo struct{}
+
+var _ buildcmd.Versioner = &Buffalo{}
 
 func (b *Buffalo) BuildVersion(ctx context.Context, root string) (string, error) {
 	if _, err := exec.LookPath("bzr"); err != nil {
@@ -31,13 +36,17 @@ func (b *Buffalo) BuildVersion(ctx context.Context, root string) (string, error)
 	return s, nil
 }
 
+var _ plugins.Plugin = Buffalo{}
+
 // Name is the name of the plugin.
 // This will also be used for the cli sub-command
 // 	"pop" | "heroku" | "auth" | etc...
-func (b *Buffalo) Name() string {
+func (b Buffalo) Name() string {
 	return "bzr"
 }
 
-func (b *Buffalo) Description() string {
+var _ plugprint.Describer = Buffalo{}
+
+func (b Buffalo) Description() string {
 	return "Provides bzr related hooks to Buffalo applications."
 }

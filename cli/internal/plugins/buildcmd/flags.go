@@ -3,8 +3,11 @@ package buildcmd
 import (
 	"io"
 
+	"github.com/gobuffalo/buffalo-cli/internal/plugins/plugprint"
 	"github.com/spf13/pflag"
 )
+
+var _ plugprint.FlagPrinter = &BuildCmd{}
 
 func (bc *BuildCmd) PrintFlags(w io.Writer) error {
 	flags := bc.Flags()

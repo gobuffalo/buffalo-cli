@@ -14,10 +14,6 @@ func (p Plugins) ScopedPlugins() []Plugin {
 	return []Plugin(p)
 }
 
-type Hider interface {
-	HidePlugin()
-}
-
 func (plugs Plugins) ExposedPlugins() []Plugin {
 	var exp []Plugin
 	for _, p := range plugs {
@@ -38,14 +34,4 @@ type background string
 
 func (b background) Name() string {
 	return string(b)
-}
-
-type PluginScoper interface {
-	ScopedPlugins() []Plugin
-}
-
-type PluginFeeder func() []Plugin
-
-type PluginNeeder interface {
-	WithPlugins(PluginFeeder)
 }

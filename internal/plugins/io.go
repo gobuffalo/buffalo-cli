@@ -6,24 +6,6 @@ import (
 	"os"
 )
 
-type IO interface {
-	StderrGetter
-	StdinGetter
-	StdoutGetter
-}
-
-type StdinGetter interface {
-	Stdin() io.Reader
-}
-
-type StdoutGetter interface {
-	Stdout() io.Writer
-}
-
-type StderrGetter interface {
-	Stderr() io.Writer
-}
-
 func NewIO() IO {
 	return stdIO{
 		Context: context.Background(),

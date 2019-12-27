@@ -7,10 +7,14 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
+	"github.com/gobuffalo/buffalo-cli/internal/plugins"
 )
 
-type Templates struct {
-}
+type Templates struct{}
+
+var _ buildcmd.TemplatesValidator = &Templates{}
 
 func (t *Templates) ValidateTemplates(root string) error {
 	root = filepath.Join(root, "templates")
@@ -40,6 +44,8 @@ func (t *Templates) ValidateTemplates(root string) error {
 		return nil
 	})
 }
+
+var _ plugins.Plugin = Templates{}
 
 func (t Templates) Name() string {
 	return "templates"

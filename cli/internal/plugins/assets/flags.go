@@ -5,8 +5,12 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
+	"github.com/gobuffalo/buffalo-cli/internal/plugins/plugprint"
 	"github.com/spf13/pflag"
 )
+
+var _ buildcmd.Pflagger = &Builder{}
 
 func (a *Builder) BuildFlags() []*pflag.Flag {
 	var values []*pflag.Flag
@@ -27,6 +31,8 @@ func (a *Builder) Flags() *pflag.FlagSet {
 	flags.StringVar(&a.ExtractTo, "extract-assets-to", filepath.Join("bin", "assets.zip"), "extract the assets and put them in a distinct archive")
 	return flags
 }
+
+var _ plugprint.FlagPrinter = &Builder{}
 
 func (a *Builder) PrintFlags(w io.Writer) error {
 	flags := a.Flags()

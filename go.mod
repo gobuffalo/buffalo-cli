@@ -9,6 +9,7 @@ require (
 	github.com/gobuffalo/packr/v2 v2.7.1
 	github.com/gobuffalo/plush v3.8.3+incompatible
 	github.com/gobuffalo/pop/v5 v5.0.4
+	github.com/markbates/grift v1.5.0
 	github.com/markbates/jim v0.4.0
 	github.com/markbates/pkger v0.13.0
 	github.com/mattn/go-isatty v0.0.11 // indirect
