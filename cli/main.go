@@ -2,38 +2,34 @@ package cli
 
 import (
 	"context"
+	"fmt"
 
-	"github.com/gobuffalo/buffalo-cli/cli/plugins"
-	"github.com/gobuffalo/buffalo-cli/internal/cmdx"
-	"github.com/gobuffalo/buffalo-cli/internal/v1/cmd"
+	"github.com/gobuffalo/buffalo-cli/internal/plugins"
+	"github.com/gobuffalo/buffalo-cli/internal/plugins/plugprint"
+	"github.com/spf13/pflag"
 )
 
 func (b *Buffalo) Main(ctx context.Context, args []string) error {
-	flags := cmdx.NewFlagSet(b.Name())
-	flags.BoolVarP(&b.help, "help", "h", false, "print this help")
+	var help bool
+	flags := pflag.NewFlagSet(b.String(), pflag.ContinueOnError)
+	flags.BoolVarP(&help, "help", "h", false, "print this help")
 	flags.Parse(args)
 
-	var cmds plugins.Commands
-	for _, p := range b.Plugins {
-		if c, ok := p.(plugins.Command); ok {
+	var cmds Commands
+	for _, p := range b.ScopedPlugins() {
+		if c, ok := p.(Command); ok {
 			cmds = append(cmds, c)
 		}
 	}
 
-	if len(args) == 0 || (len(flags.Args()) == 0 && b.help) {
-		plugs := make(plugins.Plugins, len(cmds))
-		for i, c := range cmds {
-			plugs[i] = c
-		}
-
-		return cmdx.Print(b.Stdout, "", b, plugs, flags)
+	ioe := plugins.CtxIO(ctx)
+	if len(args) == 0 || (len(flags.Args()) == 0 && help) {
+		return plugprint.Print(ioe.Stdout(), b)
 	}
 
-	if c, err := cmds.Find(args[0]); err == nil {
+	name := args[0]
+	if c, err := cmds.Find(name); err == nil {
 		return c.Main(ctx, args[1:])
 	}
-
-	c := cmd.RootCmd
-	c.SetArgs(args)
-	return c.Execute()
+	return fmt.Errorf("unknown command %s", name)
 }

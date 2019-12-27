@@ -1,9 +1,10 @@
 package install
 
 import (
+	"os/exec"
+
 	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/add"
-	"github.com/gobuffalo/genny"
-	"github.com/gobuffalo/genny/gogen"
+	"github.com/gobuffalo/genny/v2"
 )
 
 // New installs plugins and then added them to the config file
@@ -33,7 +34,8 @@ func New(opts *Options) (*genny.Group, error) {
 		if len(p.Tags) > 0 {
 			args = append(args, "-tags", p.Tags.String())
 		}
-		g.Command(gogen.Get(p.GoGet, args...))
+		args = append([]string{p.GoGet}, args...)
+		g.Command(exec.Command("go", args...))
 	}
 	gg.Add(g)
 
