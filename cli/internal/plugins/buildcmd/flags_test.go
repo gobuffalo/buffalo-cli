@@ -4,7 +4,7 @@ import (
 	"flag"
 	"testing"
 
-	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/internal/plugins"
 	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/require"
 )

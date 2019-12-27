@@ -19,8 +19,8 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/gobuffalo/buffalo-cli/plugins"
-	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
+	"github.com/gobuffalo/buffalo-cli/internal/plugins"
+	"github.com/gobuffalo/buffalo-cli/internal/plugins/plugprint"
 	"github.com/gobuffalo/here"
 	"golang.org/x/tools/go/ast/astutil"
 )

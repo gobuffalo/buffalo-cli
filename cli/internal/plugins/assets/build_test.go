@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/internal/plugins"
 	"github.com/gobuffalo/here"
 	"github.com/stretchr/testify/require"
 )

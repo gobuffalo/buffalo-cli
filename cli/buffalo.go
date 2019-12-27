@@ -17,8 +17,8 @@ import (
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/plush"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/pop"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/versioncmd"
-	"github.com/gobuffalo/buffalo-cli/plugins"
-	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
+	"github.com/gobuffalo/buffalo-cli/internal/plugins"
+	"github.com/gobuffalo/buffalo-cli/internal/plugins/plugprint"
 	"github.com/gobuffalo/here"
 )
 

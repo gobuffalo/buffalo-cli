@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/gobuffalo/buffalo-cli/internal/garlic"
-	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/internal/plugins"
 )
 
 type App struct {

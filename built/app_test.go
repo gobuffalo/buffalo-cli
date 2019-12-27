@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/internal/plugins"
 	"github.com/stretchr/testify/require"
 )
 

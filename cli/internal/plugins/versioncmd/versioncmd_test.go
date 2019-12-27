@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	bufcli "github.com/gobuffalo/buffalo-cli"
-	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/internal/plugins"
 	"github.com/stretchr/testify/require"
 )
 

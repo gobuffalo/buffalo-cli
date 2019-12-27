@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/internal/plugins"
 )
 
 func (bc *BuildCmd) GoBuildCmd(ctx context.Context) (*exec.Cmd, error) {

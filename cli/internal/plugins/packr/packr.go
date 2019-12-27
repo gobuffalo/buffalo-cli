@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
-	"github.com/gobuffalo/buffalo-cli/plugins"
-	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
+	"github.com/gobuffalo/buffalo-cli/internal/plugins"
+	"github.com/gobuffalo/buffalo-cli/internal/plugins/plugprint"
 	"github.com/gobuffalo/packr/v2/jam"
 )
 

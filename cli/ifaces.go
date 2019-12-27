@@ -3,7 +3,7 @@ package cli
 import (
 	"context"
 
-	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/internal/plugins"
 	"github.com/gobuffalo/here"
 )
 
