@@ -5,4 +5,4 @@ import (
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/pop"
 )
 
-var _ built.Initer = &pop.Buffalo{}
+var _ built.Initer = &pop.Built{}

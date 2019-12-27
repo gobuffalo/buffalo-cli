@@ -75,12 +75,12 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 			if !ok {
 				err = fmt.Errorf("%s", e)
 			}
+			bc.afterBuild(ctx, args, err)
 		}
-		bc.afterBuild(ctx, args, err)
 	}()
 
 	if err = bc.beforeBuild(ctx, args); err != nil {
-		return err
+		return bc.afterBuild(ctx, args, err)
 	}
 
 	if !bc.skipTemplateValidation {
@@ -90,14 +90,15 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 				continue
 			}
 			if err = tv.ValidateTemplates(info.Root); err != nil {
-				return err
+				return bc.afterBuild(ctx, args, err)
 			}
 		}
 	}
 
 	if err := bc.pack(ctx, info, plugs); err != nil {
-		return err
+		return bc.afterBuild(ctx, args, err)
 	}
 
-	return bc.build(ctx) // go build ...
+	err = bc.build(ctx) // go build ...
+	return bc.afterBuild(ctx, args, err)
 }

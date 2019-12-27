@@ -161,6 +161,8 @@ func (m mFlagRunner) Run() error {
 		p = strings.TrimPrefix(p, app.PackagePkg+string(filepath.Separator))
 		os.Chdir(p)
 
+		// run in each directory
+		// go test -v -run "Suite" -testify.m "Suite"
 		cmd := newTestCmd(m.args)
 		if hasTestify(p) {
 			cmd.Args = append(cmd.Args, "-testify.m", m.query)

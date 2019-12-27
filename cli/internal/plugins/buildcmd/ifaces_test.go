@@ -221,7 +221,7 @@ func (bladeRunner) Name() string {
 	return "blade"
 }
 
-func (b *bladeRunner) BuildRunner(ctx context.Context, cmd *exec.Cmd) error {
+func (b *bladeRunner) RunBuild(ctx context.Context, cmd *exec.Cmd) error {
 	b.cmd = cmd
 	return b.err
 }

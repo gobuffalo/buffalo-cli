@@ -16,6 +16,7 @@ import (
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/pkger"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/plush"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/pop"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/testcmd"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/versioncmd"
 	"github.com/gobuffalo/buffalo-cli/internal/plugins"
 	"github.com/gobuffalo/buffalo-cli/internal/plugins/plugprint"
@@ -49,10 +50,11 @@ func NewWithInfo(info here.Info) (*Buffalo, error) {
 		&infocmd.InfoCmd{},
 		&pkger.Buffalo{},
 		&plush.Buffalo{},
-		&pop.Buffalo{},
+		&testcmd.TestCmd{},
 		&versioncmd.VersionCmd{},
 		// &packr.Buffalo{},
 	)
+	b.Plugins = append(b.Plugins, pop.Plugins()...)
 
 	if _, err := os.Stat(filepath.Join(info.Root, ".git")); err == nil {
 		b.Plugins = append(b.Plugins, &git.Buffalo{})
