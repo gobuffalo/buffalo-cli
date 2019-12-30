@@ -7,21 +7,11 @@ import (
 )
 
 type PluginScoper = plugins.PluginScoper
-
-type Robust interface {
-	Describer
-	FlagPrinter
-	NamedCommand
-	UsagePrinter
-	plugins.Plugin
-}
+type Aliases = plugins.Aliases
+type NamedCommand = plugins.NamedCommand
 
 type SubCommander interface {
 	SubCommands() []plugins.Plugin
-}
-
-type NamedCommand interface {
-	CmdName() string
 }
 
 // Describer is called by `Print` and can be
@@ -45,8 +35,4 @@ type Hider interface {
 // flag information, links, and other messages to users.
 type UsagePrinter interface {
 	PrintUsage(w io.Writer) error
-}
-
-type Aliases interface {
-	Aliases() []string
 }

@@ -52,16 +52,16 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 
 	if len(flags.Args()) > 0 {
 		n := flags.Args()[0]
-		for _, p := range plugs {
-			b, ok := p.(Builder)
-			if !ok {
-				continue
-			}
-			if p.Name() == n {
-				return b.Build(ctx, args[1:])
-			}
+		cmds := plugins.Commands(plugs)
+		p, err := cmds.Find(n)
+		if err != nil {
+			return err
 		}
-		return fmt.Errorf("unknown command %q", n)
+		b, ok := p.(Builder)
+		if !ok {
+			return fmt.Errorf("unknown command %q", n)
+		}
+		return b.Build(ctx, args[1:])
 	}
 
 	if bc.help {

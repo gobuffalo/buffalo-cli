@@ -29,6 +29,23 @@ func (TestCmd) Description() string {
 
 func (tc *TestCmd) Main(ctx context.Context, args []string) error {
 	ioe := plugins.CtxIO(ctx)
+
+	plugs := tc.ScopedPlugins()
+
+	if len(args) > 0 {
+		n := args[0]
+		cmds := plugins.Commands(plugs)
+		p, err := cmds.Find(n)
+		if err != nil {
+			return err
+		}
+		b, ok := p.(Tester)
+		if !ok {
+			return fmt.Errorf("unknown command %q", n)
+		}
+		return b.Test(ctx, args[1:])
+	}
+
 	for _, a := range args {
 		if a == "-h" {
 			return plugprint.Print(ioe.Stdout(), tc)
@@ -48,7 +65,7 @@ func (tc *TestCmd) Main(ctx context.Context, args []string) error {
 	}()
 
 	if err = tc.beforeTest(ctx, args); err != nil {
-		return err
+		return tc.afterTest(ctx, args, err)
 	}
 
 	err = tc.test(ctx, args) // go build ...
@@ -92,7 +109,7 @@ func (tc *TestCmd) afterTest(ctx context.Context, args []string, err error) erro
 			}
 		}
 	}
-	return nil
+	return err
 }
 
 func (tc *TestCmd) Cmd(ctx context.Context, args []string) (*exec.Cmd, error) {
