@@ -131,6 +131,14 @@ func (tc *TestCmd) buildArgs(ctx context.Context, args []string) ([]string, erro
 
 	args = tc.reducePairedArg("-tags", args)
 
+	p := args[len(args)-1]
+
+	if strings.HasPrefix(p, ".") {
+		return args, nil
+	}
+
+	args = append(args, "./...")
+
 	return args, nil
 }
 
