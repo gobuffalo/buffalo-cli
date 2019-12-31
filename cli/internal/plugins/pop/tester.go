@@ -10,14 +10,18 @@ import (
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/testcmd"
 	"github.com/gobuffalo/buffalo-cli/internal/plugins"
 	"github.com/gobuffalo/here"
-	"github.com/gobuffalo/pop"
+	"github.com/gobuffalo/pop/v5"
 )
 
 type Tester struct {
 	info here.Info
 }
 
-var _ plugins.Plugin = &Tester{}
+var _ testcmd.Argumenter = &Tester{}
+
+func (t *Tester) TestArgs(ctx context.Context, root string) ([]string, error) {
+	return []string{"-p", "1"}, nil
+}
 
 func (t *Tester) WithHereInfo(i here.Info) {
 	t.info = i
@@ -29,6 +33,8 @@ func (t *Tester) HereInfo() (here.Info, error) {
 	}
 	return t.info, nil
 }
+
+var _ plugins.Plugin = &Tester{}
 
 func (Tester) Name() string {
 	return "pop/tester"
@@ -42,13 +48,20 @@ func (t *Tester) BeforeTest(ctx context.Context, args []string) error {
 		return err
 	}
 
-	if _, err := os.Stat(filepath.Join(info.Dir, "database.yml")); err != nil {
+	if err := pop.AddLookupPaths(info.Dir, info.Module.Dir); err != nil {
 		return err
 	}
 
-	db, err := pop.Connect("test")
-	if err != nil {
-		return err
+	db, ok := ctx.Value("tx").(*pop.Connection)
+	if !ok {
+		if _, err := os.Stat(filepath.Join(info.Dir, "database.yml")); err != nil {
+			return err
+		}
+
+		db, err = pop.Connect("test")
+		if err != nil {
+			return err
+		}
 	}
 
 	// drop the test db:
