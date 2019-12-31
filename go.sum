@@ -1,3 +1,4 @@
+github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/armon/consul-api v0.0.0-20180202201655-eb2c6b5be1b6/go.mod h1:grANhF5doyWs3UAsr3K4I6qtAmlQcZDesFNEHPZAzj8=
 github.com/blang/semver v3.5.1+incompatible h1:cQNTCjp13qL8KC3Nbxr/y2Bqb63oX6wdnnjpJbkM4JQ=
@@ -78,6 +79,8 @@ github.com/gobuffalo/plush v3.8.2+incompatible/go.mod h1:rQ4zdtUUyZNqULlc6bqd5sc
 github.com/gobuffalo/plush v3.8.3+incompatible h1:kzvUTnFPhwyfPEsx7U7LI05/IIslZVGnAlMA1heWub8=
 github.com/gobuffalo/plush v3.8.3+incompatible/go.mod h1:rQ4zdtUUyZNqULlc6bqd5scsPfLKfT0+TGMChgduDvI=
 github.com/gobuffalo/plushgen v0.1.2/go.mod h1:3U71v6HWZpVER1nInTXeAwdoRNsRd4W8aeIa1Lyp+Bk=
+github.com/gobuffalo/pop v4.13.0+incompatible h1:sE2C/dmCENwLhSfXyFXk3re4dzBbSkH/Ut62g6N1zDw=
+github.com/gobuffalo/pop v4.13.0+incompatible/go.mod h1:DwBz3SD5SsHpTZiTubcsFWcVDpJWGsxjVjMPnkiThWg=
 github.com/gobuffalo/pop/v5 v5.0.4 h1:iIVobFaC6PGUcisLG5wHHyfVTjY77zBx3e5mLgN8GP0=
 github.com/gobuffalo/pop/v5 v5.0.4/go.mod h1:P0o6Ht3XtB6e5RIVjh+0vWzdaoyW1xpTWm2aKXyLDdw=
 github.com/gobuffalo/syncx v0.0.0-20190224160051-33c29581e754/go.mod h1:HhnNqWY95UYwwW3uSASeV7vtgYkT2t16hJgV3AEPUpw=

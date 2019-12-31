@@ -37,7 +37,7 @@ func Run(ctx context.Context, args []string) error {
 		return err
 	}
 
-	if err := NewApp(ctx, info.Root, args); err != nil {
+	if err := NewApp(ctx, info.Dir, args); err != nil {
 		return err
 	}
 

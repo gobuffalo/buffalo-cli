@@ -89,7 +89,7 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 			if !ok {
 				continue
 			}
-			if err = tv.ValidateTemplates(info.Root); err != nil {
+			if err = tv.ValidateTemplates(info.Dir); err != nil {
 				return bc.afterBuild(ctx, args, err)
 			}
 		}

@@ -66,7 +66,7 @@ func (b *afterTester) AfterTest(ctx context.Context, args []string, err error) e
 	return err
 }
 
-var _ Tagger = &tagger{}
+var _ Argumenter = &tagger{}
 
 type tagger struct {
 	root string
@@ -74,7 +74,11 @@ type tagger struct {
 	err  error
 }
 
-func (b *tagger) TestTags(ctx context.Context, root string) ([]string, error) {
+func (tagger) Name() string {
+	return "tagger"
+}
+
+func (b *tagger) TestArgs(ctx context.Context, root string) ([]string, error) {
 	b.root = root
 	return b.tags, b.err
 }

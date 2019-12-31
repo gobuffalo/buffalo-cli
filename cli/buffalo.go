@@ -56,10 +56,10 @@ func NewWithInfo(info here.Info) (*Buffalo, error) {
 	)
 	b.Plugins = append(b.Plugins, pop.Plugins()...)
 
-	if _, err := os.Stat(filepath.Join(info.Root, ".git")); err == nil {
+	if _, err := os.Stat(filepath.Join(info.Dir, ".git")); err == nil {
 		b.Plugins = append(b.Plugins, &git.Buffalo{})
 	}
-	if _, err := os.Stat(filepath.Join(info.Root, ".bzr")); err == nil {
+	if _, err := os.Stat(filepath.Join(info.Dir, ".bzr")); err == nil {
 		b.Plugins = append(b.Plugins, &bzr.Buffalo{})
 	}
 

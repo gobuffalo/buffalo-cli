@@ -29,6 +29,6 @@ type Runner interface {
 	RunTests(ctx context.Context, cmd *exec.Cmd) error
 }
 
-type Tagger interface {
-	TestTags(ctx context.Context, root string) ([]string, error)
+type Argumenter interface {
+	TestArgs(ctx context.Context, root string) ([]string, error)
 }

@@ -59,7 +59,7 @@ import (
 
 func Buffalo(ctx context.Context, args []string) error {
 	fmt.Println("~~~~ Using {{.Name}}/cli.Buffalo ~~~")
-	buffalo, err := cli.New()
+	buffalo, err := cli.New(ctx)
 	if err != nil {
 		return err
 	}

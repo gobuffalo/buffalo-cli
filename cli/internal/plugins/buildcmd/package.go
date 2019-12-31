@@ -14,7 +14,7 @@ func (bc *BuildCmd) pack(ctx context.Context, info here.Info, plugs []plugins.Pl
 		if !ok {
 			continue
 		}
-		res, err := pkg.PackageFiles(ctx, info.Root)
+		res, err := pkg.PackageFiles(ctx, info.Dir)
 		if err != nil {
 			return err
 		}
@@ -26,7 +26,7 @@ func (bc *BuildCmd) pack(ctx context.Context, info here.Info, plugs []plugins.Pl
 		if !ok {
 			continue
 		}
-		if err := pkg.Package(ctx, info.Root, files); err != nil {
+		if err := pkg.Package(ctx, info.Dir, files); err != nil {
 			return err
 		}
 	}

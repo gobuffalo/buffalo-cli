@@ -33,13 +33,13 @@ func Test_Builder_Build(t *testing.T) {
 		"build": "echo wolverine",
 	})
 
-	defer os.RemoveAll(info.Root)
+	defer os.RemoveAll(info.Dir)
 
 	pwd, err := os.Getwd()
 	r.NoError(err)
 	defer os.Chdir(pwd)
 
-	os.Chdir(info.Root)
+	os.Chdir(info.Dir)
 
 	bc := &Builder{}
 	bc.WithHereInfo(info)
@@ -88,7 +88,7 @@ func Test_Builder_Cmd_PackageJSON(t *testing.T) {
 		"build": "echo hi",
 	})
 
-	defer os.RemoveAll(info.Root)
+	defer os.RemoveAll(info.Dir)
 
 	bc := &Builder{}
 	ctx := context.Background()
@@ -107,7 +107,7 @@ func Test_Builder_Cmd_PackageJSON_Yarn(t *testing.T) {
 		"build": "echo hi",
 	})
 
-	defer os.RemoveAll(info.Root)
+	defer os.RemoveAll(info.Dir)
 
 	bc := &Builder{
 		Tool: "yarnpkg",
@@ -115,7 +115,7 @@ func Test_Builder_Cmd_PackageJSON_Yarn(t *testing.T) {
 	ctx := context.Background()
 	args := []string{}
 
-	c, err := bc.Cmd(info.Root, ctx, args)
+	c, err := bc.Cmd(info.Dir, ctx, args)
 	r.NoError(err)
 
 	r.Equal([]string{"yarnpkg", "run", "build"}, c.Args)
@@ -132,7 +132,7 @@ func Test_Builder_Cmd_Webpack_Fallthrough(t *testing.T) {
 	info, err := here.Current()
 	r.NoError(err)
 
-	c, err := bc.Cmd(info.Root, ctx, args)
+	c, err := bc.Cmd(info.Dir, ctx, args)
 	r.NoError(err)
 
 	r.Equal([]string{bc.webpackBin()}, c.Args)

@@ -1,10 +1,6 @@
 package testcmd
 
 import (
-	"context"
-	"fmt"
-	"os/exec"
-
 	"github.com/gobuffalo/buffalo-cli/internal/plugins"
 	"github.com/gobuffalo/buffalo-cli/internal/plugins/plugprint"
 	"github.com/gobuffalo/here"
@@ -25,111 +21,6 @@ var _ plugprint.Describer = &TestCmd{}
 
 func (TestCmd) Description() string {
 	return "Run the tests for the Buffalo app."
-}
-
-func (tc *TestCmd) Main(ctx context.Context, args []string) error {
-	ioe := plugins.CtxIO(ctx)
-
-	plugs := tc.ScopedPlugins()
-
-	if len(args) > 0 {
-		n := args[0]
-		cmds := plugins.Commands(plugs)
-		p, err := cmds.Find(n)
-		if err != nil {
-			return err
-		}
-		b, ok := p.(Tester)
-		if !ok {
-			return fmt.Errorf("unknown command %q", n)
-		}
-		return b.Test(ctx, args[1:])
-	}
-
-	for _, a := range args {
-		if a == "-h" {
-			return plugprint.Print(ioe.Stdout(), tc)
-		}
-	}
-
-	var err error
-	defer func() {
-		if e := recover(); e != nil {
-			var ok bool
-			err, ok = e.(error)
-			if !ok {
-				err = fmt.Errorf("%s", e)
-			}
-			tc.afterTest(ctx, args, err)
-		}
-	}()
-
-	if err = tc.beforeTest(ctx, args); err != nil {
-		return tc.afterTest(ctx, args, err)
-	}
-
-	err = tc.test(ctx, args) // go build ...
-	return tc.afterTest(ctx, args, err)
-
-}
-
-func (tc *TestCmd) test(ctx context.Context, args []string) error {
-	cmd, err := tc.Cmd(ctx, args)
-	if err != nil {
-		return err
-	}
-
-	for _, p := range tc.ScopedPlugins() {
-		if br, ok := p.(Runner); ok {
-			return br.RunTests(ctx, cmd)
-		}
-	}
-
-	return cmd.Run()
-}
-
-func (tc *TestCmd) beforeTest(ctx context.Context, args []string) error {
-	testers := tc.ScopedPlugins()
-	for _, p := range testers {
-		if bb, ok := p.(BeforeTester); ok {
-			if err := bb.BeforeTest(ctx, args); err != nil {
-				return err
-			}
-		}
-	}
-	return nil
-}
-
-func (tc *TestCmd) afterTest(ctx context.Context, args []string, err error) error {
-	testers := tc.ScopedPlugins()
-	for _, p := range testers {
-		if bb, ok := p.(AfterTester); ok {
-			if err := bb.AfterTest(ctx, args, err); err != nil {
-				return err
-			}
-		}
-	}
-	return err
-}
-
-func (tc *TestCmd) Cmd(ctx context.Context, args []string) (*exec.Cmd, error) {
-	if len(args) == 0 {
-		args = append(args, "-cover")
-	}
-
-	cargs := []string{
-		"test",
-	}
-	cargs = append(cargs, args...)
-
-	c := exec.CommandContext(ctx, "go", cargs...)
-	fmt.Println(c.Args)
-
-	ioe := plugins.CtxIO(ctx)
-	c.Stdin = ioe.Stdin()
-	c.Stdout = ioe.Stdout()
-	c.Stderr = ioe.Stderr()
-	return c, nil
 }
 
 func (b *TestCmd) WithHereInfo(i here.Info) {
@@ -168,7 +59,7 @@ func (bc *TestCmd) ScopedPlugins() []plugins.Plugin {
 			builders = append(builders, p)
 		case Runner:
 			builders = append(builders, p)
-		case Tagger:
+		case Argumenter:
 			builders = append(builders, p)
 		}
 	}

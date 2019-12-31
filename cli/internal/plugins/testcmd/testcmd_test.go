@@ -14,7 +14,7 @@ func Test_TestCmd_Main(t *testing.T) {
 
 	bc := &TestCmd{}
 
-	exp := []string{"go", "test", "-cover"}
+	exp := []string{"go", "test", "./..."}
 
 	br := &bladeRunner{}
 	bc.WithPlugins(func() []plugins.Plugin {
