@@ -3,11 +3,19 @@
 package pop
 
 import (
+	"os"
 	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 )
+
+func TestMain(m *testing.M) {
+	dir := filepath.Join("internal", "testdata", "temp")
+	i := m.Run()
+	os.RemoveAll(dir)
+	os.Exit(i)
+}
 
 func Test_Tester_TestArgs(t *testing.T) {
 	r := require.New(t)
