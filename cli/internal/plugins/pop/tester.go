@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"io"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -20,7 +21,21 @@ type Tester struct {
 var _ testcmd.Argumenter = &Tester{}
 
 func (t *Tester) TestArgs(ctx context.Context, root string) ([]string, error) {
-	return []string{"-p", "1"}, nil
+	args := []string{"-p", "1"}
+
+	dy := filepath.Join(root, "database.yml")
+	if _, err := os.Stat(dy); err != nil {
+		return args, nil
+	}
+
+	b, err := ioutil.ReadFile(dy)
+	if err != nil {
+		return nil, err
+	}
+	if bytes.Contains(b, []byte("sqlite")) {
+		args = append(args, "-tags", "sqlite")
+	}
+	return args, nil
 }
 
 func (t *Tester) WithHereInfo(i here.Info) {
@@ -63,7 +78,6 @@ func (t *Tester) BeforeTest(ctx context.Context, args []string) error {
 			return err
 		}
 	}
-
 	// drop the test db:
 	db.Dialect.DropDB()
 
@@ -86,7 +100,10 @@ func (t *Tester) BeforeTest(ctx context.Context, args []string) error {
 		return t.forceMigrations(db)
 	}
 
-	return db.Dialect.LoadSchema(schema)
+	if err = db.Dialect.LoadSchema(schema); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (t *Tester) forceMigrations(db *pop.Connection) error {
