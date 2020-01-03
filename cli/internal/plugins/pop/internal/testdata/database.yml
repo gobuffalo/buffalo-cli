@@ -1,4 +1,0 @@
-sqlite:
-  dialect: "sqlite3"
-  database: "./test.sqlite"
-

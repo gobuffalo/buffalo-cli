@@ -1,13 +1,11 @@
+// +build sqlite
+
 package pop
 
 import (
-	"context"
-	"fmt"
-	"io/ioutil"
 	"path/filepath"
 	"testing"
 
-	"github.com/gobuffalo/pop/v5"
 	"github.com/stretchr/testify/require"
 )
 
@@ -21,25 +19,82 @@ func Test_Tester_TestArgs(t *testing.T) {
 	r.Equal([]string{"-p", "1"}, args)
 }
 
-func Test_Tester_BeforeTest(t *testing.T) {
+func Test_Tester_BeforeTest_widgets_migrations(t *testing.T) {
 	r := require.New(t)
-
-	ctx := context.Background()
 
 	tc := &Tester{}
 
-	dir, err := ioutil.TempDir("", "")
+	ref, err := testerRef()
 	r.NoError(err)
 
-	cd := &pop.ConnectionDetails{
-		URL: fmt.Sprintf("sqlite://%s", filepath.Join(dir, "test.db")),
-	}
+	mf := filepath.Join(ref.Dir, "migrations", "1_widgets.up.fizz")
+	r.NoError(writeFile(mf, dbWidgetsMigration))
 
-	c, err := pop.NewConnection(cd)
-	r.NoError(err)
-	ctx = context.WithValue(ctx, "tx", c)
+	tc.WithHereInfo(ref.Info)
 
 	args := []string{}
-	err = tc.BeforeTest(ctx, args)
+
+	err = tc.BeforeTest(ref.Context(), args)
+	r.NoError(err)
+
+	tx := ref.TX
+	count, err := tx.Count("widgets")
+	r.NoError(err)
+	r.Equal(0, count)
+}
+
+func Test_Tester_BeforeTest_widgets_schema(t *testing.T) {
+	r := require.New(t)
+
+	tc := &Tester{}
+
+	ref, err := testerRef()
+	r.NoError(err)
+
+	r.NoError(writeSchema(ref.Info, dbWidgetsSchema))
+
+	tc.WithHereInfo(ref.Info)
+
+	args := []string{}
+
+	err = tc.BeforeTest(ref.Context(), args)
+	r.NoError(err)
+
+	tx := ref.TX
+	count, err := tx.Count(tx.MigrationTableName())
+	r.NoError(err)
+	r.Equal(0, count)
+}
+
+func Test_Tester_BeforeTest_empty_schema(t *testing.T) {
+	r := require.New(t)
+
+	tc := &Tester{}
+
+	ref, err := testerRef()
+	r.NoError(err)
+
+	r.NoError(writeSchema(ref.Info, dbEmptySchema))
+
+	tc.WithHereInfo(ref.Info)
+
+	args := []string{}
+
+	err = tc.BeforeTest(ref.Context(), args)
+	r.NoError(err)
+}
+
+func Test_Tester_BeforeTest_no_schema(t *testing.T) {
+	r := require.New(t)
+
+	tc := &Tester{}
+
+	ref, err := testerRef()
+	r.NoError(err)
+
+	tc.WithHereInfo(ref.Info)
+
+	args := []string{}
+	err = tc.BeforeTest(ref.Context(), args)
 	r.NoError(err)
 }
