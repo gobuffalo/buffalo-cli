@@ -73,7 +73,7 @@ func (t *Tester) BeforeTest(ctx context.Context, args []string) error {
 	}
 
 	for _, a := range args {
-		if a == "--forceMigrations" {
+		if a == "--force-migrations" {
 			return t.forceMigrations(db)
 		}
 	}
