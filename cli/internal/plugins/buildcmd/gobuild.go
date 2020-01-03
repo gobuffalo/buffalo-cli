@@ -82,7 +82,7 @@ func (bc *BuildCmd) build(ctx context.Context) error {
 
 	for _, p := range bc.ScopedPlugins() {
 		if br, ok := p.(Runner); ok {
-			return br.BuildRunner(ctx, cmd)
+			return br.RunBuild(ctx, cmd)
 		}
 	}
 

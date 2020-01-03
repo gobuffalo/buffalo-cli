@@ -63,5 +63,5 @@ type Importer interface {
 
 type Runner interface {
 	plugins.Plugin
-	BuildRunner(ctx context.Context, cmd *exec.Cmd) error
+	RunBuild(ctx context.Context, cmd *exec.Cmd) error
 }

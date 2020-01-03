@@ -51,7 +51,7 @@ func (bc *Builder) Build(ctx context.Context, args []string) error {
 		return err
 	}
 
-	c, err := bc.Cmd(info.Root, ctx, args)
+	c, err := bc.Cmd(info.Dir, ctx, args)
 	if err != nil {
 		return err
 	}
@@ -70,7 +70,7 @@ func (bc *Builder) Build(ctx context.Context, args []string) error {
 		return err
 	}
 
-	if err := bc.archive(ctx, info.Root, args); err != nil {
+	if err := bc.archive(ctx, info.Dir, args); err != nil {
 		return err
 	}
 

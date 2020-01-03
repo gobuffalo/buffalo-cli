@@ -1,6 +1,8 @@
 package plugins
 
-import "io"
+import (
+	"io"
+)
 
 type PluginScoper interface {
 	ScopedPlugins() []Plugin
@@ -32,4 +34,14 @@ type StdoutGetter interface {
 
 type StderrGetter interface {
 	Stderr() io.Writer
+}
+
+type Aliases interface {
+	Plugin
+	Aliases() []string
+}
+
+type NamedCommand interface {
+	Plugin
+	CmdName() string
 }

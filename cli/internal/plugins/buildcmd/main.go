@@ -52,16 +52,16 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 
 	if len(flags.Args()) > 0 {
 		n := flags.Args()[0]
-		for _, p := range plugs {
-			b, ok := p.(Builder)
-			if !ok {
-				continue
-			}
-			if p.Name() == n {
-				return b.Build(ctx, args[1:])
-			}
+		cmds := plugins.Commands(plugs)
+		p, err := cmds.Find(n)
+		if err != nil {
+			return err
 		}
-		return fmt.Errorf("unknown command %q", n)
+		b, ok := p.(Builder)
+		if !ok {
+			return fmt.Errorf("unknown command %q", n)
+		}
+		return b.Build(ctx, args[1:])
 	}
 
 	if bc.help {
@@ -75,12 +75,12 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 			if !ok {
 				err = fmt.Errorf("%s", e)
 			}
+			bc.afterBuild(ctx, args, err)
 		}
-		bc.afterBuild(ctx, args, err)
 	}()
 
 	if err = bc.beforeBuild(ctx, args); err != nil {
-		return err
+		return bc.afterBuild(ctx, args, err)
 	}
 
 	if !bc.skipTemplateValidation {
@@ -89,15 +89,16 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 			if !ok {
 				continue
 			}
-			if err = tv.ValidateTemplates(info.Root); err != nil {
-				return err
+			if err = tv.ValidateTemplates(info.Dir); err != nil {
+				return bc.afterBuild(ctx, args, err)
 			}
 		}
 	}
 
 	if err := bc.pack(ctx, info, plugs); err != nil {
-		return err
+		return bc.afterBuild(ctx, args, err)
 	}
 
-	return bc.build(ctx) // go build ...
+	err = bc.build(ctx) // go build ...
+	return bc.afterBuild(ctx, args, err)
 }

@@ -94,7 +94,7 @@ func (bc *MainFile) generateNewMain(ctx context.Context, info here.Info, version
 		if !ok {
 			continue
 		}
-		i, err := bi.BuildImports(ctx, info.Root)
+		i, err := bi.BuildImports(ctx, info.Dir)
 		if err != nil {
 			return err
 		}

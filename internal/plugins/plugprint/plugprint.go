@@ -27,7 +27,7 @@ func Print(w io.Writer, main plugins.Plugin) error {
 		fmt.Fprintf(w, "%s\n\n", d.Description())
 	}
 
-	header := strings.TrimSpace(fmt.Sprintf("%s", main))
+	header := strings.TrimSpace(fmt.Sprintf("%s", stringer(main)))
 	header = fmt.Sprintf("$ %s", header)
 	fmt.Fprintln(w, header)
 	for i := 0; i < len(header); i++ {
@@ -89,7 +89,7 @@ func printPlugins(w io.Writer, main plugins.Plugin) error {
 		if _, ok := p.(Hider); ok {
 			continue
 		}
-		fmt.Fprintf(tw, "\t%T\t%s\t%s\n", p, p.Name(), desc(p))
+		fmt.Fprintf(tw, "\t%T\t%s\t%s\n", stringer(p), p.Name(), desc(p))
 	}
 
 	tw.Flush()
@@ -123,6 +123,13 @@ func printCommands(w io.Writer, main plugins.Plugin) error {
 	}
 	tw.Flush()
 	return nil
+}
+
+func stringer(p plugins.Plugin) string {
+	if s, ok := p.(fmt.Stringer); ok {
+		return s.String()
+	}
+	return p.Name()
 }
 
 func desc(p plugins.Plugin) string {
