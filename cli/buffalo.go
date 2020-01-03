@@ -9,6 +9,7 @@ import (
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/bzr"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/fixcmd"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/flect"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/generatecmd"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/git"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/golang"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/grifts"
@@ -45,8 +46,8 @@ func NewWithInfo(info here.Info) (*Buffalo, error) {
 		&buildcmd.MainFile{},
 		&fixcmd.FixCmd{},
 		&flect.Buffalo{},
+		&generatecmd.GenerateCmd{},
 		&golang.Templates{},
-		&grifts.Buffalo{},
 		&infocmd.InfoCmd{},
 		&pkger.Buffalo{},
 		&plush.Buffalo{},
@@ -55,6 +56,7 @@ func NewWithInfo(info here.Info) (*Buffalo, error) {
 		// &packr.Buffalo{},
 	)
 	b.Plugins = append(b.Plugins, pop.Plugins()...)
+	b.Plugins = append(b.Plugins, grifts.Plugins()...)
 
 	if _, err := os.Stat(filepath.Join(info.Dir, ".git")); err == nil {
 		b.Plugins = append(b.Plugins, &git.Buffalo{})

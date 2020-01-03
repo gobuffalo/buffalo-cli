@@ -11,6 +11,13 @@ import (
 	grifts "github.com/markbates/grift/cmd"
 )
 
+func Plugins() []plugins.Plugin {
+	return []plugins.Plugin{
+		&Buffalo{},
+		&Generator{},
+	}
+}
+
 type Buffalo struct {
 }
 
