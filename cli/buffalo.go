@@ -14,6 +14,7 @@ import (
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/golang"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/grifts"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/infocmd"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/mail"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/pkger"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/plush"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/pop"
@@ -49,6 +50,7 @@ func NewWithInfo(info here.Info) (*Buffalo, error) {
 		&generatecmd.GenerateCmd{},
 		&golang.Templates{},
 		&infocmd.InfoCmd{},
+		&mail.Generator{},
 		&pkger.Buffalo{},
 		&plush.Buffalo{},
 		&testcmd.TestCmd{},
