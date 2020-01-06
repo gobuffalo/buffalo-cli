@@ -89,7 +89,7 @@ func printPlugins(w io.Writer, main plugins.Plugin) error {
 		if _, ok := p.(Hider); ok {
 			continue
 		}
-		fmt.Fprintf(tw, "\t%T\t%s\t%s\n", stringer(p), p.Name(), desc(p))
+		fmt.Fprintf(tw, "\t%T\t%s\t%s\n", p, stringer(p), desc(p))
 	}
 
 	tw.Flush()

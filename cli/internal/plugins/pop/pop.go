@@ -7,6 +7,7 @@ func Plugins() []plugins.Plugin {
 		&Builder{},
 		&Built{},
 		&Cmd{},
+		&ModelGen{},
 		&Tester{},
 	}
 }

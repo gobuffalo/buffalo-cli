@@ -5,6 +5,7 @@ import (
 
 	"github.com/gobuffalo/buffalo-cli/internal/plugins"
 	"github.com/gobuffalo/here"
+	"github.com/markbates/safe"
 )
 
 func (bc *BuildCmd) pack(ctx context.Context, info here.Info, plugs []plugins.Plugin) error {
@@ -14,11 +15,17 @@ func (bc *BuildCmd) pack(ctx context.Context, info here.Info, plugs []plugins.Pl
 		if !ok {
 			continue
 		}
-		res, err := pkg.PackageFiles(ctx, info.Dir)
+		err := safe.RunE(func() error {
+			res, err := pkg.PackageFiles(ctx, info.Dir)
+			if err != nil {
+				return err
+			}
+			files = append(files, res...)
+			return nil
+		})
 		if err != nil {
 			return err
 		}
-		files = append(files, res...)
 	}
 
 	for _, p := range plugs {
@@ -26,7 +33,10 @@ func (bc *BuildCmd) pack(ctx context.Context, info here.Info, plugs []plugins.Pl
 		if !ok {
 			continue
 		}
-		if err := pkg.Package(ctx, info.Dir, files); err != nil {
+		err := safe.RunE(func() error {
+			return pkg.Package(ctx, info.Dir, files)
+		})
+		if err != nil {
 			return err
 		}
 	}

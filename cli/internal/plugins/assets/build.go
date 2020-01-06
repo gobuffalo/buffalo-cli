@@ -10,6 +10,7 @@ import (
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
 	"github.com/gobuffalo/buffalo-cli/internal/plugins"
 	"github.com/gobuffalo/buffalo-cli/internal/plugins/plugprint"
+	"github.com/markbates/safe"
 )
 
 type packageJSON struct {
@@ -66,7 +67,7 @@ func (bc *Builder) Build(ctx context.Context, args []string) error {
 		}
 	}
 
-	if err := fn(); err != nil {
+	if err := safe.RunE(fn); err != nil {
 		return err
 	}
 
