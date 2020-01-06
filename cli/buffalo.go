@@ -18,6 +18,7 @@ import (
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/pkger"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/plush"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/pop"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/resource"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/testcmd"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/versioncmd"
 	"github.com/gobuffalo/buffalo-cli/internal/plugins"
@@ -53,6 +54,7 @@ func NewWithInfo(info here.Info) (*Buffalo, error) {
 		&mail.Generator{},
 		&pkger.Buffalo{},
 		&plush.Buffalo{},
+		&resource.Generator{},
 		&testcmd.TestCmd{},
 		&versioncmd.VersionCmd{},
 		// &packr.Buffalo{},
