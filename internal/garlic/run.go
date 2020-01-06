@@ -11,6 +11,7 @@ import (
 	"github.com/gobuffalo/buffalo-cli/cli"
 	"github.com/gobuffalo/here"
 	"github.com/markbates/jim"
+	"github.com/markbates/safe"
 )
 
 type tasker interface {
@@ -52,7 +53,9 @@ func Run(ctx context.Context, args []string) error {
 		return err
 	}
 
-	err = jim.Run(ctx, t)
+	err = safe.RunE(func() error {
+		return jim.Run(ctx, t)
+	})
 	if err == nil {
 		return nil
 	}

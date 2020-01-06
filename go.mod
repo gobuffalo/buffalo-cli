@@ -12,6 +12,7 @@ require (
 	github.com/markbates/grift v1.5.0
 	github.com/markbates/jim v0.5.0
 	github.com/markbates/pkger v0.13.0
+	github.com/markbates/safe v1.0.1
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.4.0
 	golang.org/x/tools v0.0.0-20200102200121-6de373a2766c

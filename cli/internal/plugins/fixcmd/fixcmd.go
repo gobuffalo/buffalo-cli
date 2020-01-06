@@ -7,6 +7,7 @@ import (
 
 	"github.com/gobuffalo/buffalo-cli/internal/plugins"
 	"github.com/gobuffalo/buffalo-cli/internal/plugins/plugprint"
+	"github.com/markbates/safe"
 	"github.com/spf13/pflag"
 )
 
@@ -44,40 +45,47 @@ func (f FixCmd) String() string {
 // 	buffalo fix -h
 func (fc *FixCmd) fixPlugins(ctx context.Context, args []string) error {
 	plugs := fc.ScopedPlugins()
-	if len(args) > 0 {
-		fixers := map[string]Fixer{}
+
+	if len(args) == 0 {
 		for _, p := range plugs {
 			f, ok := p.(Fixer)
 			if !ok {
 				continue
 			}
-
-			fixers[p.Name()] = f
-		}
-
-		for _, a := range args {
-			f, ok := fixers[a]
-			if !ok {
-				return fmt.Errorf("unknown fixer %s", a)
-			}
-			if err := f.Fix(ctx, []string{}); err != nil {
+			err := safe.RunE(func() error {
+				return f.Fix(ctx, args)
+			})
+			if err != nil {
 				return err
 			}
 		}
 		return nil
 	}
 
+	fixers := map[string]Fixer{}
 	for _, p := range plugs {
 		f, ok := p.(Fixer)
 		if !ok {
 			continue
 		}
 
-		if err := f.Fix(ctx, args); err != nil {
+		fixers[p.Name()] = f
+	}
+
+	for _, a := range args {
+		f, ok := fixers[a]
+		if !ok {
+			return fmt.Errorf("unknown fixer %s", a)
+		}
+		err := safe.RunE(func() error {
+			return f.Fix(ctx, []string{})
+		})
+		if err != nil {
 			return err
 		}
 	}
 	return nil
+
 }
 
 func (fc *FixCmd) Main(ctx context.Context, args []string) error {

@@ -6,6 +6,7 @@ import (
 
 	"github.com/gobuffalo/buffalo-cli/internal/plugins"
 	"github.com/gobuffalo/buffalo-cli/internal/plugins/plugprint"
+	"github.com/markbates/safe"
 	"github.com/spf13/pflag"
 )
 
@@ -29,7 +30,9 @@ func (b *Buffalo) Main(ctx context.Context, args []string) error {
 
 	name := args[0]
 	if c, err := cmds.Find(name); err == nil {
-		return c.Main(ctx, args[1:])
+		return safe.RunE(func() error {
+			return c.Main(ctx, args[1:])
+		})
 	}
 	return fmt.Errorf("unknown command %s", name)
 }

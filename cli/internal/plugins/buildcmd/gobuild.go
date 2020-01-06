@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/gobuffalo/buffalo-cli/internal/plugins"
+	"github.com/markbates/safe"
 )
 
 func (bc *BuildCmd) GoBuildCmd(ctx context.Context) (*exec.Cmd, error) {
@@ -74,7 +75,7 @@ func (bc *BuildCmd) GoBuildCmd(ctx context.Context) (*exec.Cmd, error) {
 	return cmd, nil
 }
 
-func (bc *BuildCmd) build(ctx context.Context) error {
+func (bc *BuildCmd) build(ctx context.Context, args []string) error {
 	cmd, err := bc.GoBuildCmd(ctx)
 	if err != nil {
 		return err
@@ -82,7 +83,9 @@ func (bc *BuildCmd) build(ctx context.Context) error {
 
 	for _, p := range bc.ScopedPlugins() {
 		if br, ok := p.(Runner); ok {
-			return br.RunBuild(ctx, cmd)
+			return safe.RunE(func() error {
+				return br.RunBuild(ctx, cmd)
+			})
 		}
 	}
 
