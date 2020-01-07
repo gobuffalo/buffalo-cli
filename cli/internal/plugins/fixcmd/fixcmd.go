@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/gobuffalo/buffalo-cli/internal/plugins"
-	"github.com/gobuffalo/buffalo-cli/internal/plugins/plugprint"
+	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/markbates/safe"
 	"github.com/spf13/pflag"
 )

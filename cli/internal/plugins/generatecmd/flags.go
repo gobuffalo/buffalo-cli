@@ -3,7 +3,7 @@ package generatecmd
 import (
 	"io"
 
-	"github.com/gobuffalo/buffalo-cli/internal/plugins/plugprint"
+	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/spf13/pflag"
 )
 

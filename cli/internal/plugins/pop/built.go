@@ -3,7 +3,7 @@ package pop
 import (
 	"context"
 
-	"github.com/gobuffalo/buffalo-cli/internal/plugins"
+	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/pop/v5"
 	"github.com/markbates/pkger"
 )

@@ -4,7 +4,7 @@ import (
 	"context"
 	"os/exec"
 
-	"github.com/gobuffalo/buffalo-cli/internal/plugins"
+	"github.com/gobuffalo/buffalo-cli/plugins"
 )
 
 // Tester is a sub-command of buffalo test.

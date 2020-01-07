@@ -3,8 +3,8 @@ package pop
 import (
 	"context"
 
-	"github.com/gobuffalo/buffalo-cli/internal/plugins"
-	"github.com/gobuffalo/buffalo-cli/internal/plugins/plugprint"
+	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	soda "github.com/gobuffalo/pop/v5/soda/cmd"
 )
 

@@ -5,8 +5,8 @@ import (
 
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/generatecmd"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/resource"
-	"github.com/gobuffalo/buffalo-cli/internal/plugins"
-	"github.com/gobuffalo/buffalo-cli/internal/plugins/plugprint"
+	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 )
 
 type ModelGen struct{}

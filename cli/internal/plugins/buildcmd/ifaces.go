@@ -5,7 +5,7 @@ import (
 	"flag"
 	"os/exec"
 
-	"github.com/gobuffalo/buffalo-cli/internal/plugins"
+	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/spf13/pflag"
 )
 

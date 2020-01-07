@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
-	"github.com/gobuffalo/buffalo-cli/internal/plugins"
+	"github.com/gobuffalo/buffalo-cli/plugins"
 )
 
 type Templates struct{}

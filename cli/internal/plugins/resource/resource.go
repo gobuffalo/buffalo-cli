@@ -1,13 +1,14 @@
 package resource
 
 import (
-	"github.com/gobuffalo/buffalo-cli/internal/plugins"
+	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/here"
 )
 
 type Generator struct {
 	info      here.Info
 	pluginsFn plugins.PluginFeeder
+	help      bool
 }
 
 var _ plugins.PluginNeeder = &Generator{}
@@ -63,6 +64,10 @@ func (g *Generator) ScopedPlugins() []plugins.Plugin {
 		case Modeler:
 			builders = append(builders, p)
 		case ModelTester:
+			builders = append(builders, p)
+		case Migrationer:
+			builders = append(builders, p)
+		case MigrationTester:
 			builders = append(builders, p)
 		case Templater:
 			builders = append(builders, p)

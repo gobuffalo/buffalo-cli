@@ -8,6 +8,7 @@ import (
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/bzr"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/fixcmd"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/fizz"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/flect"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/generatecmd"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/git"
@@ -21,8 +22,8 @@ import (
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/resource"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/testcmd"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/versioncmd"
-	"github.com/gobuffalo/buffalo-cli/internal/plugins"
-	"github.com/gobuffalo/buffalo-cli/internal/plugins/plugprint"
+	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/gobuffalo/here"
 )
 
@@ -47,6 +48,7 @@ func NewWithInfo(info here.Info) (*Buffalo, error) {
 		&buildcmd.BuildCmd{},
 		&buildcmd.MainFile{},
 		&fixcmd.FixCmd{},
+		&fizz.MigrationGen{},
 		&flect.Buffalo{},
 		&generatecmd.GenerateCmd{},
 		&golang.Templates{},

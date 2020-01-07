@@ -1,6 +1,6 @@
 package pop
 
-import "github.com/gobuffalo/buffalo-cli/internal/plugins"
+import "github.com/gobuffalo/buffalo-cli/plugins"
 
 func Plugins() []plugins.Plugin {
 	return []plugins.Plugin{

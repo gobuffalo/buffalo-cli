@@ -5,6 +5,8 @@ import (
 	"fmt"
 
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/generatecmd"
+	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/gobuffalo/here"
 	"github.com/markbates/safe"
 )
@@ -51,6 +53,16 @@ func (g *Generator) Generate(ctx context.Context, args []string) error {
 		return fmt.Errorf("you must specify a name for the resource")
 	}
 
+	flags := g.Flags()
+	if err := flags.Parse(args); err != nil {
+		return err
+	}
+
+	if g.help {
+		ioe := plugins.CtxIO(ctx)
+		return plugprint.Print(ioe.Stdout(), g)
+	}
+
 	info, err := g.HereInfo()
 	if err != nil {
 		return err
@@ -78,6 +90,8 @@ func (g *Generator) Generate(ctx context.Context, args []string) error {
 	steps := []step{
 		g.generateActionTests,
 		g.generateActions,
+		g.generateMigrationTests,
+		g.generateMigrations,
 		g.generateModelTests,
 		g.generateModels,
 		g.generateTemplateTests,

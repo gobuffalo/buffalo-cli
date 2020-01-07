@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
-	"github.com/gobuffalo/buffalo-cli/internal/plugins/plugprint"
+	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/spf13/pflag"
 )
 
