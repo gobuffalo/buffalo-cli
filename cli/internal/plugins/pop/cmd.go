@@ -3,9 +3,9 @@ package pop
 import (
 	"context"
 
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/pop/internal/soda"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
-	soda "github.com/gobuffalo/pop/v5/soda/cmd"
 )
 
 type Cmd struct{}
@@ -29,6 +29,5 @@ func (Cmd) Aliases() []string {
 }
 
 func (Cmd) Main(ctx context.Context, args []string) error {
-	soda.RootCmd.SetArgs(args)
-	return soda.RootCmd.Execute()
+	return soda.Main(ctx, args)
 }

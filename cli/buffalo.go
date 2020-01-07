@@ -3,6 +3,7 @@ package cli
 import (
 	"os"
 	"path/filepath"
+	"sort"
 
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/assets"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
@@ -14,6 +15,7 @@ import (
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/git"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/golang"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/grifts"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/i18n"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/infocmd"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/mail"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/pkger"
@@ -52,6 +54,7 @@ func NewWithInfo(info here.Info) (*Buffalo, error) {
 		&flect.Buffalo{},
 		&generatecmd.GenerateCmd{},
 		&golang.Templates{},
+		&i18n.Generator{},
 		&infocmd.InfoCmd{},
 		&mail.Generator{},
 		&pkger.Buffalo{},
@@ -70,6 +73,10 @@ func NewWithInfo(info here.Info) (*Buffalo, error) {
 	if _, err := os.Stat(filepath.Join(info.Dir, ".bzr")); err == nil {
 		b.Plugins = append(b.Plugins, &bzr.Buffalo{})
 	}
+
+	sort.Slice(b.Plugins, func(i, j int) bool {
+		return b.Plugins[i].Name() < b.Plugins[j].Name()
+	})
 
 	pfn = func() []plugins.Plugin {
 		return b.Plugins

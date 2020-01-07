@@ -3,9 +3,12 @@ module github.com/gobuffalo/buffalo-cli
 go 1.13
 
 require (
+	github.com/gobuffalo/attrs v0.1.0
 	github.com/gobuffalo/flect v0.2.0
 	github.com/gobuffalo/genny/v2 v2.0.1
 	github.com/gobuffalo/here v0.6.0
+	github.com/gobuffalo/meta v0.2.1
+	github.com/gobuffalo/packd v0.3.0
 	github.com/gobuffalo/packr/v2 v2.7.1
 	github.com/gobuffalo/plush v3.8.3+incompatible
 	github.com/gobuffalo/pop/v5 v5.0.4

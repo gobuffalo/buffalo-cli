@@ -104,7 +104,8 @@ func (g *Generator) Generate(ctx context.Context, args []string) error {
 		}
 	}
 
-	return nil
+	return g.afterGenerate(ctx, info, args, nil)
+
 }
 
 func (g *Generator) generateActions(ctx context.Context, info here.Info, args []string) error {
