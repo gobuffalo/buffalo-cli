@@ -66,8 +66,6 @@ github.com/gobuffalo/logger v1.0.3 h1:YaXOTHNPCvkqqA7w05A4v0k2tCdpr+sgFlgINbQ6gq
 github.com/gobuffalo/logger v1.0.3/go.mod h1:SoeejUwldiS7ZsyCBphOGURmWdwUFXs0J7TCjEhjKxM=
 github.com/gobuffalo/mapi v1.0.2/go.mod h1:4VAGh89y6rVOvm5A8fKFxYG+wIW6LO1FMTG9hnKStFc=
 github.com/gobuffalo/mapi v1.1.0/go.mod h1:pqQ1XAqvpy/JYtRwoieNps2yU8MFiMxBUpAm2FBtQ50=
-github.com/gobuffalo/meta v0.2.1 h1:6SWsmdlfPC91ysIaPHhXjtVzcAIqUxxC5uetDd4fpdo=
-github.com/gobuffalo/meta v0.2.1/go.mod h1:KZ9Hk/o+kFpwRhzUO95EOuxf3jXU4GleCTUDSTpe3hQ=
 github.com/gobuffalo/nulls v0.1.0 h1:pR3SDzXyFcQrzyPreZj+OzNHSxI4DphSOFaQuidxrfw=
 github.com/gobuffalo/nulls v0.1.0/go.mod h1:/HRtuDRoVoN5fABk3J6jzZaGEdcIZEMs0qczj71eKZY=
 github.com/gobuffalo/packd v0.1.0/go.mod h1:M2Juc+hhDXf/PnmBANFCqx4DM3wRbgDvnVWeG2RIxq4=
