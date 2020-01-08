@@ -10,7 +10,6 @@ func Plugins() []plugins.Plugin {
 	return []plugins.Plugin{
 		&Builder{},
 		&Built{},
-		&Cmd{},
 		&Tester{},
 		&actiongen.Generator{},
 		&modelgen.Generator{},

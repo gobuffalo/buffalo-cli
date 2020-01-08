@@ -40,22 +40,21 @@ func (bc *GenerateCmd) afterGenerate(ctx context.Context, args []string, err err
 }
 
 func (bc *GenerateCmd) Main(ctx context.Context, args []string) error {
-	flags := bc.Flags()
-	if err := flags.Parse(args); err != nil {
-		return err
-	}
-
 	ioe := plugins.CtxIO(ctx)
-	if len(flags.Args()) == 0 {
-		if bc.help {
-			return plugprint.Print(ioe.Stdout(), bc)
+	if len(args) == 0 {
+		if err := plugprint.Print(ioe.Stdout(), bc); err != nil {
+			return err
 		}
 		return fmt.Errorf("no command provided")
 	}
 
+	if len(args) == 1 && args[0] == "-h" {
+		return plugprint.Print(ioe.Stdout(), bc)
+	}
+
 	plugs := bc.ScopedPlugins()
 
-	n := flags.Args()[0]
+	n := args[0]
 	cmds := plugins.Commands(plugs)
 	p, err := cmds.Find(n)
 	if err != nil {

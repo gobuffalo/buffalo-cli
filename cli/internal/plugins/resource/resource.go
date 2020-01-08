@@ -9,6 +9,7 @@ type Generator struct {
 	info      here.Info
 	pluginsFn plugins.PluginFeeder
 	help      bool
+	model     string
 }
 
 var _ plugins.PluginNeeder = &Generator{}
@@ -72,6 +73,10 @@ func (g *Generator) ScopedPlugins() []plugins.Plugin {
 		case Templater:
 			builders = append(builders, p)
 		case TemplateTester:
+			builders = append(builders, p)
+		case Flagger:
+			builders = append(builders, p)
+		case Pflagger:
 			builders = append(builders, p)
 		}
 	}

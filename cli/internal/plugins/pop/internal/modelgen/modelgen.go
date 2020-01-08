@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/generatecmd"
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/pop/internal/soda"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/resource"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/soda"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 )

@@ -1,6 +1,12 @@
 package resource
 
-import "context"
+import (
+	"context"
+	"flag"
+
+	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/spf13/pflag"
+)
 
 type BeforeGenerator interface {
 	BeforeGenerateResource(ctx context.Context, root string, args []string) error
@@ -44,4 +50,14 @@ type Migrationer interface {
 
 type MigrationTester interface {
 	GenerateResourceMigrationTests(ctx context.Context, root string, args []string) error
+}
+
+type Flagger interface {
+	plugins.Plugin
+	ResourceFlags() []*flag.Flag
+}
+
+type Pflagger interface {
+	plugins.Plugin
+	ResourceFlags() []*pflag.Flag
 }

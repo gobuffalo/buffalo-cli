@@ -3,7 +3,10 @@ module github.com/gobuffalo/buffalo-cli
 go 1.13
 
 require (
+	github.com/gobuffalo/attrs v0.1.0
+	github.com/gobuffalo/fizz v1.9.5
 	github.com/gobuffalo/flect v0.2.0
+	github.com/gobuffalo/genny v0.4.1
 	github.com/gobuffalo/genny/v2 v2.0.1
 	github.com/gobuffalo/here v0.6.0
 	github.com/gobuffalo/packr/v2 v2.7.1
@@ -13,6 +16,7 @@ require (
 	github.com/markbates/jim v0.5.0
 	github.com/markbates/pkger v0.13.0
 	github.com/markbates/safe v1.0.1
+	github.com/mattn/go-isatty v0.0.11 // indirect
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.4.0
 	golang.org/x/tools v0.0.0-20200102200121-6de373a2766c
