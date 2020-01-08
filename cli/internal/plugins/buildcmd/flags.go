@@ -3,6 +3,7 @@ package buildcmd
 import (
 	"io"
 
+	"github.com/gobuffalo/buffalo-cli/internal/flagger"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/spf13/pflag"
 )
@@ -35,11 +36,11 @@ func (bc *BuildCmd) Flags() *pflag.FlagSet {
 	for _, p := range plugs {
 		switch t := p.(type) {
 		case Flagger:
-			for _, f := range t.BuildFlags() {
+			for _, f := range flagger.CleanFlags(p, t.BuildFlags()) {
 				flags.AddGoFlag(f)
 			}
 		case Pflagger:
-			for _, f := range t.BuildFlags() {
+			for _, f := range flagger.CleanPflags(p, t.BuildFlags()) {
 				flags.AddFlag(f)
 			}
 		}

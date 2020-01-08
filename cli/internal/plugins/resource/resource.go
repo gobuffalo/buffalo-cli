@@ -6,10 +6,17 @@ import (
 )
 
 type Generator struct {
-	info      here.Info
-	pluginsFn plugins.PluginFeeder
-	help      bool
-	model     string
+	info               here.Info
+	pluginsFn          plugins.PluginFeeder
+	help               bool
+	skipActionTests    bool
+	skipActions        bool
+	skipMigrationTests bool
+	skipMigrations     bool
+	skipModelTests     bool
+	skipModels         bool
+	skipTemplateTests  bool
+	skipTemplates      bool
 }
 
 var _ plugins.PluginNeeder = &Generator{}

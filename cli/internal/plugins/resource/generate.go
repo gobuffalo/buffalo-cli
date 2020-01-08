@@ -114,6 +114,9 @@ func (g *Generator) Generate(ctx context.Context, args []string) error {
 }
 
 func (g *Generator) generateActions(ctx context.Context, info here.Info, args []string) error {
+	if g.skipActions {
+		return nil
+	}
 	for _, p := range g.ScopedPlugins() {
 		ag, ok := p.(Actioner)
 		if !ok {
@@ -128,6 +131,9 @@ func (g *Generator) generateActions(ctx context.Context, info here.Info, args []
 }
 
 func (g *Generator) generateActionTests(ctx context.Context, info here.Info, args []string) error {
+	if g.skipActionTests {
+		return nil
+	}
 	for _, p := range g.ScopedPlugins() {
 		ag, ok := p.(ActionTester)
 		if !ok {
@@ -142,6 +148,9 @@ func (g *Generator) generateActionTests(ctx context.Context, info here.Info, arg
 }
 
 func (g *Generator) generateTemplates(ctx context.Context, info here.Info, args []string) error {
+	if g.skipTemplates {
+		return nil
+	}
 	for _, p := range g.ScopedPlugins() {
 		ag, ok := p.(Templater)
 		if !ok {
@@ -156,6 +165,9 @@ func (g *Generator) generateTemplates(ctx context.Context, info here.Info, args 
 }
 
 func (g *Generator) generateTemplateTests(ctx context.Context, info here.Info, args []string) error {
+	if g.skipTemplateTests {
+		return nil
+	}
 	for _, p := range g.ScopedPlugins() {
 		ag, ok := p.(TemplateTester)
 		if !ok {
@@ -170,6 +182,9 @@ func (g *Generator) generateTemplateTests(ctx context.Context, info here.Info, a
 }
 
 func (g *Generator) generateModels(ctx context.Context, info here.Info, args []string) error {
+	if g.skipModels {
+		return nil
+	}
 	for _, p := range g.ScopedPlugins() {
 		ag, ok := p.(Modeler)
 		if !ok {
@@ -184,6 +199,9 @@ func (g *Generator) generateModels(ctx context.Context, info here.Info, args []s
 }
 
 func (g *Generator) generateModelTests(ctx context.Context, info here.Info, args []string) error {
+	if g.skipModelTests {
+		return nil
+	}
 	for _, p := range g.ScopedPlugins() {
 		ag, ok := p.(ModelTester)
 		if !ok {
@@ -198,6 +216,9 @@ func (g *Generator) generateModelTests(ctx context.Context, info here.Info, args
 }
 
 func (g *Generator) generateMigrations(ctx context.Context, info here.Info, args []string) error {
+	if g.skipMigrations {
+		return nil
+	}
 	for _, p := range g.ScopedPlugins() {
 		ag, ok := p.(Migrationer)
 		if !ok {
@@ -212,6 +233,9 @@ func (g *Generator) generateMigrations(ctx context.Context, info here.Info, args
 }
 
 func (g *Generator) generateMigrationTests(ctx context.Context, info here.Info, args []string) error {
+	if g.skipMigrationTests {
+		return nil
+	}
 	for _, p := range g.ScopedPlugins() {
 		ag, ok := p.(MigrationTester)
 		if !ok {
