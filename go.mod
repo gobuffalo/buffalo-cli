@@ -9,6 +9,7 @@ require (
 	github.com/gobuffalo/genny v0.4.1
 	github.com/gobuffalo/genny/v2 v2.0.1
 	github.com/gobuffalo/here v0.6.0
+	github.com/gobuffalo/meta/v2 v2.0.0
 	github.com/gobuffalo/packr/v2 v2.7.1
 	github.com/gobuffalo/plush v3.8.3+incompatible
 	github.com/gobuffalo/pop/v5 v5.0.4

@@ -3,8 +3,12 @@ package fizz
 import (
 	"io"
 
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/resource"
+	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/spf13/pflag"
 )
+
+var _ plugprint.FlagPrinter = &MigrationGen{}
 
 func (g *MigrationGen) PrintFlags(w io.Writer) error {
 	flags := g.Flags()
@@ -12,6 +16,8 @@ func (g *MigrationGen) PrintFlags(w io.Writer) error {
 	flags.PrintDefaults()
 	return nil
 }
+
+var _ resource.Pflagger = &MigrationGen{}
 
 func (g *MigrationGen) ResourceFlags() []*pflag.Flag {
 	var values []*pflag.Flag

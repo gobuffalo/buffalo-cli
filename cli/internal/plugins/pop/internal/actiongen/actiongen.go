@@ -1,15 +1,28 @@
 package actiongen
 
 import (
-	"context"
-	"fmt"
-
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/resource"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
+	"github.com/gobuffalo/here"
 )
 
-type Generator struct{}
+type Generator struct {
+	info         here.Info
+	modelName    string
+	modelsPkg    string
+	modelsPkgSel string
+}
+
+func (g *Generator) WithHereInfo(i here.Info) {
+	g.info = i
+}
+
+func (g *Generator) HereInfo() (here.Info, error) {
+	if g.info.IsZero() {
+		return here.Current()
+	}
+	return g.info, nil
+}
 
 var _ plugins.Plugin = Generator{}
 
@@ -27,19 +40,4 @@ var _ plugprint.Describer = Generator{}
 
 func (Generator) Description() string {
 	return "Generate a Pop action"
-}
-
-// var _ generatecmd.Generator = &Generator{}
-//
-// func (mg *Generator) Generate(ctx context.Context, args []string) error {
-// 	args = append([]string{"generate", "action"}, args...)
-// 	return nil
-// }
-
-var _ resource.Actioner = &Generator{}
-
-func (mg *Generator) GenerateResourceActions(ctx context.Context, root string, args []string) error {
-	fmt.Println(">>>TODO cli/internal/plugins/pop/internal/actiongen/actiongen.go:43: root ", root)
-	fmt.Println(">>>TODO cli/internal/plugins/pop/internal/actiongen/actiongen.go:43: args ", args)
-	return nil
 }
