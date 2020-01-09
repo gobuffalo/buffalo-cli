@@ -56,36 +56,70 @@ func (g *Generator) ScopedPlugins() []plugins.Plugin {
 		plugs = g.pluginsFn()
 	}
 
+	pm := map[string]bool{}
+
 	var builders []plugins.Plugin
+
+	for _, p := range plugs {
+		_, ok := p.(BeforeGenerator)
+		if !ok {
+			continue
+		}
+		builders = append(builders, p)
+	}
+
 	for _, p := range plugs {
 		switch p.(type) {
-		case BeforeGenerator:
-			builders = append(builders, p)
 		case ResourceGenerator:
-			builders = append(builders, p)
-		case AfterGenerator:
-			builders = append(builders, p)
+			if pm["ResourceGenerator"] {
+				continue
+			}
+			pm["ResourceGenerator"] = true
+			break
 		case Actioner:
-			builders = append(builders, p)
+			if pm["Actioner"] {
+				continue
+			}
+			pm["Actioner"] = true
 		case ActionTester:
-			builders = append(builders, p)
+			if pm["ActionTester"] {
+				continue
+			}
+			pm["ActionTester"] = true
 		case Modeler:
-			builders = append(builders, p)
+			if pm["Modeler"] {
+				continue
+			}
+			pm["Modeler"] = true
 		case ModelTester:
-			builders = append(builders, p)
-		case Migrationer:
-			builders = append(builders, p)
-		case MigrationTester:
-			builders = append(builders, p)
+			if pm["ModelTester"] {
+				continue
+			}
+			pm["ModelTester"] = true
 		case Templater:
-			builders = append(builders, p)
+			if pm["Templater"] {
+				continue
+			}
+			pm["Templater"] = true
 		case TemplateTester:
-			builders = append(builders, p)
-		case Flagger:
-			builders = append(builders, p)
-		case Pflagger:
-			builders = append(builders, p)
+			if pm["TemplateTester"] {
+				continue
+			}
+			pm["TemplateTester"] = true
+		default:
+			continue
 		}
+
+		builders = append(builders, p)
 	}
+
+	for _, p := range plugs {
+		_, ok := p.(AfterGenerator)
+		if !ok {
+			continue
+		}
+		builders = append(builders, p)
+	}
+
 	return builders
 }

@@ -1,4 +1,4 @@
-package actiongen
+package actiontest
 
 import (
 	"github.com/gobuffalo/buffalo-cli/plugins"
@@ -7,10 +7,8 @@ import (
 )
 
 type Generator struct {
-	info         here.Info
-	modelName    string
-	modelsPkg    string
-	modelsPkgSel string
+	info    here.Info
+	testPkg string
 }
 
 func (g *Generator) WithHereInfo(i here.Info) {
@@ -27,17 +25,11 @@ func (g *Generator) HereInfo() (here.Info, error) {
 var _ plugins.Plugin = Generator{}
 
 func (Generator) Name() string {
-	return "pop/action"
-}
-
-var _ plugprint.NamedCommand = Generator{}
-
-func (Generator) CmdName() string {
-	return "action"
+	return "pop/action-test"
 }
 
 var _ plugprint.Describer = Generator{}
 
 func (Generator) Description() string {
-	return "Generate a Pop action"
+	return "Generate a Pop action test"
 }

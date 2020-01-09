@@ -1,4 +1,4 @@
-package actiongen
+package actions
 
 import (
 	"io"

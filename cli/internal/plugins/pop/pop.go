@@ -1,8 +1,9 @@
 package pop
 
 import (
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/pop/internal/actiongen"
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/pop/internal/modelgen"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/pop/internal/generators/actions"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/pop/internal/generators/actiontest"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/pop/internal/generators/models"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 )
 
@@ -11,7 +12,8 @@ func Plugins() []plugins.Plugin {
 		&Builder{},
 		&Built{},
 		&Tester{},
-		&actiongen.Generator{},
-		&modelgen.Generator{},
+		&actions.Generator{},
+		&actiontest.Generator{},
+		&models.Generator{},
 	}
 }

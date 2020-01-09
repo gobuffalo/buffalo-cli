@@ -1,10 +1,11 @@
-package actiongen
+package actions
 
 // AsWeb
-// Model (ident)
+// ImportName
+// Model (name.Ident)
 // ModelsPkg
 // ModelsPkgSel
-// Name (ident)
+// Name (name.Ident)
 const actionsTmpl = `
 package actions
 

@@ -1,16 +1,24 @@
-package modelgen
+package models
 
 import (
 	"context"
+	"path/filepath"
 
+	"github.com/gobuffalo/attrs"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/generatecmd"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/resource"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/soda"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
+	"github.com/gobuffalo/genny"
+	gmodel "github.com/gobuffalo/pop/v5/genny/model"
 )
 
-type Generator struct{}
+type Generator struct {
+	modelPath string
+	modelPkg  string
+	structTag string
+}
 
 var _ plugins.Plugin = Generator{}
 
@@ -40,5 +48,43 @@ func (mg *Generator) Generate(ctx context.Context, args []string) error {
 var _ resource.Modeler = &Generator{}
 
 func (mg *Generator) GenerateResourceModels(ctx context.Context, root string, args []string) error {
+	flags := mg.Flags()
+	if err := flags.Parse(args); err != nil {
+		return err
+	}
+	args = flags.Args()
+
+	run := genny.WetRunner(context.Background())
+
+	modelPath := mg.modelPath
+	if len(modelPath) == 0 {
+		modelPath = "models"
+	}
+	modelPath = filepath.Join(root, modelPath)
+
+	structTag := mg.structTag
+	if len(structTag) == 0 {
+		structTag = "json"
+	}
+
+	atts, err := attrs.ParseArgs(args[1:]...)
+	if err != nil {
+		return err
+	}
+
+	// Mount models generator
+	g, err := gmodel.New(&gmodel.Options{
+		Name:                   args[0],
+		Attrs:                  atts,
+		Path:                   modelPath,
+		Encoding:               structTag,
+		ForceDefaultID:         true,
+		ForceDefaultTimestamps: true,
+	})
+	if err != nil {
+		return err
+	}
+
+	run.With(g)
 	return mg.Generate(ctx, args)
 }
