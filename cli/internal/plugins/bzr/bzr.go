@@ -26,7 +26,7 @@ var _ plugins.Plugin = Buffalo{}
 //Ensuring bzr is a buffalo buildcmd.Versioner
 var _ buildcmd.Versioner = &Buffalo{}
 
-//Tconfig is used to mock command things when testing.
+//testConfig is used to mock command things when testing.
 var testConfig = struct {
 	enabled bool
 
