@@ -12,23 +12,55 @@ import (
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 )
 
-type Buffalo struct{}
+const (
+	name        = "bzr"
+	description = "Provides bzr related hooks to Buffalo applications."
+)
 
+//Ensuring bzr is a describer
+var _ plugprint.Describer = Buffalo{}
+
+//Ensuring bzr is a buffalo Plugin
+var _ plugins.Plugin = Buffalo{}
+
+//Ensuring bzr is a buffalo buildcmd.Versioner
 var _ buildcmd.Versioner = &Buffalo{}
 
-func (b *Buffalo) BuildVersion(ctx context.Context, root string) (string, error) {
-	if _, err := exec.LookPath("bzr"); err != nil {
-		return "", err
-	}
+//Tconfig is used to mock command things when testing.
+var testConfig = struct {
+	enabled bool
 
-	bb := &bytes.Buffer{}
+	resultError   error
+	resultVersion string
+}{}
+
+type Buffalo struct{}
+
+func (b *Buffalo) runCmd(ctx context.Context, bb *bytes.Buffer) error {
+	if testConfig.enabled {
+		fmt.Fprint(bb, testConfig.resultVersion)
+		return testConfig.resultError
+	}
 
 	cmd := exec.CommandContext(ctx, "bzr", "revno")
 	cmd.Stdout = bb
 	cmd.Stderr = bb
-	if err := cmd.Run(); err != nil {
+
+	return cmd.Run()
+}
+
+// BuildVersion is used by other commands to get the build
+// version of the current source and use it for the build.
+func (b *Buffalo) BuildVersion(ctx context.Context, root string) (string, error) {
+	if _, err := exec.LookPath("bzr"); err != nil && !testConfig.enabled {
+		return "", err
+	}
+
+	bb := &bytes.Buffer{}
+	if err := b.runCmd(ctx, bb); err != nil {
 		return "", fmt.Errorf("%s: %s", err, bb.String())
 	}
+
 	s := strings.TrimSpace(bb.String())
 	if len(s) == 0 {
 		return "", nil
@@ -36,17 +68,14 @@ func (b *Buffalo) BuildVersion(ctx context.Context, root string) (string, error)
 	return s, nil
 }
 
-var _ plugins.Plugin = Buffalo{}
-
 // Name is the name of the plugin.
 // This will also be used for the cli sub-command
 // 	"pop" | "heroku" | "auth" | etc...
 func (b Buffalo) Name() string {
-	return "bzr"
+	return name
 }
 
-var _ plugprint.Describer = Buffalo{}
-
+//Description is a general description of the plugin and its functionalities.
 func (b Buffalo) Description() string {
-	return "Provides bzr related hooks to Buffalo applications."
+	return description
 }
