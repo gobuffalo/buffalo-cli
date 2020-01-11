@@ -9,7 +9,7 @@ import (
 	"github.com/markbates/safe"
 )
 
-func (bc *GenerateCmd) beforeGenerate(ctx context.Context, args []string) error {
+func (bc *Command) beforeGenerate(ctx context.Context, args []string) error {
 	builders := bc.ScopedPlugins()
 	for _, p := range builders {
 		if bb, ok := p.(BeforeGenerator); ok {
@@ -24,7 +24,7 @@ func (bc *GenerateCmd) beforeGenerate(ctx context.Context, args []string) error 
 	return nil
 }
 
-func (bc *GenerateCmd) afterGenerate(ctx context.Context, args []string, err error) error {
+func (bc *Command) afterGenerate(ctx context.Context, args []string, err error) error {
 	builders := bc.ScopedPlugins()
 	for _, p := range builders {
 		if bb, ok := p.(AfterGenerator); ok {
@@ -39,7 +39,8 @@ func (bc *GenerateCmd) afterGenerate(ctx context.Context, args []string, err err
 	return err
 }
 
-func (bc *GenerateCmd) Main(ctx context.Context, args []string) error {
+// Main implements cli.Command and is the entry point for `buffalo generate`
+func (bc *Command) Main(ctx context.Context, args []string) error {
 	ioe := plugins.CtxIO(ctx)
 	if len(args) == 0 {
 		if err := plugprint.Print(ioe.Stdout(), bc); err != nil {

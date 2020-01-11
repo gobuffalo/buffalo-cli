@@ -50,6 +50,8 @@ func (g *Generator) afterGenerate(ctx context.Context, info here.Info, args []st
 	}
 	return nil
 }
+
+// Generate implements generatecmd.Generator and is the entry point for `buffalo generate resource`
 func (g *Generator) Generate(ctx context.Context, args []string) error {
 	if len(args) == 0 {
 		return fmt.Errorf("you must specify a name for the resource")

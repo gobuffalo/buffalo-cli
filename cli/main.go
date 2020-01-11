@@ -10,6 +10,7 @@ import (
 	"github.com/spf13/pflag"
 )
 
+// Main is the entry point of the `buffalo` command
 func (b *Buffalo) Main(ctx context.Context, args []string) error {
 	var help bool
 	flags := pflag.NewFlagSet(b.String(), pflag.ContinueOnError)

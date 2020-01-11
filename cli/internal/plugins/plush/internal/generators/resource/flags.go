@@ -10,7 +10,7 @@ import (
 
 func (g *Generator) Flags() *pflag.FlagSet {
 	flags := pflag.NewFlagSet(g.Name(), pflag.ContinueOnError)
-
+	flags.StringVarP(&g.modelName, "model-name", "n", "", "name of the model to use [defaults to resource name]")
 	return flags
 }
 

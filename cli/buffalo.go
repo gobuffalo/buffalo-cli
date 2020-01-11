@@ -53,7 +53,7 @@ func NewWithInfo(info here.Info) (*Buffalo, error) {
 		&fixcmd.FixCmd{},
 		&fizz.MigrationGen{},
 		&flect.Buffalo{},
-		&generatecmd.GenerateCmd{},
+		&generatecmd.Command{},
 		&golang.Templates{},
 		&i18n.Generator{},
 		&infocmd.InfoCmd{},

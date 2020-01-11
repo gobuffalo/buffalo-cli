@@ -40,6 +40,7 @@ func (Generator) Description() string {
 
 var _ generatecmd.Generator = &Generator{}
 
+// Generate implements generatecmd.Generator and is the entry point for `buffalo generate model`
 func (mg *Generator) Generate(ctx context.Context, args []string) error {
 	args = append([]string{"generate", "model"}, args...)
 	return soda.Main(ctx, args)
@@ -47,6 +48,8 @@ func (mg *Generator) Generate(ctx context.Context, args []string) error {
 
 var _ resource.Modeler = &Generator{}
 
+// GenerateResourceModels implements resource.Modeler and is responsible for generating a model
+// during `buffalo generate resource`
 func (mg *Generator) GenerateResourceModels(ctx context.Context, root string, args []string) error {
 	flags := mg.Flags()
 	if err := flags.Parse(args); err != nil {

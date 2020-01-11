@@ -1,4 +1,4 @@
-{{ range $p := .opts.Attrs -}}
+{{ range $p := .Attrs -}}
 {{ if eq $p.CommonType "text" -}}
 <%= f.TextAreaTag("{{$p.Name.Pascalize}}", {rows: 10}) %>
 {{ else -}}
