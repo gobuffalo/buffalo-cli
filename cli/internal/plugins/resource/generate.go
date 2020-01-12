@@ -3,10 +3,16 @@ package resource
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/generatecmd"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
+	"github.com/gobuffalo/flect/name"
+	"github.com/gobuffalo/genny/v2"
+	"github.com/gobuffalo/genny/v2/gogen"
 	"github.com/gobuffalo/here"
 	"github.com/markbates/safe"
 )
@@ -32,8 +38,42 @@ func (g *Generator) beforeGenerate(ctx context.Context, info here.Info, args []s
 	return nil
 }
 
+func (g *Generator) addResource(info here.Info, n string) error {
+	fp := filepath.Join(info.Dir, "actions", "app.go")
+
+	b, err := ioutil.ReadFile(fp)
+	if err != nil {
+		return err
+	}
+
+	pres := name.New(n)
+	stmt := fmt.Sprintf("app.Resource(\"/%s\", %sResource{})", pres.URL(), pres.Resource())
+
+	gf, err := gogen.AddInsideBlock(genny.NewFileB(fp, b), "if app == nil {", stmt)
+	if err != nil {
+		return err
+	}
+
+	f, err := os.Create(fp)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	_, err = f.WriteString(gf.String())
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
 func (g *Generator) afterGenerate(ctx context.Context, info here.Info, args []string, err error) error {
 	plugs := g.ScopedPlugins()
+
+	if err == nil && len(args) > 0 {
+		if err := g.addResource(info, args[0]); err != nil {
+			return err
+		}
+	}
 
 	for _, p := range plugs {
 		b, ok := p.(AfterGenerator)

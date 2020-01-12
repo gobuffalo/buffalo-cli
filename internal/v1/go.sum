@@ -251,6 +251,7 @@ github.com/gobuffalo/genny v0.1.1/go.mod h1:5TExbEyY48pfunL4QSXxlDOmdsD44RRq4mVZ
 github.com/gobuffalo/genny v0.2.0/go.mod h1:rWs4Z12d1Zbf19rlsn0nurr75KqhYp52EAGGxTbBhNk=
 github.com/gobuffalo/genny v0.3.0/go.mod h1:ywJ2CoXrTZj7rbS8HTbzv7uybnLKlsNSBhEQ+yFI3E8=
 github.com/gobuffalo/genny v0.4.0/go.mod h1:Kdo8wsw5zmooVvEfMkfv4JI9Ogz/PMvBNvl133soylI=
+github.com/gobuffalo/genny v0.4.1 h1:ylgRyFoVGtfq92Ziq0kyi0Sdwh//pqWEwg+vD3eK1ZA=
 github.com/gobuffalo/genny v0.4.1/go.mod h1:dpded+KBgICFciAb+6R5Lo+1VxzofjqHgKqFYIL8M7U=
 github.com/gobuffalo/genny v0.6.0 h1:d7c6d66ZrTHHty01hDX1/TcTWvAJQxRZl885KWX5kHY=
 github.com/gobuffalo/genny/v2 v2.0.1 h1:ODYh+YVv1ey1HBqm1NAHqlmDnzwBSjgBZd+cqAY/U7g=
@@ -267,6 +268,7 @@ github.com/gobuffalo/gogen v0.0.0-20190224213239-1c6076128bbc/go.mod h1:tQqPADZK
 github.com/gobuffalo/gogen v0.0.0-20190315121717-8f38393713f5/go.mod h1:V9QVDIxsgKNZs6L2IYiGR8datgMhB577vzTDqypH360=
 github.com/gobuffalo/gogen v0.1.0/go.mod h1:8NTelM5qd8RZ15VjQTFkAW6qOMx5wBbW4dSCS3BY8gg=
 github.com/gobuffalo/gogen v0.1.1/go.mod h1:y8iBtmHmGc4qa3urIyo1shvOD8JftTtfcKi+71xfDNE=
+github.com/gobuffalo/gogen v0.2.0 h1:Xx7NCe+/y++eII2aWAFZ09/81MhDCsZwvMzIFJoQRnU=
 github.com/gobuffalo/gogen v0.2.0/go.mod h1:V9QVDIxsgKNZs6L2IYiGR8datgMhB577vzTDqypH360=
 github.com/gobuffalo/helpers v0.0.0-20190422082217-384f90c6579f/go.mod h1:g0I3qKQEyJxwnHtEmLugD75eoOiWxEtibcV62tYah9w=
 github.com/gobuffalo/helpers v0.0.0-20190506214229-8e6f634af7c3/go.mod h1:HlNpmw2+Rjx882VUf6hJfNJs5wpNRzX02KcqCXDlLGc=
@@ -671,6 +673,7 @@ github.com/markbates/refresh v1.6.0/go.mod h1:p8jWGABFUaFf/cSw0pxbo0MQVujiz5NTQ0
 github.com/markbates/refresh v1.7.1/go.mod h1:hcGVJc3m5EeskliwSVJxcTHzUtMz2h8gBtCS0V94CgE=
 github.com/markbates/refresh v1.8.0/go.mod h1:ppl0l94oz3OKBAx3MV65vCDWPo51JQnypdtFUmps1NM=
 github.com/markbates/safe v1.0.0/go.mod h1:nAqgmRi7cY2nqMc92/bSEeQA+R4OheNU2T1kNSCBdG0=
+github.com/markbates/safe v1.0.1 h1:yjZkbvRM6IzKj9tlu/zMJLS0n/V351OZWRnF3QfaUxI=
 github.com/markbates/safe v1.0.1/go.mod h1:nAqgmRi7cY2nqMc92/bSEeQA+R4OheNU2T1kNSCBdG0=
 github.com/markbates/sigtx v1.0.0/go.mod h1:QF1Hv6Ic6Ca6W+T+DL0Y/ypborFKyvUY9HmuCD4VeTc=
 github.com/markbates/willie v1.0.9/go.mod h1:fsrFVWl91+gXpx/6dv715j7i11fYPfZ9ZGfH0DQzY7w=
