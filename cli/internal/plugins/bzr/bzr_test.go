@@ -7,6 +7,7 @@ import (
 	"testing"
 )
 
+// testVersionRunner is a custom version runner used for testing purposes.
 type testVersionRunner struct {
 	resultError   error
 	resultVersion string
