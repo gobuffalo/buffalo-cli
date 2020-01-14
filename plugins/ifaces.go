@@ -1,6 +1,7 @@
 package plugins
 
 import (
+	"context"
 	"io"
 )
 
@@ -44,4 +45,9 @@ type Aliases interface {
 type NamedCommand interface {
 	Plugin
 	CmdName() string
+}
+
+type NamedWriter interface {
+	Plugin
+	NamedWriter(ctx context.Context, n string) (io.Writer, error)
 }

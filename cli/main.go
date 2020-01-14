@@ -17,6 +17,16 @@ func (b *Buffalo) Main(ctx context.Context, args []string) error {
 	flags.BoolVarP(&help, "help", "h", false, "print this help")
 	flags.Parse(args)
 
+	pfn := func() []plugins.Plugin {
+		return b.Plugins
+	}
+
+	for _, b := range b.Plugins {
+		if wp, ok := b.(plugins.PluginNeeder); ok {
+			wp.WithPlugins(pfn)
+		}
+	}
+
 	var cmds Commands
 	for _, p := range b.ScopedPlugins() {
 		if c, ok := p.(Command); ok {

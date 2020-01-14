@@ -12,6 +12,30 @@ import (
 )
 
 type Generator struct {
+	pluginsFn plugins.PluginFeeder
+}
+
+var _ plugins.PluginNeeder = &Generator{}
+
+func (g *Generator) WithPlugins(f plugins.PluginFeeder) {
+	g.pluginsFn = f
+}
+
+func (g *Generator) ScopedPlugins() []plugins.Plugin {
+	if g.pluginsFn == nil {
+		return []plugins.Plugin{}
+	}
+	plugs := g.pluginsFn()
+
+	var scoped []plugins.Plugin
+	for _, p := range plugs {
+		switch p.(type) {
+		case NamedWriter:
+			scoped = append(scoped, p)
+		}
+	}
+
+	return scoped
 }
 
 var _ plugins.Plugin = &Generator{}
@@ -42,6 +66,12 @@ func (g *Generator) AfterGenerateResource(ctx context.Context, root string, args
 	}
 
 	if err := t.Execute(f, model); err != nil {
+		return err
+	}
+
+	flash := &flasher{}
+	flash.WithPlugins(g.ScopedPlugins)
+	if err := flash.Flash(ctx, root, model); err != nil {
 		return err
 	}
 	return nil
