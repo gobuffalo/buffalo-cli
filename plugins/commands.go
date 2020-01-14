@@ -1,6 +1,10 @@
 package plugins
 
-import "fmt"
+import (
+	"context"
+	"fmt"
+	"os/exec"
+)
 
 // Commands is a slice of type `Plugin`
 type Commands []Plugin
@@ -24,4 +28,18 @@ func (commands Commands) Find(name string) (Plugin, error) {
 		}
 	}
 	return nil, fmt.Errorf("command %s not found", name)
+}
+
+// Cmd calls the exec.CommandContext, and then sets Stdout, Stderr,
+// and Stdin using CtxIO to find IO, if any, in the context to the
+// exec.Cmd before returning it.
+func Cmd(ctx context.Context, name string, arg ...string) *exec.Cmd {
+	cmd := exec.CommandContext(ctx, name, arg...)
+
+	ioe := CtxIO(ctx)
+	cmd.Stdin = ioe.Stdin()
+	cmd.Stdout = ioe.Stdout()
+	cmd.Stderr = ioe.Stderr()
+
+	return cmd
 }
