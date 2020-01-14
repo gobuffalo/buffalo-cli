@@ -59,14 +59,16 @@ import (
 
 func Buffalo(ctx context.Context, args []string) error {
 	fmt.Println("~~~~ Using {{.Name}}/cli.Buffalo ~~~")
+
 	buffalo, err := cli.New(ctx)
 	if err != nil {
 		return err
 	}
 
-	// buffalo.Plugins = append(buffalo.Plugins,
-	// 	your plugins here!
-	// )
+	buffalo.Plugins = append([]plugins.Plugin{
+		// prepend your plugins here
+	}, buffalo.Plugins...)
+
 	return buffalo.Main(ctx, args)
 }
 `

@@ -1,59 +1,59 @@
 package generatecmd
 
 import (
-	"github.com/gobuffalo/buffalo-cli/internal/plugins"
-	"github.com/gobuffalo/buffalo-cli/internal/plugins/plugprint"
+	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/gobuffalo/here"
 )
 
-type GenerateCmd struct {
+type Command struct {
 	Info      here.Info
 	help      bool
 	pluginsFn plugins.PluginFeeder
 }
 
-func (b *GenerateCmd) WithHereInfo(i here.Info) {
+func (b *Command) WithHereInfo(i here.Info) {
 	b.Info = i
 }
 
-func (b *GenerateCmd) HereInfo() (here.Info, error) {
+func (b *Command) HereInfo() (here.Info, error) {
 	if !b.Info.IsZero() {
 		return b.Info, nil
 	}
 	return here.Current()
 }
 
-var _ plugins.PluginNeeder = &GenerateCmd{}
+var _ plugins.PluginNeeder = &Command{}
 
-func (b *GenerateCmd) WithPlugins(f plugins.PluginFeeder) {
+func (b *Command) WithPlugins(f plugins.PluginFeeder) {
 	b.pluginsFn = f
 }
 
-var _ plugprint.Aliases = &GenerateCmd{}
+var _ plugprint.Aliases = &Command{}
 
-func (*GenerateCmd) Aliases() []string {
+func (*Command) Aliases() []string {
 	return []string{"g"}
 }
 
-var _ plugins.Plugin = &GenerateCmd{}
+var _ plugins.Plugin = &Command{}
 
-func (b GenerateCmd) Name() string {
+func (b Command) Name() string {
 	return "generate"
 }
 
-func (b GenerateCmd) String() string {
+func (b Command) String() string {
 	return b.Name()
 }
 
-var _ plugprint.Describer = &GenerateCmd{}
+var _ plugprint.Describer = &Command{}
 
-func (GenerateCmd) Description() string {
+func (Command) Description() string {
 	return "Generate application components"
 }
 
-var _ plugprint.SubCommander = &GenerateCmd{}
+var _ plugprint.SubCommander = &Command{}
 
-func (bc *GenerateCmd) SubCommands() []plugins.Plugin {
+func (bc *Command) SubCommands() []plugins.Plugin {
 	var plugs []plugins.Plugin
 	for _, p := range bc.ScopedPlugins() {
 		if _, ok := p.(Generator); ok {
@@ -63,9 +63,9 @@ func (bc *GenerateCmd) SubCommands() []plugins.Plugin {
 	return plugs
 }
 
-var _ plugins.PluginScoper = &GenerateCmd{}
+var _ plugins.PluginScoper = &Command{}
 
-func (bc *GenerateCmd) ScopedPlugins() []plugins.Plugin {
+func (bc *Command) ScopedPlugins() []plugins.Plugin {
 	var plugs []plugins.Plugin
 	if bc.pluginsFn != nil {
 		plugs = bc.pluginsFn()

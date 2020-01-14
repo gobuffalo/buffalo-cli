@@ -3,7 +3,7 @@ package cli
 import (
 	"fmt"
 
-	"github.com/gobuffalo/buffalo-cli/internal/plugins"
+	"github.com/gobuffalo/buffalo-cli/plugins"
 )
 
 // Commands is a slice of type `Command`

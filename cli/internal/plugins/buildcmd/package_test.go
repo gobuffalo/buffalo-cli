@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/gobuffalo/buffalo-cli/internal/plugins"
+	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/stretchr/testify/require"
 )
 

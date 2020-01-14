@@ -4,12 +4,12 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/gobuffalo/buffalo-cli/internal/plugins"
-	"github.com/gobuffalo/buffalo-cli/internal/plugins/plugprint"
+	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/markbates/safe"
 )
 
-func (bc *GenerateCmd) beforeGenerate(ctx context.Context, args []string) error {
+func (bc *Command) beforeGenerate(ctx context.Context, args []string) error {
 	builders := bc.ScopedPlugins()
 	for _, p := range builders {
 		if bb, ok := p.(BeforeGenerator); ok {
@@ -24,7 +24,7 @@ func (bc *GenerateCmd) beforeGenerate(ctx context.Context, args []string) error 
 	return nil
 }
 
-func (bc *GenerateCmd) afterGenerate(ctx context.Context, args []string, err error) error {
+func (bc *Command) afterGenerate(ctx context.Context, args []string, err error) error {
 	builders := bc.ScopedPlugins()
 	for _, p := range builders {
 		if bb, ok := p.(AfterGenerator); ok {
@@ -39,23 +39,23 @@ func (bc *GenerateCmd) afterGenerate(ctx context.Context, args []string, err err
 	return err
 }
 
-func (bc *GenerateCmd) Main(ctx context.Context, args []string) error {
-	flags := bc.Flags()
-	if err := flags.Parse(args); err != nil {
-		return err
-	}
-
+// Main implements cli.Command and is the entry point for `buffalo generate`
+func (bc *Command) Main(ctx context.Context, args []string) error {
 	ioe := plugins.CtxIO(ctx)
-	if len(flags.Args()) == 0 {
-		if bc.help {
-			return plugprint.Print(ioe.Stdout(), bc)
+	if len(args) == 0 {
+		if err := plugprint.Print(ioe.Stdout(), bc); err != nil {
+			return err
 		}
 		return fmt.Errorf("no command provided")
 	}
 
+	if len(args) == 1 && args[0] == "-h" {
+		return plugprint.Print(ioe.Stdout(), bc)
+	}
+
 	plugs := bc.ScopedPlugins()
 
-	n := flags.Args()[0]
+	n := args[0]
 	cmds := plugins.Commands(plugs)
 	p, err := cmds.Find(n)
 	if err != nil {

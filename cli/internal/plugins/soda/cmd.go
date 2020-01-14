@@ -1,11 +1,10 @@
-package pop
+package soda
 
 import (
 	"context"
 
-	"github.com/gobuffalo/buffalo-cli/internal/plugins"
-	"github.com/gobuffalo/buffalo-cli/internal/plugins/plugprint"
-	soda "github.com/gobuffalo/pop/v5/soda/cmd"
+	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 )
 
 type Cmd struct{}
@@ -13,22 +12,21 @@ type Cmd struct{}
 var _ plugins.Plugin = Cmd{}
 
 func (Cmd) Name() string {
-	return "pop/cmd"
+	return "soda/cmd"
 }
 
 var _ plugprint.NamedCommand = Cmd{}
 
 func (Cmd) CmdName() string {
-	return "pop"
+	return "soda"
 }
 
 var _ plugprint.Aliases = Cmd{}
 
 func (Cmd) Aliases() []string {
-	return []string{"db"}
+	return []string{"db", "pop"}
 }
 
 func (Cmd) Main(ctx context.Context, args []string) error {
-	soda.RootCmd.SetArgs(args)
-	return soda.RootCmd.Execute()
+	return Main(ctx, args)
 }

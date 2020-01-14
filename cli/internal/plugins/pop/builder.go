@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
-	"github.com/gobuffalo/buffalo-cli/internal/plugins"
+	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/here"
 	"github.com/gobuffalo/pop/v5/soda/cmd"
 )

@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
-	"github.com/gobuffalo/buffalo-cli/internal/plugins"
+	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/here"
 	"github.com/markbates/pkger/cmd/pkger/cmds"
 	"github.com/markbates/pkger/parser"

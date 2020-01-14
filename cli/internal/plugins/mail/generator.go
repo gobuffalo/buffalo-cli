@@ -5,8 +5,8 @@ import (
 	"os"
 
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/mail/internal/mailgen"
-	"github.com/gobuffalo/buffalo-cli/internal/plugins"
-	"github.com/gobuffalo/buffalo-cli/internal/plugins/plugprint"
+	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/gobuffalo/genny/v2"
 	"github.com/gobuffalo/genny/v2/gogen"
 )

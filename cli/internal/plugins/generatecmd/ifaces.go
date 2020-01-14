@@ -3,7 +3,7 @@ package generatecmd
 import (
 	"context"
 
-	"github.com/gobuffalo/buffalo-cli/internal/plugins"
+	"github.com/gobuffalo/buffalo-cli/plugins"
 )
 
 // Generator is a sub-command of buffalo generate.
