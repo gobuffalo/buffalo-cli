@@ -10,7 +10,7 @@ import (
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/soda"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
-	"github.com/gobuffalo/genny"
+	"github.com/gobuffalo/genny/v2"
 	gmodel "github.com/gobuffalo/pop/v5/genny/model"
 )
 
