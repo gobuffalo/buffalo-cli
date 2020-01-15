@@ -5,19 +5,22 @@ import (
 	"os/exec"
 )
 
-type versionRunner struct {
-	cmd     *exec.Cmd
-	version string
-	err     error
+type commandRunner struct {
+	cmd    *exec.Cmd
+	stdout string
+	err    error
 }
 
-func (v *versionRunner) Name() string {
-	return "versionRunner"
+func (v *commandRunner) Name() string {
+	return "commandRunner"
 }
 
-var _ VersionRunner = &versionRunner{}
+var _ CommandRunner = &commandRunner{}
 
-func (v *versionRunner) RunGitVersion(ctx context.Context, cmd *exec.Cmd) (string, error) {
+func (v *commandRunner) RunGitCommand(ctx context.Context, cmd *exec.Cmd) error {
 	v.cmd = cmd
-	return v.version, v.err
+	if len(v.stdout) > 0 {
+		v.cmd.Stdout.Write([]byte(v.stdout))
+	}
+	return v.err
 }

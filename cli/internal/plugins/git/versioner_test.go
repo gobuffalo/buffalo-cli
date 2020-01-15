@@ -11,8 +11,8 @@ import (
 func Test_Versioner_BuildVersion(t *testing.T) {
 	r := require.New(t)
 
-	vr := &versionRunner{
-		version: "123",
+	vr := &commandRunner{
+		stdout: "123",
 	}
 
 	v := &Versioner{
@@ -23,7 +23,7 @@ func Test_Versioner_BuildVersion(t *testing.T) {
 
 	s, err := v.BuildVersion(context.Background(), "")
 	r.NoError(err)
-	r.Equal(vr.version, s)
+	r.Equal(vr.stdout, s)
 	r.NotNil(vr.cmd)
 	r.Equal([]string{"git", "rev-parse", "--short", "HEAD"}, vr.cmd.Args)
 }

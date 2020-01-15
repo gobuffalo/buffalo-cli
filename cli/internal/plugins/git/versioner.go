@@ -25,7 +25,7 @@ func (b *Versioner) ScopedPlugins() []plugins.Plugin {
 	var scoped []plugins.Plugin
 	for _, p := range b.pluginsFn() {
 		switch p.(type) {
-		case VersionRunner:
+		case CommandRunner:
 			scoped = append(scoped, p)
 		}
 	}
@@ -38,26 +38,24 @@ func (b *Versioner) BuildVersion(ctx context.Context, root string) (string, erro
 		return "", err
 	}
 
-	ioe := plugins.CtxIO(ctx)
-
 	cmd := exec.CommandContext(ctx, "git", "rev-parse", "--short", "HEAD")
-	cmd.Stdin = ioe.Stdin()
-	cmd.Stdout = ioe.Stdout()
-	cmd.Stderr = ioe.Stderr()
-
-	for _, p := range b.ScopedPlugins() {
-		if vr, ok := p.(VersionRunner); ok {
-			s, err := vr.RunGitVersion(ctx, cmd)
-			return strings.TrimSpace(s), err
-		}
-	}
 	bb := &bytes.Buffer{}
 	cmd.Stdout = bb
-	if err := cmd.Run(); err != nil {
+
+	var fn cmdRunnerFn = func(ctx context.Context, cmd *exec.Cmd) error {
+		return cmd.Run()
+	}
+
+	for _, p := range b.ScopedPlugins() {
+		if vr, ok := p.(CommandRunner); ok {
+			fn = vr.RunGitCommand
+			break
+		}
+	}
+	if err := fn(ctx, cmd); err != nil {
 		return "", err
 	}
 	return strings.TrimSpace(bb.String()), nil
-
 }
 
 // Name is the name of the plugin.
