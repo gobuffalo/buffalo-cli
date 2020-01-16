@@ -34,10 +34,6 @@ func (b *Versioner) ScopedPlugins() []plugins.Plugin {
 }
 
 func (b *Versioner) BuildVersion(ctx context.Context, root string) (string, error) {
-	if _, err := exec.LookPath("git"); err != nil {
-		return "", err
-	}
-
 	cmd := exec.CommandContext(ctx, "git", "rev-parse", "--short", "HEAD")
 	bb := &bytes.Buffer{}
 	cmd.Stdout = bb
