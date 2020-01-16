@@ -3,55 +3,15 @@ package plugins
 import (
 	"context"
 	"io"
-	"os"
 )
 
-func NewIO() IO {
-	return stdIO{
-		Context: context.Background(),
-		stdin:   os.Stdin,
-		stdout:  os.Stdout,
-		stderr:  os.Stderr,
-	}
-}
-
-type stdIO struct {
-	context.Context
-	stdin  io.Reader
-	stdout io.Writer
-	stderr io.Writer
-}
-
-func (i stdIO) Stdin() io.Reader {
-	if i.stdin != nil {
-		return i.stdin
-	}
-	if x, ok := i.Context.(StdinGetter); ok {
-		return x.Stdin()
-	}
-	return os.Stdin
-}
-
-func (i stdIO) Stdout() io.Writer {
-	if i.stdout != nil {
-		return i.stdout
-	}
-	if x, ok := i.Context.(StdoutGetter); ok {
-		return x.Stdout()
-	}
-	return os.Stdout
-}
-
-func (i stdIO) Stderr() io.Writer {
-	if i.stderr != nil {
-		return i.stderr
-	}
-	if x, ok := i.Context.(StderrGetter); ok {
-		return x.Stderr()
-	}
-	return os.Stderr
-}
-
+// CtxIO returns a working IO implmentation which
+// defaults to using os.Stdin, os.Stdout, and os.Stderr.
+// If the context itself implements IO, the it is returned.
+// Next, if the context contains an "io" value that implements
+// IO, then that value is returned.
+// If not IO implementation is found, a default implementation
+// using the standard IO is returned.
 func CtxIO(ctx context.Context) IO {
 	if i, ok := ctx.(IO); ok {
 		return i
@@ -62,6 +22,8 @@ func CtxIO(ctx context.Context) IO {
 	return NewIO()
 }
 
+// WithIO wraps the given context and IO with a new context
+// that also implements the given IO.
 func WithIO(ctx context.Context, i IO) context.Context {
 	return stdIO{
 		Context: ctx,
@@ -71,6 +33,8 @@ func WithIO(ctx context.Context, i IO) context.Context {
 	}
 }
 
+// WithStdin returns a new context that implements IO with
+// the given io.Reader representing Stdin.
 func WithStdin(ctx context.Context, stdin io.Reader) context.Context {
 	i := CtxIO(ctx)
 	return stdIO{
