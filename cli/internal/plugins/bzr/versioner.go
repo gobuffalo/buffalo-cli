@@ -45,10 +45,6 @@ func (b *Versioner) BuildVersion(ctx context.Context, root string) (string, erro
 	cmd.Stdout = bb
 
 	var fn cmdRunnerFn = func(ctx context.Context, cmd *exec.Cmd) error {
-		if _, err := exec.LookPath("bzr"); err != nil {
-			return err
-		}
-
 		return cmd.Run()
 	}
 
