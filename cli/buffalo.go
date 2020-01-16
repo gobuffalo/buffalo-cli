@@ -73,7 +73,7 @@ func NewWithInfo(info here.Info) (*Buffalo, error) {
 		b.Plugins = append(b.Plugins, &git.Buffalo{})
 	}
 	if _, err := os.Stat(filepath.Join(info.Dir, ".bzr")); err == nil {
-		b.Plugins = append(b.Plugins, &bzr.BzrVersioner{})
+		b.Plugins = append(b.Plugins, bzr.Plugins()...)
 	}
 
 	sort.Slice(b.Plugins, func(i, j int) bool {

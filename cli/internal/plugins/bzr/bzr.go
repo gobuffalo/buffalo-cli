@@ -6,11 +6,14 @@ import (
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 )
 
-//Ensuring bzr is a describer
-var _ plugprint.Describer = BzrVersioner{}
+var _ buildcmd.Versioner = &Versioner{}
+var _ plugins.Plugin = Versioner{}
+var _ plugins.PluginNeeder = &Versioner{}
+var _ plugprint.Describer = Versioner{}
 
-//Ensuring bzr is a buffalo Plugin
-var _ plugins.Plugin = BzrVersioner{}
-
-//Ensuring bzr is a buffalo buildcmd.Versioner
-var _ buildcmd.Versioner = &BzrVersioner{}
+// Plugins ...
+func Plugins() []plugins.Plugin {
+	return []plugins.Plugin{
+		Versioner{},
+	}
+}

@@ -3,8 +3,10 @@ package bzr
 import (
 	"bytes"
 	"context"
-	"errors"
 	"testing"
+
+	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/stretchr/testify/require"
 )
 
 // testVersionRunner is a custom version runner used for testing purposes.
@@ -23,55 +25,30 @@ func (tv *testVersionRunner) RunVersionCommand(ctx context.Context, bb *bytes.Bu
 }
 
 func Test_Bzr_Generalities(t *testing.T) {
-	b := BzrVersioner{}
+	r := require.New(t)
+	b := Versioner{}
 
-	if b.Name() != "bzr" {
-		t.Error("Name should be bzr")
-	}
-
-	if b.Description() != "Provides bzr related hooks to Buffalo applications." {
-		t.Error("description should be something else")
-	}
+	r.Equal("bzr", b.Name(), "Name should be bzr")
+	r.Equal("Provides bzr related hooks to Buffalo applications.", b.Description(), "Description does not match")
 }
 
 func Test_Bzr_BuildVersion(t *testing.T) {
 
-	tcases := []struct {
-		name    string
-		version string
-		err     error
-
-		expectedVersion string
-		hasErr          bool
-	}{
-		{name: "ALL GOOD", version: "abc123", err: nil, expectedVersion: "abc123", hasErr: false},
-		{name: "ERROR", version: "", err: errors.New("error loading this thing"), expectedVersion: "", hasErr: true},
+	r := require.New(t)
+	vr := &commandRunner{
+		stdout: "123",
 	}
 
-	for _, tcase := range tcases {
-
-		t.Run(tcase.name, func(t *testing.T) {
-
-			b := &BzrVersioner{
-				versionRunner: &testVersionRunner{
-					resultError:   tcase.err,
-					resultVersion: tcase.version,
-				},
-			}
-
-			result, err := b.BuildVersion(context.Background(), ".")
-
-			if tcase.hasErr && err == nil {
-				t.Errorf("Should return err")
-			}
-
-			if !tcase.hasErr && err != nil {
-				t.Errorf("Should not return err")
-			}
-
-			if result != tcase.expectedVersion {
-				t.Errorf("Version should be `%+v` but is `%+v`", tcase.expectedVersion, result)
-			}
-		})
+	v := &Versioner{
+		pluginsFn: plugins.Plugins{
+			vr,
+		}.ScopedPlugins,
 	}
+
+	s, err := v.BuildVersion(context.Background(), "")
+	r.NoError(err)
+	r.Equal(vr.stdout, s)
+	r.NotNil(vr.cmd)
+
+	r.Equal([]string{"bzr", "revno"}, vr.cmd.Args)
 }
