@@ -6,71 +6,59 @@ import (
 	"os"
 	"strings"
 	"testing"
-
-	"github.com/stretchr/testify/require"
 )
 
 func Test_NewIO(t *testing.T) {
-	r := require.New(t)
-
 	ioe := NewIO()
 
-	r.Equal(os.Stdin, ioe.Stdin())
-	r.Equal(os.Stderr, ioe.Stderr())
-	r.Equal(os.Stdout, ioe.Stdout())
+	Equal(os.Stdin, ioe.Stdin())
+	Equal(os.Stderr, ioe.Stderr())
+	Equal(os.Stdout, ioe.Stdout())
 }
 
 func Test_WithStdin(t *testing.T) {
-	r := require.New(t)
-
-	r.Equal(os.Stdin, stdIO{}.Stdin())
+	Equal(os.Stdin, stdIO{}.Stdin())
 
 	ctx := context.Background()
 	ioe := CtxIO(ctx)
-	r.Equal(os.Stdin, ioe.Stdin())
+	Equal(os.Stdin, ioe.Stdin())
 
 	in := &bytes.Buffer{}
 	ctx = WithStdin(ctx, in)
 
 	ioe = CtxIO(ctx)
-	r.Equal(in, ioe.Stdin())
+	Equal(in, ioe.Stdin())
 }
 
 func Test_WithStdout(t *testing.T) {
-	r := require.New(t)
-
-	r.Equal(os.Stdout, stdIO{}.Stdout())
+	Equal(os.Stdout, stdIO{}.Stdout())
 
 	ctx := context.Background()
 	ioe := CtxIO(ctx)
-	r.Equal(os.Stdout, ioe.Stdout())
+	Equal(os.Stdout, ioe.Stdout())
 
 	out := &bytes.Buffer{}
 	ctx = WithStdout(ctx, out)
 
 	ioe = CtxIO(ctx)
-	r.Equal(out, ioe.Stdout())
+	Equal(out, ioe.Stdout())
 }
 
 func Test_WithStderr(t *testing.T) {
-	r := require.New(t)
-
-	r.Equal(os.Stderr, stdIO{}.Stderr())
+	Equal(os.Stderr, stdIO{}.Stderr())
 
 	ctx := context.Background()
 	ioe := CtxIO(ctx)
-	r.Equal(os.Stderr, ioe.Stderr())
+	Equal(os.Stderr, ioe.Stderr())
 
 	out := &bytes.Buffer{}
 	ctx = WithStderr(ctx, out)
 
 	ioe = CtxIO(ctx)
-	r.Equal(out, ioe.Stderr())
+	Equal(out, ioe.Stderr())
 }
 
 func Test_WithIO(t *testing.T) {
-	r := require.New(t)
-
 	ctx := context.Background()
 
 	stdin := &bytes.Reader{}
@@ -87,7 +75,7 @@ func Test_WithIO(t *testing.T) {
 	ctx = WithIO(ctx, io)
 
 	ioe := CtxIO(ctx)
-	r.Equal(stdin, ioe.Stdin())
-	r.Equal(stdout, ioe.Stdout())
-	r.Equal(stderr, ioe.Stderr())
+	Equal(stdin, ioe.Stdin())
+	Equal(stdout, ioe.Stdout())
+	Equal(stderr, ioe.Stderr())
 }

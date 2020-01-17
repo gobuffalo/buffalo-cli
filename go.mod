@@ -4,6 +4,7 @@ go 1.13
 
 require (
 	github.com/gobuffalo/attrs v0.1.0
+	github.com/gobuffalo/buffalo-cli/plugins v0.0.0-00010101000000-000000000000
 	github.com/gobuffalo/fizz v1.9.5
 	github.com/gobuffalo/flect v0.2.0
 	github.com/gobuffalo/genny/v2 v2.0.1
@@ -22,3 +23,5 @@ require (
 	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e
 	golang.org/x/tools v0.0.0-20200115210426-f04f2c82d09b
 )
+
+replace github.com/gobuffalo/buffalo-cli/plugins => ./plugins

@@ -4,6 +4,7 @@ install:
 
 test:
 	go test -failfast -short -cover -tags "sqlite" ./...
+	cd ./plugins && go test -failfast -short -cover -tags "sqlite" ./...
 	go mod tidy -v
 
 cov:
