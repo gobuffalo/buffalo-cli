@@ -1,9 +1,6 @@
-package assets
+package builder
 
 import (
-	"path/filepath"
-	"runtime"
-
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/gobuffalo/here"
@@ -48,6 +45,10 @@ func (bc *Builder) ScopedPlugins() []plugins.Plugin {
 		switch p.(type) {
 		case AssetBuilder:
 			builders = append(builders, p)
+		case Tooler:
+			builders = append(builders, p)
+		case Scripter:
+			builders = append(builders, p)
 		}
 	}
 	return builders
@@ -78,12 +79,4 @@ func (a Builder) Description() string {
 
 func (a Builder) String() string {
 	return a.Name()
-}
-
-func (b Builder) webpackBin() string {
-	s := filepath.Join("node_modules", ".bin", "webpack")
-	if runtime.GOOS == "windows" {
-		s += ".cmd"
-	}
-	return s
 }

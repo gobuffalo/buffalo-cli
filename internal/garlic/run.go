@@ -3,12 +3,12 @@ package garlic
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"io/ioutil"
 	"os"
-	"path"
 	"path/filepath"
 
-	"github.com/gobuffalo/buffalo-cli/cli"
+	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/here"
 	"github.com/markbates/jim"
 	"github.com/markbates/safe"
@@ -18,53 +18,51 @@ type tasker interface {
 	Task() *jim.Task
 }
 
+func isBuffalo(mod string) bool {
+	if _, err := os.Stat(mod); err != nil {
+		return false
+	}
+
+	b, err := ioutil.ReadFile(mod)
+	if err != nil {
+		return false
+	}
+
+	return bytes.Contains(b, []byte("github.com/gobuffalo/buffalo"))
+}
+
 func Run(ctx context.Context, args []string) error {
 	info, err := here.Dir(".")
 	if err != nil {
 		return err
 	}
 
-	ip := path.Join(info.Module.Path, "cli")
-
-	bargs, err := buildTags(ctx, info)
-	if err != nil {
-		return err
+	if !isBuffalo(info.Module.GoMod) {
+		// TODO use cli.Buffalo with a set of appropriate
+		// plugins for use outside of an app. such as `buffalo new`.
+		return fmt.Errorf("%s is not a buffalo app", info.Module)
 	}
 
-	t := &jim.Task{
-		Info:      info,
-		Args:      args,
-		BuildArgs: bargs,
-		Pkg:       ip,
-		Sel:       "cli",
-		Name:      "Buffalo",
+	main := filepath.Join(info.Dir, "cmd", "buffalo")
+	if _, err := os.Stat(filepath.Dir(main)); err != nil {
+		if err := NewApp(ctx, info.Dir, args); err != nil {
+			return err
+		}
 	}
 
-	err = jim.Run(ctx, t)
-	if err == nil {
-		return nil
-	}
+	bargs := []string{"run", "./cmd/buffalo"}
+	bargs = append(bargs, args...)
 
-	if _, ok := err.(tasker); !ok {
-		return err
-	}
-
-	if err := NewApp(ctx, info.Dir, args); err != nil {
-		return err
-	}
-
+	cmd := plugins.Cmd(ctx, "go", bargs...)
 	err = safe.RunE(func() error {
-		return jim.Run(ctx, t)
+		fmt.Println(cmd.Args)
+		return cmd.Run()
 	})
-	if err == nil {
-		return nil
-	}
-
-	b, err := cli.New()
 	if err != nil {
 		return err
 	}
-	return b.Main(ctx, args)
+
+	return nil
 
 }
 

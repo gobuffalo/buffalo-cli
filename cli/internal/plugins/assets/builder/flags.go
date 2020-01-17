@@ -1,4 +1,4 @@
-package assets
+package builder
 
 import (
 	"io"

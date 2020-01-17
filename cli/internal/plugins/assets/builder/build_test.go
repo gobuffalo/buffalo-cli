@@ -1,4 +1,4 @@
-package assets
+package builder
 
 import (
 	"bytes"
@@ -6,6 +6,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/assets/scripts"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/here"
 	"github.com/stretchr/testify/require"
@@ -66,7 +67,10 @@ func Test_Builder_Build_Skip(t *testing.T) {
 	bc := &Builder{}
 	br := &bladeRunner{}
 	bc.WithPlugins(func() []plugins.Plugin {
-		return []plugins.Plugin{br}
+		return []plugins.Plugin{
+			br,
+			&tooler{tool: "npm"},
+		}
 	})
 
 	ctx := context.Background()
@@ -94,7 +98,7 @@ func Test_Builder_Cmd_PackageJSON(t *testing.T) {
 	ctx := context.Background()
 	args := []string{}
 
-	c, err := bc.Cmd(info.Dir, ctx, args)
+	c, err := bc.Cmd(ctx, info.Dir, args)
 	r.NoError(err)
 
 	r.Equal([]string{"npm", "run", "build"}, c.Args)
@@ -115,7 +119,7 @@ func Test_Builder_Cmd_PackageJSON_Yarn(t *testing.T) {
 	ctx := context.Background()
 	args := []string{}
 
-	c, err := bc.Cmd(info.Dir, ctx, args)
+	c, err := bc.Cmd(ctx, info.Dir, args)
 	r.NoError(err)
 
 	r.Equal([]string{"yarnpkg", "run", "build"}, c.Args)
@@ -125,6 +129,11 @@ func Test_Builder_Cmd_Webpack_Fallthrough(t *testing.T) {
 	r := require.New(t)
 
 	bc := &Builder{}
+	bc.WithPlugins(func() []plugins.Plugin {
+		return []plugins.Plugin{
+			&tooler{tool: "npm"},
+		}
+	})
 
 	ctx := context.Background()
 	args := []string{}
@@ -132,8 +141,8 @@ func Test_Builder_Cmd_Webpack_Fallthrough(t *testing.T) {
 	info, err := here.Current()
 	r.NoError(err)
 
-	c, err := bc.Cmd(info.Dir, ctx, args)
+	c, err := bc.Cmd(ctx, info.Dir, args)
 	r.NoError(err)
 
-	r.Equal([]string{bc.webpackBin()}, c.Args)
+	r.Equal([]string{scripts.WebpackBin(info.Dir)}, c.Args)
 }

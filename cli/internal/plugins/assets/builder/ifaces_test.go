@@ -1,4 +1,4 @@
-package assets
+package builder
 
 import (
 	"context"
@@ -19,4 +19,21 @@ func (bladeRunner) Name() string {
 func (b *bladeRunner) BuildAssets(ctx context.Context, cmd *exec.Cmd) error {
 	b.cmd = cmd
 	return b.err
+}
+
+var _ Tooler = &tooler{}
+
+type tooler struct {
+	root string
+	tool string
+	err  error
+}
+
+func (tooler) Name() string {
+	return "tooler"
+}
+
+func (tool *tooler) AssetTool(ctx context.Context, root string) (string, error) {
+	tool.root = root
+	return tool.tool, tool.err
 }

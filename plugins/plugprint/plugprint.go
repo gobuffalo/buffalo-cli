@@ -3,6 +3,7 @@ package plugprint
 import (
 	"fmt"
 	"io"
+	"path"
 	"sort"
 	"strings"
 	"text/tabwriter"
@@ -143,5 +144,5 @@ func cmdName(p plugins.Plugin) string {
 	if d, ok := p.(NamedCommand); ok {
 		return d.CmdName()
 	}
-	return p.Name()
+	return path.Base(p.Name())
 }

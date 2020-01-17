@@ -47,10 +47,8 @@ func (bc *BuildCmd) Main(ctx context.Context, args []string) error {
 
 	ioe := plugins.CtxIO(ctx)
 
-	if len(flags.Args()) == 0 {
-		if bc.help {
-			return plugprint.Print(ioe.Stdout(), bc)
-		}
+	if len(flags.Args()) == 0 && bc.help {
+		return plugprint.Print(ioe.Stdout(), bc)
 	}
 
 	type builder func(ctx context.Context, args []string) error

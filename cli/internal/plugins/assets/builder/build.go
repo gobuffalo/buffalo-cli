@@ -1,12 +1,11 @@
-package assets
+package builder
 
 import (
 	"context"
-	"encoding/json"
 	"os"
 	"os/exec"
-	"path/filepath"
 
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/assets/scripts"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
@@ -52,7 +51,7 @@ func (bc *Builder) Build(ctx context.Context, args []string) error {
 		return err
 	}
 
-	c, err := bc.Cmd(info.Dir, ctx, args)
+	c, err := bc.Cmd(ctx, info.Dir, args)
 	if err != nil {
 		return err
 	}
@@ -78,32 +77,32 @@ func (bc *Builder) Build(ctx context.Context, args []string) error {
 	return nil
 }
 
-func (bc *Builder) Cmd(root string, ctx context.Context, args []string) (*exec.Cmd, error) {
+func (bc *Builder) tool(ctx context.Context, root string) (string, error) {
+	for _, p := range bc.ScopedPlugins() {
+		if tp, ok := p.(Tooler); ok {
+			return tp.AssetTool(ctx, root)
+		}
+	}
+	return scripts.Tool(root)
+}
+
+func (bc *Builder) Cmd(ctx context.Context, root string, args []string) (*exec.Cmd, error) {
 	tool := bc.Tool
+
+	var err error
 	if len(tool) == 0 {
-		tool = "npm"
+		tool, err = bc.tool(ctx, root)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	// Fallback on legacy runner
-	c := exec.CommandContext(ctx, bc.webpackBin())
+	cmd := plugins.Cmd(ctx, scripts.WebpackBin(root))
 
-	// parse package.json looking for a custom build script
-	scripts := packageJSON{}
-	if pf, err := os.Open(filepath.Join(root, "package.json")); err == nil {
-		if err = json.NewDecoder(pf).Decode(&scripts); err != nil {
-			return nil, err
-		}
-		if _, ok := scripts.Scripts["build"]; ok {
-			c = exec.CommandContext(ctx, tool, "run", "build")
-		}
-		if err := pf.Close(); err != nil {
-			return nil, err
-		}
+	if _, err := scripts.ScriptFor(root, "build"); err == nil {
+		cmd = plugins.Cmd(ctx, tool, "run", "build")
 	}
 
-	ioe := plugins.CtxIO(ctx)
-	c.Stdout = ioe.Stdout()
-	c.Stderr = ioe.Stderr()
-	c.Stdin = ioe.Stdin()
-	return c, nil
+	return cmd, nil
 }
