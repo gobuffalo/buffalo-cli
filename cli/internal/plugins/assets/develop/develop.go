@@ -1,4 +1,4 @@
-package developer
+package develop
 
 import (
 	"context"

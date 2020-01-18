@@ -10,18 +10,44 @@ import (
 )
 
 func CleanPflags(p plugins.Plugin, flags []*pflag.Flag) []*pflag.Flag {
+	fls := make([]*pflag.Flag, len(flags))
 	for i, f := range flags {
-		f.Name = fmt.Sprintf("%s-%s", path.Base(p.Name()), f.Name)
-		f.Shorthand = ""
-		flags[i] = f
+		fls[i] = &pflag.Flag{
+			Annotations:         f.Annotations,
+			Changed:             f.Changed,
+			DefValue:            f.DefValue,
+			Deprecated:          f.Deprecated,
+			Hidden:              f.Hidden,
+			Name:                fmt.Sprintf("%s-%s", path.Base(name(p)), f.Name),
+			NoOptDefVal:         f.NoOptDefVal,
+			ShorthandDeprecated: f.ShorthandDeprecated,
+			Usage:               f.Usage,
+			Value:               f.Value,
+		}
 	}
-	return flags
+	return fls
+}
+
+type cmdName interface {
+	CmdName() string
+}
+
+func name(p plugins.Plugin) string {
+	if c, ok := p.(cmdName); ok {
+		return c.CmdName()
+	}
+	return p.Name()
 }
 
 func CleanFlags(p plugins.Plugin, flags []*flag.Flag) []*flag.Flag {
+	fls := make([]*flag.Flag, len(flags))
 	for i, f := range flags {
-		f.Name = fmt.Sprintf("%s-%s", path.Base(p.Name()), f.Name)
-		flags[i] = f
+		fls[i] = &flag.Flag{
+			DefValue: f.DefValue,
+			Name:     fmt.Sprintf("%s-%s", path.Base(name(p)), f.Name),
+			Usage:    f.Usage,
+			Value:    f.Value,
+		}
 	}
-	return flags
+	return fls
 }

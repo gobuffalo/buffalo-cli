@@ -1,4 +1,4 @@
-package builder
+package build
 
 import (
 	"github.com/gobuffalo/buffalo-cli/plugins"

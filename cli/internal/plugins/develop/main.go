@@ -3,6 +3,7 @@ package develop
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
@@ -29,21 +30,27 @@ func (cmd *Cmd) SubCommand(ctx context.Context, name string, args []string) erro
 }
 
 func (cmd *Cmd) Main(ctx context.Context, args []string) error {
+	if len(args) == 1 && args[0] == "-h" {
+		ioe := plugins.CtxIO(ctx)
+		return plugprint.Print(ioe.Stdout(), cmd)
+	}
+
+	if len(args) > 0 {
+		for _, n := range args {
+			if strings.HasPrefix(n, "-") {
+				continue
+			}
+			return cmd.SubCommand(ctx, n, args[1:])
+		}
+
+	}
+
 	flags := cmd.Flags()
 	if err := flags.Parse(args); err != nil {
 		return err
 	}
 
 	args = flags.Args()
-
-	if len(args) == 0 && cmd.help {
-		ioe := plugins.CtxIO(ctx)
-		return plugprint.Print(ioe.Stdout(), cmd)
-	}
-
-	if len(args) > 0 {
-		return cmd.SubCommand(ctx, args[0], args[1:])
-	}
 
 	info, err := cmd.HereInfo()
 	if err != nil {

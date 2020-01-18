@@ -2,6 +2,8 @@ module github.com/gobuffalo/buffalo-cli
 
 go 1.13
 
+replace github.com/gobuffalo/buffalo-cli/plugins => ./plugins
+
 require (
 	github.com/gobuffalo/attrs v0.1.0
 	github.com/gobuffalo/buffalo-cli/plugins v0.0.0-00010101000000-000000000000
@@ -16,12 +18,10 @@ require (
 	github.com/markbates/grift v1.5.0
 	github.com/markbates/jim v0.5.0
 	github.com/markbates/pkger v0.14.0
+	github.com/markbates/refresh v1.10.0
 	github.com/markbates/safe v1.0.1
-	github.com/mattn/go-isatty v0.0.11 // indirect
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.4.0
 	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e
-	golang.org/x/tools v0.0.0-20200115210426-f04f2c82d09b
+	golang.org/x/tools v0.0.0-20200117220505-0cba7a3a9ee9
 )
-
-replace github.com/gobuffalo/buffalo-cli/plugins => ./plugins
