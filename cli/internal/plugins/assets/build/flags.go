@@ -5,12 +5,8 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/build"
-	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/spf13/pflag"
 )
-
-var _ build.Pflagger = &Builder{}
 
 func (a *Builder) BuildFlags() []*pflag.Flag {
 	var values []*pflag.Flag
@@ -22,6 +18,10 @@ func (a *Builder) BuildFlags() []*pflag.Flag {
 }
 
 func (a *Builder) Flags() *pflag.FlagSet {
+	if a.flags != nil && a.flags.Parsed() {
+		return a.flags
+	}
+
 	flags := pflag.NewFlagSet(a.String(), pflag.ContinueOnError)
 	flags.SetOutput(ioutil.Discard)
 	flags.BoolVar(&a.Clean, "clean", false, "will delete public/assets before calling webpack")
@@ -29,10 +29,10 @@ func (a *Builder) Flags() *pflag.FlagSet {
 	flags.BoolVarP(&a.Skip, "skip", "k", false, "skip running webpack and building assets")
 
 	flags.StringVar(&a.ExtractTo, "extract-to", filepath.Join("bin", "assets.zip"), "extract the assets and put them in a distinct archive")
-	return flags
-}
 
-var _ plugprint.FlagPrinter = &Builder{}
+	a.flags = flags
+	return a.flags
+}
 
 func (a *Builder) PrintFlags(w io.Writer) error {
 	flags := a.Flags()

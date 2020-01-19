@@ -5,8 +5,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/assets/scripts"
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/build"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/assets/internal/scripts"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/markbates/safe"
@@ -16,15 +15,11 @@ type packageJSON struct {
 	Scripts map[string]string `json:"scripts"`
 }
 
-var _ build.BeforeBuilder = &Builder{}
-
 // BeforeBuild implements the build.BeforeBuilder interface to
 // hook into the `buffalo build` lifecycle.
 func (a *Builder) BeforeBuild(ctx context.Context, args []string) error {
 	return a.Build(ctx, args)
 }
-
-var _ build.Builder = &Builder{}
 
 // Build implements the build.Builder interface to so it can be run
 // as `buffalo build assets`.
@@ -51,7 +46,7 @@ func (bc *Builder) Build(ctx context.Context, args []string) error {
 		return err
 	}
 
-	c, err := bc.Cmd(ctx, info.Dir, args)
+	c, err := bc.cmd(ctx, info.Dir, args)
 	if err != nil {
 		return err
 	}
@@ -77,30 +72,12 @@ func (bc *Builder) Build(ctx context.Context, args []string) error {
 	return nil
 }
 
-func (bc *Builder) tool(ctx context.Context, root string) (string, error) {
-	for _, p := range bc.ScopedPlugins() {
-		if tp, ok := p.(Tooler); ok {
-			return tp.AssetTool(ctx, root)
-		}
-	}
-	return scripts.Tool(root)
-}
-
-func (bc *Builder) scriptFor(ctx context.Context, root string, name string) (string, error) {
-	for _, p := range bc.ScopedPlugins() {
-		if tp, ok := p.(Scripter); ok {
-			return tp.AssetScript(ctx, root, name)
-		}
-	}
-	return scripts.ScriptFor(root, name)
-}
-
-func (bc *Builder) Cmd(ctx context.Context, root string, args []string) (*exec.Cmd, error) {
+func (bc *Builder) cmd(ctx context.Context, root string, args []string) (*exec.Cmd, error) {
 	tool := bc.Tool
 
 	var err error
 	if len(tool) == 0 {
-		tool, err = bc.tool(ctx, root)
+		tool, err = scripts.Tool(bc, ctx, root)
 		if err != nil {
 			return nil, err
 		}
@@ -109,7 +86,7 @@ func (bc *Builder) Cmd(ctx context.Context, root string, args []string) (*exec.C
 	// Fallback on legacy runner
 	cmd := plugins.Cmd(ctx, scripts.WebpackBin(root))
 
-	if _, err := bc.scriptFor(ctx, root, "build"); err == nil {
+	if _, err := scripts.ScriptFor(bc, ctx, root, "build"); err == nil {
 		cmd = plugins.Cmd(ctx, tool, "run", "build")
 	}
 

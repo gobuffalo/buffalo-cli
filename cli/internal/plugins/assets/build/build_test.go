@@ -3,14 +3,48 @@ package build
 import (
 	"bytes"
 	"context"
+	"encoding/json"
+	"io/ioutil"
 	"os"
+	"path/filepath"
 	"testing"
 
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/assets/scripts"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/assets/internal/scripts"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/here"
 	"github.com/stretchr/testify/require"
 )
+
+func tempApp(t *testing.T, scripts map[string]string) here.Info {
+	t.Helper()
+	dir, err := ioutil.TempDir("", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	f, err := os.Create(filepath.Join(dir, "package.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	sc := packageJSON{
+		Scripts: scripts,
+	}
+
+	err = json.NewEncoder(f).Encode(sc)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if err := f.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	return here.Info{
+		Root: dir,
+		Dir:  dir,
+	}
+}
 
 func Test_Builder_Build_Help(t *testing.T) {
 	r := require.New(t)
@@ -98,7 +132,7 @@ func Test_Builder_Cmd_PackageJSON(t *testing.T) {
 	ctx := context.Background()
 	args := []string{}
 
-	c, err := bc.Cmd(ctx, info.Dir, args)
+	c, err := bc.cmd(ctx, info.Dir, args)
 	r.NoError(err)
 
 	r.Equal([]string{"npm", "run", "build"}, c.Args)
@@ -119,7 +153,7 @@ func Test_Builder_Cmd_PackageJSON_Yarn(t *testing.T) {
 	ctx := context.Background()
 	args := []string{}
 
-	c, err := bc.Cmd(ctx, info.Dir, args)
+	c, err := bc.cmd(ctx, info.Dir, args)
 	r.NoError(err)
 
 	r.Equal([]string{"yarnpkg", "run", "build"}, c.Args)
@@ -141,7 +175,7 @@ func Test_Builder_Cmd_Webpack_Fallthrough(t *testing.T) {
 	info, err := here.Current()
 	r.NoError(err)
 
-	c, err := bc.Cmd(ctx, info.Dir, args)
+	c, err := bc.cmd(ctx, info.Dir, args)
 	r.NoError(err)
 
 	r.Equal([]string{scripts.WebpackBin(info.Dir)}, c.Args)

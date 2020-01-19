@@ -1,11 +1,15 @@
 package scripts
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
+
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/assets/internal/ifaces"
+	"github.com/gobuffalo/buffalo-cli/plugins"
 )
 
 type packageJSON struct {
@@ -14,7 +18,15 @@ type packageJSON struct {
 
 // ScriptFor will attempt to find the named script in the
 // package.json file of the application.
-func ScriptFor(root string, name string) (string, error) {
+func ScriptFor(plug plugins.Plugin, ctx context.Context, root string, name string) (string, error) {
+
+	if pp, ok := plug.(plugins.PluginScoper); ok {
+		for _, p := range pp.ScopedPlugins() {
+			if tp, ok := p.(ifaces.Scripter); ok {
+				return tp.AssetScript(ctx, root, name)
+			}
+		}
+	}
 	scripts := packageJSON{}
 
 	pf, err := os.Open(filepath.Join(root, "package.json"))
@@ -40,17 +52,4 @@ func WebpackBin(root string) string {
 		s += ".cmd"
 	}
 	return s
-}
-
-// Tool tries to determine whether to use yarn or npm
-func Tool(root string) (string, error) {
-	if _, err := os.Stat(filepath.Join(root, "yarn.lock")); err == nil {
-		return "yarnpkg", nil
-	}
-
-	if _, err := os.Stat(filepath.Join(root, "package.json")); err == nil {
-		return "npm", nil
-	}
-
-	return "", fmt.Errorf("could not determine asset tool from %q", root)
 }

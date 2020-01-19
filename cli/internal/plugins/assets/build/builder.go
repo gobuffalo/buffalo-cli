@@ -1,38 +1,44 @@
 package build
 
 import (
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/build"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/gobuffalo/here"
+	"github.com/spf13/pflag"
 )
+
+var _ build.BeforeBuilder = &Builder{}
+var _ build.Builder = &Builder{}
+var _ build.Pflagger = &Builder{}
+var _ plugins.NamedCommand = &Builder{}
+var _ plugins.Plugin = &Builder{}
+var _ plugins.PluginNeeder = &Builder{}
+var _ plugins.PluginScoper = &Builder{}
+var _ plugprint.Describer = &Builder{}
+var _ plugprint.FlagPrinter = &Builder{}
 
 // Builder is responsible for building webpack
 // and other assets
 type Builder struct {
-	Info here.Info
-
 	Environment string
 	// CleanAssets will remove the public/assets folder build compiling
 	Clean bool
 	// places ./public/assets into ./bin/assets.zip.
-	Extract   bool
-	ExtractTo string // ./bin
-
+	Extract    bool
+	ExtractTo  string // ./bin
 	AssetPaths []string
+	Skip       bool
+	Tool       string // default is npm
 
-	Skip bool
-	Tool string // default is npm
-
+	info      here.Info
 	pluginsFn plugins.PluginFeeder
+	flags     *pflag.FlagSet
 }
-
-var _ plugins.PluginNeeder = &Builder{}
 
 func (bc *Builder) WithPlugins(f plugins.PluginFeeder) {
 	bc.pluginsFn = f
 }
-
-var _ plugins.PluginScoper = &Builder{}
 
 func (bc *Builder) ScopedPlugins() []plugins.Plugin {
 	var plugs []plugins.Plugin
@@ -55,23 +61,23 @@ func (bc *Builder) ScopedPlugins() []plugins.Plugin {
 }
 
 func (a *Builder) WithHereInfo(i here.Info) {
-	a.Info = i
+	a.info = i
 }
 
 func (a *Builder) HereInfo() (here.Info, error) {
-	if !a.Info.IsZero() {
-		return a.Info, nil
+	if !a.info.IsZero() {
+		return a.info, nil
 	}
 	return here.Current()
 }
 
-var _ plugins.Plugin = &Builder{}
-
 func (a Builder) Name() string {
-	return "assets"
+	return "assets/builder"
 }
 
-var _ plugprint.Describer = &Builder{}
+func (a Builder) CmdName() string {
+	return "assets"
+}
 
 func (a Builder) Description() string {
 	return "Manages webpack assets during the buffalo build process."

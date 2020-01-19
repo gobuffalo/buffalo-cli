@@ -55,6 +55,8 @@ func Test_Cmd_Flags(t *testing.T) {
 		},
 	})
 
+	bc = &Cmd{}
+	bc.WithPlugins(plugs.ScopedPlugins)
 	flags = bc.Flags()
 
 	values = []*pflag.Flag{}
@@ -75,6 +77,8 @@ func Test_Cmd_Flags(t *testing.T) {
 		},
 	})
 
+	bc = &Cmd{}
+	bc.WithPlugins(plugs.ScopedPlugins)
 	flags = bc.Flags()
 
 	values = []*pflag.Flag{}

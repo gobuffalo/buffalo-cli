@@ -3,11 +3,8 @@ package generate
 import (
 	"io"
 
-	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/spf13/pflag"
 )
-
-var _ plugprint.FlagPrinter = &Cmd{}
 
 func (bc *Cmd) PrintFlags(w io.Writer) error {
 	flags := bc.Flags()

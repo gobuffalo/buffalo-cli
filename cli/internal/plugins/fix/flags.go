@@ -1,8 +1,6 @@
-package develop
+package fix
 
 import (
-	"io"
-
 	"github.com/gobuffalo/buffalo-cli/internal/flagger"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/spf13/pflag"
@@ -19,11 +17,11 @@ func (cmd *Cmd) Flags() *pflag.FlagSet {
 	for _, p := range cmd.ScopedPlugins() {
 		switch t := p.(type) {
 		case Flagger:
-			for _, f := range plugins.CleanFlags(p, t.DevelopFlags()) {
+			for _, f := range plugins.CleanFlags(p, t.FixFlags()) {
 				flags.AddGoFlag(f)
 			}
 		case Pflagger:
-			for _, f := range flagger.CleanPflags(p, t.DevelopFlags()) {
+			for _, f := range flagger.CleanPflags(p, t.FixFlags()) {
 				flags.AddGoFlag(f)
 			}
 		}
@@ -32,11 +30,4 @@ func (cmd *Cmd) Flags() *pflag.FlagSet {
 	cmd.flags = flags
 
 	return cmd.flags
-}
-
-func (cmd *Cmd) PrintFlags(w io.Writer) error {
-	flags := cmd.Flags()
-	flags.SetOutput(w)
-	flags.PrintDefaults()
-	return nil
 }

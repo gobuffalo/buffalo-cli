@@ -16,18 +16,20 @@ func Plugins() []plugins.Plugin {
 	}
 }
 
+var _ plugins.Plugin = &Cmd{}
+var _ plugins.PluginNeeder = &Cmd{}
+var _ plugins.PluginScoper = &Cmd{}
+var _ plugprint.Describer = &Cmd{}
+var _ plugprint.FlagPrinter = &Cmd{}
+
 type Cmd struct {
 	pluginsFn plugins.PluginFeeder
 	help      bool
 }
 
-var _ plugins.PluginNeeder = &Cmd{}
-
 func (ic *Cmd) WithPlugins(f plugins.PluginFeeder) {
 	ic.pluginsFn = f
 }
-
-var _ plugprint.FlagPrinter = &Cmd{}
 
 func (ic *Cmd) PrintFlags(w io.Writer) error {
 	flags := ic.Flags()
@@ -36,13 +38,9 @@ func (ic *Cmd) PrintFlags(w io.Writer) error {
 	return nil
 }
 
-var _ plugins.Plugin = &Cmd{}
-
 func (ic *Cmd) Name() string {
 	return "info"
 }
-
-var _ plugprint.Describer = &Cmd{}
 
 func (ic *Cmd) Description() string {
 	return "Print diagnostic information (useful for debugging)"
@@ -66,8 +64,6 @@ func (ic *Cmd) plugins(ctx context.Context, args []string) error {
 	}
 	return nil
 }
-
-var _ plugins.PluginScoper = &Cmd{}
 
 func (ic *Cmd) ScopedPlugins() []plugins.Plugin {
 	var plugs []plugins.Plugin

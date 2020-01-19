@@ -4,11 +4,18 @@ import (
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/gobuffalo/here"
+	"github.com/spf13/pflag"
 )
 
-type Cmd struct {
-	Info here.Info
+var _ plugins.Plugin = &Cmd{}
+var _ plugins.PluginNeeder = &Cmd{}
+var _ plugins.PluginScoper = &Cmd{}
+var _ plugprint.Aliases = &Cmd{}
+var _ plugprint.Describer = &Cmd{}
+var _ plugprint.FlagPrinter = &Cmd{}
+var _ plugprint.SubCommander = &Cmd{}
 
+type Cmd struct {
 	// Mod is the -mod flag
 	Mod string
 	// Static sets the following flags for the final `go build` command:
@@ -23,37 +30,33 @@ type Cmd struct {
 	BuildFlags             []string
 	Tags                   string
 	Bin                    string
-	help                   bool
-	skipTemplateValidation bool
-	verbose                bool
+	Verbose                bool
+	SkipTemplateValidation bool
 
+	help      bool
+	info      here.Info
 	pluginsFn plugins.PluginFeeder
+	flags     *pflag.FlagSet
 }
 
-func (b *Cmd) WithHereInfo(i here.Info) {
-	b.Info = i
+func (cmd *Cmd) WithHereInfo(i here.Info) {
+	cmd.info = i
 }
 
-func (b *Cmd) HereInfo() (here.Info, error) {
-	if !b.Info.IsZero() {
-		return b.Info, nil
+func (cmd *Cmd) HereInfo() (here.Info, error) {
+	if !cmd.info.IsZero() {
+		return cmd.info, nil
 	}
 	return here.Current()
 }
 
-var _ plugins.PluginNeeder = &Cmd{}
-
-func (b *Cmd) WithPlugins(f plugins.PluginFeeder) {
-	b.pluginsFn = f
+func (cmd *Cmd) WithPlugins(f plugins.PluginFeeder) {
+	cmd.pluginsFn = f
 }
-
-var _ plugprint.Aliases = &Cmd{}
 
 func (*Cmd) Aliases() []string {
 	return []string{"b", "install"}
 }
-
-var _ plugins.Plugin = &Cmd{}
 
 func (b Cmd) Name() string {
 	return "build"
@@ -63,13 +66,9 @@ func (b Cmd) String() string {
 	return b.Name()
 }
 
-var _ plugprint.Describer = &Cmd{}
-
 func (Cmd) Description() string {
 	return "Build the application binary, including bundling of assets (packr & webpack)"
 }
-
-var _ plugprint.SubCommander = &Cmd{}
 
 func (bc *Cmd) SubCommands() []plugins.Plugin {
 	var plugs []plugins.Plugin
@@ -80,8 +79,6 @@ func (bc *Cmd) SubCommands() []plugins.Plugin {
 	}
 	return plugs
 }
-
-var _ plugins.PluginScoper = &Cmd{}
 
 func (bc *Cmd) ScopedPlugins() []plugins.Plugin {
 	var plugs []plugins.Plugin

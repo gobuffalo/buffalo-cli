@@ -2,6 +2,10 @@ package fix
 
 import (
 	"context"
+	"flag"
+
+	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/spf13/pflag"
 )
 
 // Fixer is an optional interface a plugin can implement
@@ -10,4 +14,14 @@ import (
 // The expectation is fixing of only one major revision.
 type Fixer interface {
 	Fix(ctx context.Context, args []string) error
+}
+
+type Flagger interface {
+	plugins.Plugin
+	FixFlags() []*flag.Flag
+}
+
+type Pflagger interface {
+	plugins.Plugin
+	FixFlags() []*pflag.Flag
 }

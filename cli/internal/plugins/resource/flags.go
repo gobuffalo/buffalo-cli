@@ -4,6 +4,7 @@ import (
 	"io"
 
 	"github.com/gobuffalo/buffalo-cli/internal/flagger"
+	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/spf13/pflag"
 )
 
@@ -31,12 +32,12 @@ func (g *Generator) Flags() *pflag.FlagSet {
 	for _, p := range plugs {
 		switch t := p.(type) {
 		case Flagger:
-			for _, f := range flagger.CleanFlags(p, t.ResourceFlags()) {
+			for _, f := range plugins.CleanFlags(p, t.ResourceFlags()) {
 				flags.AddGoFlag(f)
 			}
 		case Pflagger:
 			for _, f := range flagger.CleanPflags(p, t.ResourceFlags()) {
-				flags.AddFlag(f)
+				flags.AddGoFlag(f)
 			}
 		}
 	}

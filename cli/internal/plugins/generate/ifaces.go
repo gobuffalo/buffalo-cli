@@ -12,13 +12,3 @@ type Generator interface {
 	plugins.Plugin
 	Generate(ctx context.Context, args []string) error
 }
-
-type BeforeGenerator interface {
-	plugins.Plugin
-	BeforeGenerate(ctx context.Context, args []string) error
-}
-
-type AfterGenerator interface {
-	plugins.Plugin
-	AfterGenerate(ctx context.Context, args []string, err error) error
-}

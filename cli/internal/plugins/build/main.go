@@ -81,7 +81,7 @@ func (bc *Cmd) Main(ctx context.Context, args []string) error {
 		return bc.afterBuild(ctx, args, err)
 	}
 
-	if !bc.skipTemplateValidation {
+	if !bc.SkipTemplateValidation {
 		for _, p := range plugs {
 			tv, ok := p.(TemplatesValidator)
 			if !ok {

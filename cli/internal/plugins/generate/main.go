@@ -6,54 +6,23 @@ import (
 
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
-	"github.com/markbates/safe"
 )
 
-func (bc *Cmd) beforeGenerate(ctx context.Context, args []string) error {
-	builders := bc.ScopedPlugins()
-	for _, p := range builders {
-		if bb, ok := p.(BeforeGenerator); ok {
-			err := safe.RunE(func() error {
-				return bb.BeforeGenerate(ctx, args)
-			})
-			if err != nil {
-				return err
-			}
-		}
-	}
-	return nil
-}
-
-func (bc *Cmd) afterGenerate(ctx context.Context, args []string, err error) error {
-	builders := bc.ScopedPlugins()
-	for _, p := range builders {
-		if bb, ok := p.(AfterGenerator); ok {
-			err := safe.RunE(func() error {
-				return bb.AfterGenerate(ctx, args, err)
-			})
-			if err != nil {
-				return err
-			}
-		}
-	}
-	return err
-}
-
 // Main implements cli.Cmd and is the entry point for `buffalo generate`
-func (bc *Cmd) Main(ctx context.Context, args []string) error {
+func (cmd *Cmd) Main(ctx context.Context, args []string) error {
 	ioe := plugins.CtxIO(ctx)
 	if len(args) == 0 {
-		if err := plugprint.Print(ioe.Stdout(), bc); err != nil {
+		if err := plugprint.Print(ioe.Stdout(), cmd); err != nil {
 			return err
 		}
 		return fmt.Errorf("no command provided")
 	}
 
 	if len(args) == 1 && args[0] == "-h" {
-		return plugprint.Print(ioe.Stdout(), bc)
+		return plugprint.Print(ioe.Stdout(), cmd)
 	}
 
-	plugs := bc.ScopedPlugins()
+	plugs := cmd.ScopedPlugins()
 
 	n := args[0]
 	cmds := plugins.Commands(plugs)
@@ -67,13 +36,5 @@ func (bc *Cmd) Main(ctx context.Context, args []string) error {
 		return fmt.Errorf("unknown command %q", n)
 	}
 
-	if err = bc.beforeGenerate(ctx, args); err != nil {
-		return bc.afterGenerate(ctx, args, err)
-	}
-
-	err = safe.RunE(func() error {
-		return b.Generate(ctx, args[1:])
-	})
-
-	return bc.afterGenerate(ctx, args, err)
+	return b.Generate(ctx, args[1:])
 }

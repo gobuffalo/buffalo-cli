@@ -3,7 +3,6 @@ package fix
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
@@ -11,23 +10,25 @@ import (
 	"github.com/spf13/pflag"
 )
 
+var _ plugins.Plugin = &Cmd{}
+var _ plugins.PluginNeeder = &Cmd{}
+var _ plugins.PluginScoper = &Cmd{}
+var _ plugprint.Describer = &Cmd{}
+var _ plugprint.SubCommander = &Cmd{}
+
 type Cmd struct {
+	flags     *pflag.FlagSet
+	help      bool
 	pluginsFn plugins.PluginFeeder
 }
-
-var _ plugins.PluginNeeder = &Cmd{}
 
 func (fc *Cmd) WithPlugins(f plugins.PluginFeeder) {
 	fc.pluginsFn = f
 }
 
-var _ plugins.Plugin = &Cmd{}
-
 func (fc *Cmd) Name() string {
 	return "fix"
 }
-
-var _ plugprint.Describer = &Cmd{}
 
 func (fc *Cmd) Description() string {
 	return "Attempt to fix a Buffalo application's API to match version in go.mod"
@@ -89,10 +90,8 @@ func (fc *Cmd) fixPlugins(ctx context.Context, args []string) error {
 }
 
 func (fc *Cmd) Main(ctx context.Context, args []string) error {
-	var help bool
-	flags := pflag.NewFlagSet(fc.String(), pflag.ContinueOnError)
-	flags.SetOutput(ioutil.Discard)
-	flags.BoolVarP(&help, "help", "h", false, "print this help")
+
+	flags := fc.Flags()
 
 	if err := flags.Parse(args); err != nil {
 		return err
@@ -101,7 +100,7 @@ func (fc *Cmd) Main(ctx context.Context, args []string) error {
 	ioe := plugins.CtxIO(ctx)
 	out := ioe.Stdout()
 
-	if help {
+	if fc.help {
 		return plugprint.Print(out, fc)
 	}
 
@@ -112,13 +111,9 @@ func (fc *Cmd) Main(ctx context.Context, args []string) error {
 	return fc.fixPlugins(ctx, args)
 }
 
-var _ plugprint.SubCommander = &Cmd{}
-
 func (fc *Cmd) SubCommands() []plugins.Plugin {
 	return fc.ScopedPlugins()
 }
-
-var _ plugins.PluginScoper = &Cmd{}
 
 func (fc *Cmd) ScopedPlugins() []plugins.Plugin {
 	var plugs []plugins.Plugin

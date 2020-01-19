@@ -79,15 +79,18 @@ func Test_Cmd_Main_ValidateTemplates(t *testing.T) {
 	info := newRef(t, "")
 
 	bc := &Cmd{
-		Info:      info,
 		pluginsFn: plugs.ScopedPlugins,
 	}
+	bc.WithHereInfo(info)
 
 	args := []string{}
 
 	err := bc.Main(context.Background(), args)
 	r.NoError(err)
-	r.Equal(bc.Info.Root, p.root)
+
+	bi, err := bc.HereInfo()
+	r.NoError(err)
+	r.Equal(bi.Root, p.root)
 }
 
 func Test_Cmd_Main_ValidateTemplates_err(t *testing.T) {
