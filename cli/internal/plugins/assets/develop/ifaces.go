@@ -1,9 +1,6 @@
-package build
+package develop
 
 import (
-	"context"
-	"os/exec"
-
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/assets/internal/ifaces"
 )
 
@@ -12,7 +9,3 @@ import (
 type Tooler = ifaces.Tooler
 
 type Scripter = ifaces.Scripter
-
-type AssetBuilder interface {
-	BuildAssets(ctx context.Context, cmd *exec.Cmd) error
-}

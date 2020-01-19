@@ -12,6 +12,8 @@ type packageJSON struct {
 	Scripts map[string]string `json:"scripts"`
 }
 
+// ScriptFor will attempt to find the named script in the
+// package.json file of the application.
 func ScriptFor(root string, name string) (string, error) {
 	scripts := packageJSON{}
 
@@ -31,6 +33,7 @@ func ScriptFor(root string, name string) (string, error) {
 	return "", fmt.Errorf("script %q not found", name)
 }
 
+// WebpackBin returns the location of the webpack binary
 func WebpackBin(root string) string {
 	s := filepath.Join(root, "node_modules", ".bin", "webpack")
 	if runtime.GOOS == "windows" {
@@ -39,6 +42,7 @@ func WebpackBin(root string) string {
 	return s
 }
 
+// Tool tries to determine whether to use yarn or npm
 func Tool(root string) (string, error) {
 	if _, err := os.Stat(filepath.Join(root, "yarn.lock")); err == nil {
 		return "yarnpkg", nil

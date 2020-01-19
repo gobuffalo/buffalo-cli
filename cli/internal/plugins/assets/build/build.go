@@ -86,6 +86,15 @@ func (bc *Builder) tool(ctx context.Context, root string) (string, error) {
 	return scripts.Tool(root)
 }
 
+func (bc *Builder) scriptFor(ctx context.Context, root string, name string) (string, error) {
+	for _, p := range bc.ScopedPlugins() {
+		if tp, ok := p.(Scripter); ok {
+			return tp.AssetScript(ctx, root, name)
+		}
+	}
+	return scripts.ScriptFor(root, name)
+}
+
 func (bc *Builder) Cmd(ctx context.Context, root string, args []string) (*exec.Cmd, error) {
 	tool := bc.Tool
 
@@ -100,7 +109,7 @@ func (bc *Builder) Cmd(ctx context.Context, root string, args []string) (*exec.C
 	// Fallback on legacy runner
 	cmd := plugins.Cmd(ctx, scripts.WebpackBin(root))
 
-	if _, err := scripts.ScriptFor(root, "build"); err == nil {
+	if _, err := bc.scriptFor(ctx, root, "build"); err == nil {
 		cmd = plugins.Cmd(ctx, tool, "run", "build")
 	}
 
