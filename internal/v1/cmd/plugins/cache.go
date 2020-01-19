@@ -17,6 +17,6 @@ var cacheCmd = &cobra.Command{
 func init() {
 	cacheCmd.AddCommand(cache.CleanCmd)
 	cacheCmd.AddCommand(cache.ListCmd)
-	cacheCmd.AddCommand(cache.BuildCmd)
+	cacheCmd.AddCommand(cache.Cmd)
 	PluginsCmd.AddCommand(cacheCmd)
 }

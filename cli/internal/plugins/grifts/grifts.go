@@ -4,7 +4,7 @@ import (
 	"context"
 	"path/filepath"
 
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/build"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/gobuffalo/here"
@@ -37,7 +37,7 @@ func (Buffalo) Name() string {
 	return "grifts"
 }
 
-var _ buildcmd.Importer = Buffalo{}
+var _ build.Importer = Buffalo{}
 
 func (Buffalo) BuildImports(ctx context.Context, root string) ([]string, error) {
 	dir := filepath.Join(root, "grifts")

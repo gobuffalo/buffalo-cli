@@ -4,7 +4,7 @@ import (
 	"context"
 	"path/filepath"
 
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/build"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/here"
 	"github.com/gobuffalo/pop/v5/soda/cmd"
@@ -20,13 +20,13 @@ func (Builder) Name() string {
 	return "pop/builder"
 }
 
-var _ buildcmd.Versioner = &Builder{}
+var _ build.Versioner = &Builder{}
 
 func (b *Builder) BuildVersion(ctx context.Context, root string) (string, error) {
 	return cmd.Version, nil
 }
 
-var _ buildcmd.PackFiler = &Builder{}
+var _ build.PackFiler = &Builder{}
 
 func (b *Builder) PackageFiles(ctx context.Context, root string) ([]string, error) {
 	return []string{
@@ -34,7 +34,7 @@ func (b *Builder) PackageFiles(ctx context.Context, root string) ([]string, erro
 	}, nil
 }
 
-var _ buildcmd.Importer = Builder{}
+var _ build.Importer = Builder{}
 
 func (Builder) BuildImports(ctx context.Context, root string) ([]string, error) {
 	dir := filepath.Join(root, "models")

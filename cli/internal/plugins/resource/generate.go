@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/generatecmd"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/generate"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/gobuffalo/flect/name"
@@ -17,7 +17,7 @@ import (
 	"github.com/markbates/safe"
 )
 
-var _ generatecmd.Generator = &Generator{}
+var _ generate.Generator = &Generator{}
 
 func (g *Generator) beforeGenerate(ctx context.Context, info here.Info, args []string) error {
 	plugs := g.ScopedPlugins()
@@ -91,7 +91,7 @@ func (g *Generator) afterGenerate(ctx context.Context, info here.Info, args []st
 	return nil
 }
 
-// Generate implements generatecmd.Generator and is the entry point for `buffalo generate resource`
+// Generate implements generate.Generator and is the entry point for `buffalo generate resource`
 func (g *Generator) Generate(ctx context.Context, args []string) error {
 	if len(args) == 0 {
 		return fmt.Errorf("you must specify a name for the resource")

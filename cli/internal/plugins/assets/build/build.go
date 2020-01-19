@@ -6,7 +6,7 @@ import (
 	"os/exec"
 
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/assets/scripts"
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/build"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/markbates/safe"
@@ -16,17 +16,17 @@ type packageJSON struct {
 	Scripts map[string]string `json:"scripts"`
 }
 
-var _ buildcmd.BeforeBuilder = &Builder{}
+var _ build.BeforeBuilder = &Builder{}
 
-// BeforeBuild implements the buildcmd.BeforeBuilder interface to
+// BeforeBuild implements the build.BeforeBuilder interface to
 // hook into the `buffalo build` lifecycle.
 func (a *Builder) BeforeBuild(ctx context.Context, args []string) error {
 	return a.Build(ctx, args)
 }
 
-var _ buildcmd.Builder = &Builder{}
+var _ build.Builder = &Builder{}
 
-// Build implements the buildcmd.Builder interface to so it can be run
+// Build implements the build.Builder interface to so it can be run
 // as `buffalo build assets`.
 func (bc *Builder) Build(ctx context.Context, args []string) error {
 	var help bool

@@ -4,21 +4,27 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/build"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/gobuffalo/packr/v2/jam"
 )
 
+func Plugins() []plugins.Plugin {
+	return []plugins.Plugin{
+		&Buffalo{},
+	}
+}
+
 type Buffalo struct{}
 
-var _ buildcmd.BeforeBuilder = &Buffalo{}
+var _ build.BeforeBuilder = &Buffalo{}
 
 func (b *Buffalo) BeforeBuild(ctx context.Context, args []string) error {
 	return jam.Clean()
 }
 
-var _ buildcmd.Packager = &Buffalo{}
+var _ build.Packager = &Buffalo{}
 
 func (b *Buffalo) Package(ctx context.Context, root string, files []string) error {
 	if len(files) > 0 {

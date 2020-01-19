@@ -7,8 +7,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// BuildCmd rebuilds the plugins cache
-var BuildCmd = &cobra.Command{
+// Cmd rebuilds the plugins cache
+var Cmd = &cobra.Command{
 	Use:   "build",
 	Short: "rebuilds the plugins cache",
 	RunE: func(cmd *cobra.Command, args []string) error {

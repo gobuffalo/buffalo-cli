@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 
 	"github.com/gobuffalo/attrs"
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/generatecmd"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/generate"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/resource"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/soda"
 	"github.com/gobuffalo/buffalo-cli/plugins"
@@ -38,9 +38,9 @@ func (Generator) Description() string {
 	return "Generate a Pop model"
 }
 
-var _ generatecmd.Generator = &Generator{}
+var _ generate.Generator = &Generator{}
 
-// Generate implements generatecmd.Generator and is the entry point for `buffalo generate model`
+// Generate implements generate.Generator and is the entry point for `buffalo generate model`
 func (mg *Generator) Generate(ctx context.Context, args []string) error {
 	args = append([]string{"generate", "model"}, args...)
 	return soda.Main(ctx, args)

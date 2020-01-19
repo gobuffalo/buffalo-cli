@@ -8,7 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/testcmd"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/test"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/here"
 	"github.com/gobuffalo/pop/v5"
@@ -18,7 +18,7 @@ type Tester struct {
 	info here.Info
 }
 
-var _ testcmd.Argumenter = &Tester{}
+var _ test.Argumenter = &Tester{}
 
 func (t *Tester) TestArgs(ctx context.Context, root string) ([]string, error) {
 	args := []string{"-p", "1"}
@@ -55,7 +55,7 @@ func (Tester) Name() string {
 	return "pop/tester"
 }
 
-var _ testcmd.BeforeTester = &Tester{}
+var _ test.BeforeTester = &Tester{}
 
 func (t *Tester) BeforeTest(ctx context.Context, args []string) error {
 	info, err := t.HereInfo()

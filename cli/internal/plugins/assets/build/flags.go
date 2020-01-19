@@ -5,12 +5,12 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/build"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/spf13/pflag"
 )
 
-var _ buildcmd.Pflagger = &Builder{}
+var _ build.Pflagger = &Builder{}
 
 func (a *Builder) BuildFlags() []*pflag.Flag {
 	var values []*pflag.Flag

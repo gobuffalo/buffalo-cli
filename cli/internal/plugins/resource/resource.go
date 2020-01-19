@@ -5,6 +5,12 @@ import (
 	"github.com/gobuffalo/here"
 )
 
+func Plugins() []plugins.Plugin {
+	return []plugins.Plugin{
+		&Generator{},
+	}
+}
+
 type Generator struct {
 	info               here.Info
 	pluginsFn          plugins.PluginFeeder

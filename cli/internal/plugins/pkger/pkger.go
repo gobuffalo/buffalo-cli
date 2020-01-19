@@ -4,7 +4,7 @@ import (
 	"context"
 	"os"
 
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/build"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/here"
 	"github.com/markbates/pkger/cmd/pkger/cmds"
@@ -13,20 +13,26 @@ import (
 
 const outPath = "pkged.go"
 
-type Buffalo struct {
+func Plugins() []plugins.Plugin {
+	return []plugins.Plugin{
+		&Builder{},
+	}
+}
+
+type Builder struct {
 	OutPath   string
 	pluginsFn plugins.PluginFeeder
 }
 
-var _ plugins.PluginNeeder = &Buffalo{}
+var _ plugins.PluginNeeder = &Builder{}
 
-func (b *Buffalo) WithPlugins(f plugins.PluginFeeder) {
+func (b *Builder) WithPlugins(f plugins.PluginFeeder) {
 	b.pluginsFn = f
 }
 
-var _ buildcmd.AfterBuilder = &Buffalo{}
+var _ build.AfterBuilder = &Builder{}
 
-func (b *Buffalo) AfterBuild(ctx context.Context, args []string, err error) error {
+func (b *Builder) AfterBuild(ctx context.Context, args []string, err error) error {
 	p := b.OutPath
 	if len(p) == 0 {
 		p = outPath
@@ -35,9 +41,9 @@ func (b *Buffalo) AfterBuild(ctx context.Context, args []string, err error) erro
 	return nil
 }
 
-var _ plugins.PluginScoper = &Buffalo{}
+var _ plugins.PluginScoper = &Builder{}
 
-func (b *Buffalo) ScopedPlugins() []plugins.Plugin {
+func (b *Builder) ScopedPlugins() []plugins.Plugin {
 	var plugs []plugins.Plugin
 	if b.pluginsFn != nil {
 		plugs = b.pluginsFn()
@@ -46,15 +52,15 @@ func (b *Buffalo) ScopedPlugins() []plugins.Plugin {
 	return plugs
 }
 
-var _ buildcmd.Builder = &Buffalo{}
+var _ build.Builder = &Builder{}
 
-func (b *Buffalo) Build(ctx context.Context, args []string) error {
+func (b *Builder) Build(ctx context.Context, args []string) error {
 	return b.Package(ctx, ".", nil)
 }
 
-var _ buildcmd.Packager = &Buffalo{}
+var _ build.Packager = &Builder{}
 
-func (b *Buffalo) Package(ctx context.Context, root string, files []string) error {
+func (b *Builder) Package(ctx context.Context, root string, files []string) error {
 	info, err := here.Current()
 	if err != nil {
 		return err
@@ -80,8 +86,8 @@ func (b *Buffalo) Package(ctx context.Context, root string, files []string) erro
 	return nil
 }
 
-var _ plugins.Plugin = &Buffalo{}
+var _ plugins.Plugin = &Builder{}
 
-func (b Buffalo) Name() string {
+func (b Builder) Name() string {
 	return "pkger"
 }

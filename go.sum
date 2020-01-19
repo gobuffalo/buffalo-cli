@@ -53,6 +53,8 @@ github.com/gobuffalo/helpers v0.2.2/go.mod h1:xYbzUdCUpVzLwLnqV8HIjT6hmG0Cs7YIBC
 github.com/gobuffalo/helpers v0.2.4/go.mod h1:NX7v27yxPDOPTgUFYmJ5ow37EbxdoLraucOGvMNawyk=
 github.com/gobuffalo/helpers v0.5.0 h1:w8SeLFxS4RL/QqwdGfYAVgdavqB2zaBaHjxUbT7z5/c=
 github.com/gobuffalo/helpers v0.5.0/go.mod h1:stpgxJ2C7T99NLyAxGUnYMM2zAtBk5NKQR0SIbd05j4=
+github.com/gobuffalo/helpers v0.6.0 h1:CL1xOSGeKCaKD1IUpo4RfrkDU83kmkMG4H3dXAS7dw0=
+github.com/gobuffalo/helpers v0.6.0/go.mod h1:pncVrer7x/KRvnL5aJABLAuT/RhKRR9klL6dkUOhyv8=
 github.com/gobuffalo/here v0.4.0/go.mod h1:bTNk/uKZgycuB358iR0D32dI9kHBClBGpXjW2HVHkNo=
 github.com/gobuffalo/here v0.4.3/go.mod h1:HLATYJxpkktFu8ZWog+wsu/MpaTIu82PRzW7J9Ylk6k=
 github.com/gobuffalo/here v0.6.0 h1:hYrd0a6gDmWxBM4TnrGw8mQg24iSVoIkHEk7FodQcBI=
@@ -63,6 +65,7 @@ github.com/gobuffalo/logger v1.0.1/go.mod h1:2zbswyIUa45I+c+FLXuWl9zSWEiVuthsk8z
 github.com/gobuffalo/logger v1.0.3 h1:YaXOTHNPCvkqqA7w05A4v0k2tCdpr+sgFlgINbQ6gqc=
 github.com/gobuffalo/logger v1.0.3/go.mod h1:SoeejUwldiS7ZsyCBphOGURmWdwUFXs0J7TCjEhjKxM=
 github.com/gobuffalo/mapi v1.0.2/go.mod h1:4VAGh89y6rVOvm5A8fKFxYG+wIW6LO1FMTG9hnKStFc=
+github.com/gobuffalo/mapi v1.1.0 h1:VEhxtd2aoPXFqVmliLXGSmqPh541OprxYYZFwgNcjn4=
 github.com/gobuffalo/mapi v1.1.0/go.mod h1:pqQ1XAqvpy/JYtRwoieNps2yU8MFiMxBUpAm2FBtQ50=
 github.com/gobuffalo/meta/v2 v2.0.0 h1:3watfxLa8sJv2A1T20b61xl4AcYAZrY2IyPDPcHf7eo=
 github.com/gobuffalo/meta/v2 v2.0.0/go.mod h1:Vt/b8Gcy++T/ENj191iy1X2zNaHSQLwfApy0fU05i1g=
@@ -88,10 +91,14 @@ github.com/gobuffalo/tags v2.1.0+incompatible h1:qQjj3n2RtHxfooqXQ4/A9SsEfZ7/7gu
 github.com/gobuffalo/tags v2.1.0+incompatible/go.mod h1:9XmhOkyaB7UzvuY4UoZO4s67q8/xRMVJEaakauVQYeY=
 github.com/gobuffalo/tags v2.1.7+incompatible h1:GUxxh34f9SI4U0Pj3ZqvopO9SlzuqSf+g4ZGSPSszt4=
 github.com/gobuffalo/tags v2.1.7+incompatible/go.mod h1:9XmhOkyaB7UzvuY4UoZO4s67q8/xRMVJEaakauVQYeY=
+github.com/gobuffalo/tags/v3 v3.0.2 h1:gxE6c6fA5radwQeg59aPIeYgCG8YA8AZd3Oh6fh5UXA=
+github.com/gobuffalo/tags/v3 v3.0.2/go.mod h1:ZQeN6TCTiwAFnS0dNcbDtSgZDwNKSpqajvVtt6mlYpA=
 github.com/gobuffalo/uuid v2.0.5+incompatible h1:c5uWRuEnYggYCrT9AJm0U2v1QTG7OVDAvxhj8tIV5Gc=
 github.com/gobuffalo/uuid v2.0.5+incompatible/go.mod h1:ErhIzkRhm0FtRuiE/PeORqcw4cVi1RtSpnwYrxuvkfE=
 github.com/gobuffalo/validate v2.0.3+incompatible h1:6f4JCEz11Zi6iIlexMv7Jz10RBPvgI795AOaubtCwTE=
 github.com/gobuffalo/validate v2.0.3+incompatible/go.mod h1:N+EtDe0J8252BgfzQUChBgfd6L93m9weay53EWFVsMM=
+github.com/gobuffalo/validate/v3 v3.0.0 h1:dF7Bg8NMF9Zv8bZvUMXYJXxZdj+eSZ8z/lGM7/jVFUE=
+github.com/gobuffalo/validate/v3 v3.0.0/go.mod h1:HFpjq+AIiA2RHoQnQVTFKF/ZpUPXwyw82LgyDPxQ9r0=
 github.com/gofrs/uuid v3.2.0+incompatible h1:y12jRkkFxsd7GpqdSZ+/KCs/fJbqpEXSGd4+jfEaewE=
 github.com/gofrs/uuid v3.2.0+incompatible/go.mod h1:b2aQJv3Z4Fp6yNu3cdSllBxTCLRxnplIgP/c0N/04lM=
 github.com/golang/protobuf v1.2.0/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
@@ -308,6 +315,8 @@ golang.org/x/xerrors v0.0.0-20190513163551-3ee3066db522/go.mod h1:I/5z698sn9Ka8T
 golang.org/x/xerrors v0.0.0-20190717185122-a985d3407aa7/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
 golang.org/x/xerrors v0.0.0-20191011141410-1b5146add898 h1:/atklqdjdhuosWIl6AIbOeHJjicWYPqR9bpxqxYG2pA=
 golang.org/x/xerrors v0.0.0-20191011141410-1b5146add898/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
+golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543 h1:E7g+9GITq07hpfrRu66IVDexMakfv52eLZ2CXBWiKr4=
+golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
 google.golang.org/appengine v1.6.1 h1:QzqyMA1tlu6CgqCDUtU9V+ZKhLFT2dkJuANu5QaxI3I=
 google.golang.org/appengine v1.6.1/go.mod h1:i06prIuMbXzDqacNJfV5OdTW448YApPu5ww/cMBSeb0=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=

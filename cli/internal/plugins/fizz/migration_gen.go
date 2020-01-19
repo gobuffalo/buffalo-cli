@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 
 	"github.com/gobuffalo/attrs"
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/generatecmd"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/generate"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/resource"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/soda"
 	"github.com/gobuffalo/buffalo-cli/plugins"
@@ -42,7 +42,7 @@ func (MigrationGen) Description() string {
 	return "Generate a fizz migration"
 }
 
-var _ generatecmd.Generator = &MigrationGen{}
+var _ generate.Generator = &MigrationGen{}
 
 func (mg *MigrationGen) Generate(ctx context.Context, args []string) error {
 	args = append([]string{"generate", "migration"}, args...)

@@ -11,6 +11,12 @@ import (
 	"github.com/gobuffalo/flect/name"
 )
 
+func Plugins() []plugins.Plugin {
+	return []plugins.Plugin{
+		&Generator{},
+	}
+}
+
 type Generator struct {
 	pluginsFn plugins.PluginFeeder
 }
