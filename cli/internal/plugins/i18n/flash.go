@@ -15,6 +15,9 @@ import (
 	"github.com/gobuffalo/flect/name"
 )
 
+var _ plugins.PluginNeeder = &flasher{}
+var _ plugins.PluginScoper = &flasher{}
+
 type flasher struct {
 	pluginsFn plugins.PluginFeeder
 	model     name.Ident

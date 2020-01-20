@@ -62,9 +62,6 @@ func (b *Versioner) BuildVersion(ctx context.Context, root string) (string, erro
 	return strings.TrimSpace(bb.String()), nil
 }
 
-// Name is the name of the plugin.
-// This will also be used for the cli sub-command
-// 	"pop" | "heroku" | "auth" | etc...
 func (b Versioner) Name() string {
 	return "git/versioner"
 }
