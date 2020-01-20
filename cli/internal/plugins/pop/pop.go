@@ -15,7 +15,7 @@ func Plugins() []plugins.Plugin {
 		&actions.Generator{},
 		&actiontest.Generator{},
 		&builder.Builder{},
-		&built.Built{},
+		&built.Initer{},
 		&models.Generator{},
 		&tester.Tester{},
 	}

@@ -8,15 +8,15 @@ import (
 	"github.com/markbates/pkger"
 )
 
-var _ plugins.Plugin = Built{}
+var _ plugins.Plugin = Initer{}
 
-type Built struct{}
+type Initer struct{}
 
-func (Built) Name() string {
-	return "pop/built"
+func (Initer) Name() string {
+	return "pop/built/initer"
 }
 
-func (p *Built) BuiltInit(ctx context.Context, args []string) error {
+func (p *Initer) BuiltInit(ctx context.Context, args []string) error {
 	f, err := pkger.Open("/database.yml")
 	if err != nil {
 		return err
