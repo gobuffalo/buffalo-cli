@@ -8,12 +8,9 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/resource"
 	"github.com/gobuffalo/flect/name"
 	"github.com/gobuffalo/meta/v2"
 )
-
-var _ resource.Actioner = &Generator{}
 
 func (mg *Generator) GenerateResourceActions(ctx context.Context, root string, args []string) error {
 	if len(args) == 0 {
@@ -27,17 +24,17 @@ func (mg *Generator) GenerateResourceActions(ctx context.Context, root string, a
 
 	resourceName := args[0]
 
-	modelName := mg.modelName
+	modelName := mg.ModelName
 	if len(modelName) == 0 {
 		modelName = resourceName
 	}
 
-	modelsPkg := mg.modelsPkg
+	modelsPkg := mg.ModelsPkg
 	if len(modelsPkg) == 0 {
 		modelsPkg = path.Join(info.ImportPath, "models")
 	}
 
-	modelsPkgSel := mg.modelsPkgSel
+	modelsPkgSel := mg.ModelsPkgSel
 	importName := modelsPkgSel
 	if len(modelsPkgSel) == 0 {
 		modelsPkgSel = path.Base(modelsPkg)

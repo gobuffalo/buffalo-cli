@@ -1,4 +1,4 @@
-package pop
+package builder
 
 import (
 	"context"
@@ -10,31 +10,28 @@ import (
 	"github.com/gobuffalo/pop/v5/soda/cmd"
 )
 
+var _ build.Importer = Builder{}
+var _ build.PackFiler = &Builder{}
+var _ build.Versioner = &Builder{}
+var _ plugins.Plugin = Builder{}
+
 const filePath = "/database.yml"
 
 type Builder struct{}
-
-var _ plugins.Plugin = Builder{}
 
 func (Builder) Name() string {
 	return "pop/builder"
 }
 
-var _ build.Versioner = &Builder{}
-
 func (b *Builder) BuildVersion(ctx context.Context, root string) (string, error) {
 	return cmd.Version, nil
 }
-
-var _ build.PackFiler = &Builder{}
 
 func (b *Builder) PackageFiles(ctx context.Context, root string) ([]string, error) {
 	return []string{
 		filepath.Join(root, filePath),
 	}, nil
 }
-
-var _ build.Importer = Builder{}
 
 func (Builder) BuildImports(ctx context.Context, root string) ([]string, error) {
 	dir := filepath.Join(root, "models")

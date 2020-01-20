@@ -11,24 +11,27 @@ import (
 
 	"github.com/gobuffalo/attrs"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/resource"
+	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/gobuffalo/flect/name"
 	"github.com/markbates/pkger"
+	"github.com/spf13/pflag"
 )
+
+var _ plugins.Plugin = &Generator{}
+var _ plugprint.FlagPrinter = &Generator{}
+var _ resource.Pflagger = &Generator{}
+var _ resource.Templater = &Generator{}
 
 type Generator struct {
 	modelName string
+	flags     *pflag.FlagSet
 }
 
 func (g *Generator) Name() string {
 	return "plush/templates"
 }
 
-var _ resource.Templater = &Generator{}
-
-// Attrs
-// Model
-// Name
-// Folder
 func (g *Generator) GenerateResourceTemplates(ctx context.Context, root string, args []string) error {
 	if len(args) == 0 {
 		return fmt.Errorf("you must specify a resource name")

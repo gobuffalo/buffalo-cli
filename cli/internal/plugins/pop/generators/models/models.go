@@ -7,46 +7,48 @@ import (
 	"github.com/gobuffalo/attrs"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/generate"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/resource"
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/soda"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/gobuffalo/genny/v2"
 	gmodel "github.com/gobuffalo/pop/v5/genny/model"
+	"github.com/gobuffalo/pop/v5/soda/cmd"
+	"github.com/spf13/pflag"
 )
 
-type Generator struct {
-	modelPath string
-	modelPkg  string
-	structTag string
-}
-
+var _ generate.Generator = &Generator{}
 var _ plugins.Plugin = Generator{}
+var _ plugprint.Describer = Generator{}
+var _ plugprint.FlagPrinter = &Generator{}
+var _ plugprint.NamedCommand = Generator{}
+var _ resource.Modeler = &Generator{}
+var _ resource.Pflagger = &Generator{}
+
+type Generator struct {
+	ModelPath string
+	ModelPkg  string
+	StructTag string
+
+	flags *pflag.FlagSet
+}
 
 func (Generator) Name() string {
 	return "pop/model"
 }
 
-var _ plugprint.NamedCommand = Generator{}
-
 func (Generator) CmdName() string {
 	return "model"
 }
-
-var _ plugprint.Describer = Generator{}
 
 func (Generator) Description() string {
 	return "Generate a Pop model"
 }
 
-var _ generate.Generator = &Generator{}
-
 // Generate implements generate.Generator and is the entry point for `buffalo generate model`
 func (mg *Generator) Generate(ctx context.Context, args []string) error {
 	args = append([]string{"generate", "model"}, args...)
-	return soda.Main(ctx, args)
+	cmd.RootCmd.SetArgs(args)
+	return cmd.RootCmd.Execute()
 }
-
-var _ resource.Modeler = &Generator{}
 
 // GenerateResourceModels implements resource.Modeler and is responsible for generating a model
 // during `buffalo generate resource`
@@ -59,13 +61,13 @@ func (mg *Generator) GenerateResourceModels(ctx context.Context, root string, ar
 
 	run := genny.WetRunner(context.Background())
 
-	modelPath := mg.modelPath
+	modelPath := mg.ModelPath
 	if len(modelPath) == 0 {
 		modelPath = "models"
 	}
 	modelPath = filepath.Join(root, modelPath)
 
-	structTag := mg.structTag
+	structTag := mg.StructTag
 	if len(structTag) == 0 {
 		structTag = "json"
 	}

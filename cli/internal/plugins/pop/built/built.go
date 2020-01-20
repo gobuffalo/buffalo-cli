@@ -1,4 +1,4 @@
-package pop
+package built
 
 import (
 	"context"
@@ -8,9 +8,9 @@ import (
 	"github.com/markbates/pkger"
 )
 
-type Built struct{}
-
 var _ plugins.Plugin = Built{}
+
+type Built struct{}
 
 func (Built) Name() string {
 	return "pop/built"

@@ -1,4 +1,4 @@
-package plush
+package validator
 
 import (
 	"fmt"

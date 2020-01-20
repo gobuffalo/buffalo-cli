@@ -7,12 +7,17 @@ import (
 	"path"
 	"time"
 
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/develop"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/gobuffalo/here"
 	"github.com/markbates/refresh/refresh"
 	"github.com/spf13/pflag"
 )
+
+var _ develop.Developer = &Developer{}
+var _ plugins.NamedCommand = &Developer{}
+var _ plugins.Plugin = &Developer{}
 
 type Developer struct {
 	Debug  bool

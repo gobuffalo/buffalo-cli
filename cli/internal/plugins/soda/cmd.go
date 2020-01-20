@@ -5,28 +5,28 @@ import (
 
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
+	"github.com/gobuffalo/pop/v5/soda/cmd"
 )
 
-type Cmd struct{}
-
 var _ plugins.Plugin = Cmd{}
+var _ plugprint.Aliases = Cmd{}
+var _ plugprint.NamedCommand = Cmd{}
+
+type Cmd struct{}
 
 func (Cmd) Name() string {
 	return "soda/cmd"
 }
 
-var _ plugprint.NamedCommand = Cmd{}
-
 func (Cmd) CmdName() string {
 	return "soda"
 }
-
-var _ plugprint.Aliases = Cmd{}
 
 func (Cmd) Aliases() []string {
 	return []string{"db", "pop"}
 }
 
 func (Cmd) Main(ctx context.Context, args []string) error {
-	return Main(ctx, args)
+	cmd.RootCmd.SetArgs(args)
+	return cmd.RootCmd.Execute()
 }

@@ -1,14 +1,23 @@
 package actiontest
 
 import (
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/resource"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/gobuffalo/here"
+	"github.com/spf13/pflag"
 )
 
+var _ plugins.Plugin = Generator{}
+var _ plugprint.Describer = Generator{}
+var _ plugprint.FlagPrinter = &Generator{}
+var _ resource.ActionTester = &Generator{}
+var _ resource.Pflagger = &Generator{}
+
 type Generator struct {
+	TestPkg string
+	flags   *pflag.FlagSet
 	info    here.Info
-	testPkg string
 }
 
 func (g *Generator) WithHereInfo(i here.Info) {
@@ -22,13 +31,9 @@ func (g *Generator) HereInfo() (here.Info, error) {
 	return g.info, nil
 }
 
-var _ plugins.Plugin = Generator{}
-
 func (Generator) Name() string {
 	return "pop/action-test"
 }
-
-var _ plugprint.Describer = Generator{}
 
 func (Generator) Description() string {
 	return "Generate a Pop action test"

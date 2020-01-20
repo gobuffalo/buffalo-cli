@@ -1,4 +1,4 @@
-package pop
+package tester
 
 import (
 	"bytes"
@@ -14,11 +14,13 @@ import (
 	"github.com/gobuffalo/pop/v5"
 )
 
+var _ plugins.Plugin = &Tester{}
+var _ test.Argumenter = &Tester{}
+var _ test.BeforeTester = &Tester{}
+
 type Tester struct {
 	info here.Info
 }
-
-var _ test.Argumenter = &Tester{}
 
 func (t *Tester) TestArgs(ctx context.Context, root string) ([]string, error) {
 	args := []string{"-p", "1"}
@@ -49,13 +51,9 @@ func (t *Tester) HereInfo() (here.Info, error) {
 	return t.info, nil
 }
 
-var _ plugins.Plugin = &Tester{}
-
 func (Tester) Name() string {
 	return "pop/tester"
 }
-
-var _ test.BeforeTester = &Tester{}
 
 func (t *Tester) BeforeTest(ctx context.Context, args []string) error {
 	info, err := t.HereInfo()

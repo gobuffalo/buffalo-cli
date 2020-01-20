@@ -7,12 +7,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/resource"
 	"github.com/gobuffalo/flect/name"
 	"github.com/gobuffalo/meta/v2"
 )
-
-var _ resource.ActionTester = &Generator{}
 
 func (mg *Generator) GenerateResourceActionTests(ctx context.Context, root string, args []string) error {
 	if len(args) == 0 {
@@ -26,7 +23,7 @@ func (mg *Generator) GenerateResourceActionTests(ctx context.Context, root strin
 
 	resourceName := args[0]
 
-	testPkg := mg.testPkg
+	testPkg := mg.TestPkg
 	if len(testPkg) == 0 {
 		testPkg = "actions"
 	}

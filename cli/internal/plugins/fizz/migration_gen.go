@@ -7,7 +7,6 @@ import (
 	"github.com/gobuffalo/attrs"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/generate"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/resource"
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/soda"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/gobuffalo/fizz"
@@ -15,6 +14,7 @@ import (
 	"github.com/gobuffalo/genny/v2"
 	"github.com/gobuffalo/pop/v5"
 	"github.com/gobuffalo/pop/v5/genny/fizz/ctable"
+	"github.com/gobuffalo/pop/v5/soda/cmd"
 	"github.com/spf13/pflag"
 )
 
@@ -49,7 +49,8 @@ func (MigrationGen) Description() string {
 
 func (mg *MigrationGen) Generate(ctx context.Context, args []string) error {
 	args = append([]string{"generate", "migration"}, args...)
-	return soda.Main(ctx, args)
+	cmd.RootCmd.SetArgs(args)
+	return cmd.RootCmd.Execute()
 }
 
 func (mg *MigrationGen) GenerateResourceMigrations(ctx context.Context, root string, args []string) error {

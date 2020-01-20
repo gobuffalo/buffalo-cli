@@ -1,16 +1,25 @@
 package actions
 
 import (
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/resource"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/gobuffalo/here"
+	"github.com/spf13/pflag"
 )
 
+var _ plugins.Plugin = Generator{}
+var _ plugprint.Describer = Generator{}
+var _ plugprint.FlagPrinter = &Generator{}
+var _ resource.Pflagger = &Generator{}
+var _ resource.Actioner = &Generator{}
+
 type Generator struct {
+	ModelName    string
+	ModelsPkg    string
+	ModelsPkgSel string
+	flags        *pflag.FlagSet
 	info         here.Info
-	modelName    string
-	modelsPkg    string
-	modelsPkgSel string
 }
 
 func (g *Generator) WithHereInfo(i here.Info) {
@@ -24,13 +33,9 @@ func (g *Generator) HereInfo() (here.Info, error) {
 	return g.info, nil
 }
 
-var _ plugins.Plugin = Generator{}
-
 func (Generator) Name() string {
 	return "pop/action"
 }
-
-var _ plugprint.Describer = Generator{}
 
 func (Generator) Description() string {
 	return "Generate a Pop action"
