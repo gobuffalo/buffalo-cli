@@ -7,10 +7,7 @@ import (
 	"github.com/gobuffalo/here"
 )
 
-type Aliases interface {
-	plugins.Plugin
-	Aliases() []string
-}
+type Aliases = plugins.Aliases
 
 // Command represents a plugin that can be
 // used as a full sub-command. Like Go program's the
@@ -20,10 +17,10 @@ type Command interface {
 	Main(ctx context.Context, args []string) error
 }
 
-type NamedCommand interface {
-	Command
-	CmdName() string
-}
+// type NamedCommand interface {
+// 	Command
+// 	CmdName() string
+// }
 
 type WithHere interface {
 	WithHereInfo(i here.Info)

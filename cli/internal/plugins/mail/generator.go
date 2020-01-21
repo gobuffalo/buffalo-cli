@@ -4,6 +4,7 @@ import (
 	"context"
 	"os"
 
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/generate"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/mail/internal/mailgen"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
@@ -11,21 +12,20 @@ import (
 	"github.com/gobuffalo/genny/v2/gogen"
 )
 
-type Generator struct{}
-
+var _ generate.Generator = Generator{}
+var _ plugins.NamedCommand = Generator{}
 var _ plugins.Plugin = Generator{}
+var _ plugprint.Describer = Generator{}
+
+type Generator struct{}
 
 func (Generator) Name() string {
 	return "mail/generator"
 }
 
-var _ plugins.NamedCommand = Generator{}
-
 func (Generator) CmdName() string {
 	return "mail"
 }
-
-var _ plugprint.Describer = Generator{}
 
 func (Generator) Description() string {
 	return "Generate a new mailer for Buffalo"

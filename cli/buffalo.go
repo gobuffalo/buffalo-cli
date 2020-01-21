@@ -6,25 +6,27 @@ import (
 	"sort"
 
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/assets"
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/build"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/bzr"
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/fixcmd"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/develop"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/fizz"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/flect"
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/generatecmd"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/generate"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/git"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/golang"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/grifts"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/i18n"
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/infocmd"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/info"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/mail"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/packr"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/pkger"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/plush"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/pop"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/refresh"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/resource"
 	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/soda"
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/testcmd"
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/versioncmd"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/test"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/version"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/gobuffalo/here"
@@ -40,39 +42,38 @@ type Buffalo struct {
 	plugins.Plugins
 }
 
-func NewWithInfo(info here.Info) (*Buffalo, error) {
+func NewWithInfo(inf here.Info) (*Buffalo, error) {
 	b := &Buffalo{}
 
 	pfn := func() []plugins.Plugin {
 		return b.Plugins
 	}
-	b.Plugins = append(b.Plugins,
-		&assets.Builder{},
-		&buildcmd.BuildCmd{},
-		&buildcmd.MainFile{},
-		&fixcmd.FixCmd{},
-		&fizz.MigrationGen{},
-		&flect.Buffalo{},
-		&generatecmd.Command{},
-		&golang.Templates{},
-		&i18n.Generator{},
-		&infocmd.InfoCmd{},
-		&mail.Generator{},
-		&pkger.Buffalo{},
-		&resource.Generator{},
-		&testcmd.TestCmd{},
-		&versioncmd.VersionCmd{},
-		// &packr.Buffalo{},
-	)
+
+	b.Plugins = append(b.Plugins, assets.Plugins()...)
+	b.Plugins = append(b.Plugins, build.Plugins()...)
+	b.Plugins = append(b.Plugins, develop.Plugins()...)
+	b.Plugins = append(b.Plugins, fizz.Plugins()...)
+	b.Plugins = append(b.Plugins, flect.Plugins()...)
+	b.Plugins = append(b.Plugins, generate.Plugins()...)
+	b.Plugins = append(b.Plugins, golang.Plugins()...)
 	b.Plugins = append(b.Plugins, grifts.Plugins()...)
+	b.Plugins = append(b.Plugins, i18n.Plugins()...)
+	b.Plugins = append(b.Plugins, info.Plugins()...)
+	b.Plugins = append(b.Plugins, mail.Plugins()...)
+	b.Plugins = append(b.Plugins, packr.Plugins()...)
+	b.Plugins = append(b.Plugins, pkger.Plugins()...)
 	b.Plugins = append(b.Plugins, plush.Plugins()...)
 	b.Plugins = append(b.Plugins, pop.Plugins()...)
+	b.Plugins = append(b.Plugins, refresh.Plugins()...)
+	b.Plugins = append(b.Plugins, resource.Plugins()...)
 	b.Plugins = append(b.Plugins, soda.Plugins()...)
+	b.Plugins = append(b.Plugins, test.Plugins()...)
+	b.Plugins = append(b.Plugins, version.Plugins()...)
 
-	if _, err := os.Stat(filepath.Join(info.Dir, ".git")); err == nil {
+	if _, err := os.Stat(filepath.Join(inf.Dir, ".git")); err == nil {
 		b.Plugins = append(b.Plugins, git.Plugins()...)
 	}
-	if _, err := os.Stat(filepath.Join(info.Dir, ".bzr")); err == nil {
+	if _, err := os.Stat(filepath.Join(inf.Dir, ".bzr")); err == nil {
 		b.Plugins = append(b.Plugins, &bzr.Buffalo{})
 	}
 
@@ -97,7 +98,7 @@ func NewWithInfo(info here.Info) (*Buffalo, error) {
 		if !ok {
 			continue
 		}
-		f.WithHereInfo(info)
+		f.WithHereInfo(inf)
 	}
 
 	return b, nil

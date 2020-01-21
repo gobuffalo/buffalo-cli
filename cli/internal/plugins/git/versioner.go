@@ -6,8 +6,16 @@ import (
 	"os/exec"
 	"strings"
 
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/build"
 	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 )
+
+var _ build.Versioner = &Versioner{}
+var _ plugins.Plugin = &Versioner{}
+var _ plugins.PluginNeeder = &Versioner{}
+var _ plugins.PluginScoper = &Versioner{}
+var _ plugprint.Describer = &Versioner{}
 
 type Versioner struct {
 	pluginsFn plugins.PluginFeeder
@@ -54,9 +62,6 @@ func (b *Versioner) BuildVersion(ctx context.Context, root string) (string, erro
 	return strings.TrimSpace(bb.String()), nil
 }
 
-// Name is the name of the plugin.
-// This will also be used for the cli sub-command
-// 	"pop" | "heroku" | "auth" | etc...
 func (b Versioner) Name() string {
 	return "git/versioner"
 }

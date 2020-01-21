@@ -8,15 +8,16 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/build"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 )
 
-type Templates struct{}
+var _ plugins.Plugin = Templater{}
+var _ build.TemplatesValidator = &Templater{}
 
-var _ buildcmd.TemplatesValidator = &Templates{}
+type Templater struct{}
 
-func (t *Templates) ValidateTemplates(root string) error {
+func (t *Templater) ValidateTemplates(root string) error {
 	root = filepath.Join(root, "templates")
 	return filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -45,8 +46,6 @@ func (t *Templates) ValidateTemplates(root string) error {
 	})
 }
 
-var _ plugins.Plugin = Templates{}
-
-func (t Templates) Name() string {
+func (t Templater) Name() string {
 	return "templates"
 }

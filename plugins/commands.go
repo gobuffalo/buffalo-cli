@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os/exec"
+	"path"
 )
 
 // Commands is a slice of type `Plugin`
@@ -13,6 +14,7 @@ type Commands []Plugin
 // by it's `Aliases()`, `CmdName()` or `Name()` methods.
 // If it can't be found an error is returned.
 func (commands Commands) Find(name string) (Plugin, error) {
+	name = path.Base(name)
 	for _, c := range commands {
 		names := []string{c.Name()}
 		if a, ok := c.(NamedCommand); ok {

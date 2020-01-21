@@ -7,14 +7,14 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/build"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 )
 
 type Buffalo struct{}
 
-var _ buildcmd.Versioner = &Buffalo{}
+var _ build.Versioner = &Buffalo{}
 
 func (b *Buffalo) BuildVersion(ctx context.Context, root string) (string, error) {
 	if _, err := exec.LookPath("bzr"); err != nil {

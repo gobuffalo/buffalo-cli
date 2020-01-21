@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/generatecmd"
+	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/generate"
 	"github.com/gobuffalo/buffalo-cli/plugins"
 	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
 	"github.com/gobuffalo/flect/name"
@@ -15,9 +15,127 @@ import (
 	"github.com/gobuffalo/genny/v2/gogen"
 	"github.com/gobuffalo/here"
 	"github.com/markbates/safe"
+	"github.com/spf13/pflag"
 )
 
-var _ generatecmd.Generator = &Generator{}
+var _ generate.Generator = &Generator{}
+var _ plugins.Aliases = Generator{}
+var _ plugins.Plugin = &Generator{}
+var _ plugins.PluginNeeder = &Generator{}
+var _ plugins.PluginScoper = &Generator{}
+
+type Generator struct {
+	SkipActionTests    bool
+	SkipActions        bool
+	SkipMigrationTests bool
+	SkipMigrations     bool
+	SkipModelTests     bool
+	SkipModels         bool
+	SkipTemplateTests  bool
+	SkipTemplates      bool
+
+	flags     *pflag.FlagSet
+	help      bool
+	info      here.Info
+	pluginsFn plugins.PluginFeeder
+}
+
+func (g *Generator) WithPlugins(f plugins.PluginFeeder) {
+	g.pluginsFn = f
+}
+
+func (g *Generator) WithHereInfo(i here.Info) {
+	g.info = i
+}
+
+func (g *Generator) HereInfo() (here.Info, error) {
+	if g.info.IsZero() {
+		return here.Current()
+	}
+	return g.info, nil
+}
+
+func (g Generator) Name() string {
+	return "resource"
+}
+
+func (g Generator) Aliases() []string {
+	return []string{"r"}
+}
+
+func (g *Generator) ScopedPlugins() []plugins.Plugin {
+	var plugs []plugins.Plugin
+	if g.pluginsFn != nil {
+		plugs = g.pluginsFn()
+	}
+
+	pm := map[string]bool{}
+
+	var builders []plugins.Plugin
+
+	for _, p := range plugs {
+		_, ok := p.(BeforeGenerator)
+		if !ok {
+			continue
+		}
+		builders = append(builders, p)
+	}
+
+	for _, p := range plugs {
+		switch p.(type) {
+		case ResourceGenerator:
+			if pm["ResourceGenerator"] {
+				continue
+			}
+			pm["ResourceGenerator"] = true
+			break
+		case Actioner:
+			if pm["Actioner"] {
+				continue
+			}
+			pm["Actioner"] = true
+		case ActionTester:
+			if pm["ActionTester"] {
+				continue
+			}
+			pm["ActionTester"] = true
+		case Modeler:
+			if pm["Modeler"] {
+				continue
+			}
+			pm["Modeler"] = true
+		case ModelTester:
+			if pm["ModelTester"] {
+				continue
+			}
+			pm["ModelTester"] = true
+		case Templater:
+			if pm["Templater"] {
+				continue
+			}
+			pm["Templater"] = true
+		case TemplateTester:
+			if pm["TemplateTester"] {
+				continue
+			}
+			pm["TemplateTester"] = true
+		default:
+			continue
+		}
+
+		builders = append(builders, p)
+	}
+
+	for _, p := range plugs {
+		_, ok := p.(AfterGenerator)
+		if !ok {
+			continue
+		}
+		builders = append(builders, p)
+	}
+
+	return builders
+}
 
 func (g *Generator) beforeGenerate(ctx context.Context, info here.Info, args []string) error {
 	plugs := g.ScopedPlugins()
@@ -91,7 +209,7 @@ func (g *Generator) afterGenerate(ctx context.Context, info here.Info, args []st
 	return nil
 }
 
-// Generate implements generatecmd.Generator and is the entry point for `buffalo generate resource`
+// Generate implements generate.Generator and is the entry point for `buffalo generate resource`
 func (g *Generator) Generate(ctx context.Context, args []string) error {
 	if len(args) == 0 {
 		return fmt.Errorf("you must specify a name for the resource")
@@ -156,7 +274,7 @@ func (g *Generator) Generate(ctx context.Context, args []string) error {
 }
 
 func (g *Generator) generateActions(ctx context.Context, info here.Info, args []string) error {
-	if g.skipActions {
+	if g.SkipActions {
 		return nil
 	}
 	for _, p := range g.ScopedPlugins() {
@@ -173,7 +291,7 @@ func (g *Generator) generateActions(ctx context.Context, info here.Info, args []
 }
 
 func (g *Generator) generateActionTests(ctx context.Context, info here.Info, args []string) error {
-	if g.skipActionTests {
+	if g.SkipActionTests {
 		return nil
 	}
 	for _, p := range g.ScopedPlugins() {
@@ -190,7 +308,7 @@ func (g *Generator) generateActionTests(ctx context.Context, info here.Info, arg
 }
 
 func (g *Generator) generateTemplates(ctx context.Context, info here.Info, args []string) error {
-	if g.skipTemplates {
+	if g.SkipTemplates {
 		return nil
 	}
 	for _, p := range g.ScopedPlugins() {
@@ -207,7 +325,7 @@ func (g *Generator) generateTemplates(ctx context.Context, info here.Info, args 
 }
 
 func (g *Generator) generateTemplateTests(ctx context.Context, info here.Info, args []string) error {
-	if g.skipTemplateTests {
+	if g.SkipTemplateTests {
 		return nil
 	}
 	for _, p := range g.ScopedPlugins() {
@@ -224,7 +342,7 @@ func (g *Generator) generateTemplateTests(ctx context.Context, info here.Info, a
 }
 
 func (g *Generator) generateModels(ctx context.Context, info here.Info, args []string) error {
-	if g.skipModels {
+	if g.SkipModels {
 		return nil
 	}
 	for _, p := range g.ScopedPlugins() {
@@ -241,7 +359,7 @@ func (g *Generator) generateModels(ctx context.Context, info here.Info, args []s
 }
 
 func (g *Generator) generateModelTests(ctx context.Context, info here.Info, args []string) error {
-	if g.skipModelTests {
+	if g.SkipModelTests {
 		return nil
 	}
 	for _, p := range g.ScopedPlugins() {
@@ -258,7 +376,7 @@ func (g *Generator) generateModelTests(ctx context.Context, info here.Info, args
 }
 
 func (g *Generator) generateMigrations(ctx context.Context, info here.Info, args []string) error {
-	if g.skipMigrations {
+	if g.SkipMigrations {
 		return nil
 	}
 	for _, p := range g.ScopedPlugins() {
@@ -275,7 +393,7 @@ func (g *Generator) generateMigrations(ctx context.Context, info here.Info, args
 }
 
 func (g *Generator) generateMigrationTests(ctx context.Context, info here.Info, args []string) error {
-	if g.skipMigrationTests {
+	if g.SkipMigrationTests {
 		return nil
 	}
 	for _, p := range g.ScopedPlugins() {
