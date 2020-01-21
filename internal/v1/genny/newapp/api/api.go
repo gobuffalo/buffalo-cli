@@ -3,7 +3,7 @@ package api
 import (
 	"html/template"
 
-	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/newapp/core"
+	"github.com/gobuffalo/buffalo-cli/v2/internal/v1/genny/newapp/core"
 	"github.com/gobuffalo/genny/v2"
 	"github.com/gobuffalo/genny/v2/gogen"
 	"github.com/gobuffalo/packr/v2"

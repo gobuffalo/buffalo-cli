@@ -3,11 +3,11 @@ package core
 import (
 	"os/exec"
 
-	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/ci"
-	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/docker"
-	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/plugins/install"
-	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/refresh"
-	"github.com/gobuffalo/buffalo-cli/internal/v1/plugins/plugdeps"
+	"github.com/gobuffalo/buffalo-cli/v2/internal/v1/genny/ci"
+	"github.com/gobuffalo/buffalo-cli/v2/internal/v1/genny/docker"
+	"github.com/gobuffalo/buffalo-cli/v2/internal/v1/genny/plugins/install"
+	"github.com/gobuffalo/buffalo-cli/v2/internal/v1/genny/refresh"
+	"github.com/gobuffalo/buffalo-cli/v2/internal/v1/plugins/plugdeps"
 	pop "github.com/gobuffalo/buffalo-pop/genny/newapp"
 	"github.com/gobuffalo/genny/v2"
 	"github.com/gobuffalo/here"

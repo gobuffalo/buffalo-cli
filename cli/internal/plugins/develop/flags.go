@@ -3,8 +3,8 @@ package develop
 import (
 	"io"
 
-	"github.com/gobuffalo/buffalo-cli/internal/flagger"
-	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/v2/internal/flagger"
+	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 	"github.com/spf13/pflag"
 )
 

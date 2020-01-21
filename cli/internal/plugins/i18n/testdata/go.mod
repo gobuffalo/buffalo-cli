@@ -1,4 +1,4 @@
-module github.com/gobuffalo/buffalo-cli/cli/internal/plugins/i18n/testdata/actions
+module github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/i18n/testdata/actions
 
 go 1.13
 

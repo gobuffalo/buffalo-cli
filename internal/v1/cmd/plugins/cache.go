@@ -1,7 +1,7 @@
 package plugins
 
 import (
-	"github.com/gobuffalo/buffalo-cli/internal/v1/cmd/plugins/internal/cache"
+	"github.com/gobuffalo/buffalo-cli/v2/internal/v1/cmd/plugins/internal/cache"
 	"github.com/spf13/cobra"
 )
 

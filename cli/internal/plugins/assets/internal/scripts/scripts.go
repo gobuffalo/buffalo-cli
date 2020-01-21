@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/assets/internal/ifaces"
-	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/assets/internal/ifaces"
+	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 )
 
 type packageJSON struct {

@@ -3,7 +3,7 @@ package fix
 import (
 	"fmt"
 
-	bufcli "github.com/gobuffalo/buffalo-cli"
+	bufcli "github.com/gobuffalo/buffalo-cli/v2"
 	"github.com/gobuffalo/meta"
 )
 

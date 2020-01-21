@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/gobuffalo/buffalo-cli/internal/v1/plugins"
+	"github.com/gobuffalo/buffalo-cli/v2/internal/v1/plugins"
 	"github.com/spf13/cobra"
 )
 

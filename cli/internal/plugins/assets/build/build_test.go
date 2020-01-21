@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/assets/internal/scripts"
-	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/assets/internal/scripts"
+	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 	"github.com/gobuffalo/here"
 	"github.com/stretchr/testify/require"
 )

@@ -16,8 +16,8 @@ import (
 	_ "{{$imp}}"
 	{{end -}}
 
-	"github.com/gobuffalo/buffalo-cli/built"
-	"github.com/gobuffalo/buffalo-cli/cli"
+	"github.com/gobuffalo/buffalo-cli/v2/built"
+	"github.com/gobuffalo/buffalo-cli/v2/cli"
 	"github.com/gobuffalo/buffalo/runtime"
 )
 

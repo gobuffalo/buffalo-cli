@@ -10,8 +10,8 @@ import (
 	"strings"
 
 	"github.com/fatih/color"
-	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/assets/webpack"
-	rg "github.com/gobuffalo/buffalo-cli/internal/v1/genny/refresh"
+	"github.com/gobuffalo/buffalo-cli/v2/internal/v1/genny/assets/webpack"
+	rg "github.com/gobuffalo/buffalo-cli/v2/internal/v1/genny/refresh"
 	"github.com/gobuffalo/events"
 	"github.com/gobuffalo/genny/v2"
 	"github.com/gobuffalo/meta"

@@ -3,7 +3,7 @@ package install
 import (
 	"os/exec"
 
-	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/add"
+	"github.com/gobuffalo/buffalo-cli/v2/internal/v1/genny/add"
 	"github.com/gobuffalo/genny/v2"
 )
 

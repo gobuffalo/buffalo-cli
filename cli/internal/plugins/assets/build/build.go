@@ -5,9 +5,9 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/assets/internal/scripts"
-	"github.com/gobuffalo/buffalo-cli/plugins"
-	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/assets/internal/scripts"
+	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
 	"github.com/markbates/safe"
 )
 

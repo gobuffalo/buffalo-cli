@@ -3,7 +3,7 @@ package grifts
 import (
 	"context"
 
-	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 	grifts "github.com/markbates/grift/cmd"
 )
 

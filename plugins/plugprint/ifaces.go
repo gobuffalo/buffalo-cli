@@ -3,7 +3,7 @@ package plugprint
 import (
 	"io"
 
-	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 )
 
 type PluginScoper = plugins.PluginScoper

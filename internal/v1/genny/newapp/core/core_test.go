@@ -5,7 +5,7 @@ package core
 import (
 	"testing"
 
-	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/docker"
+	"github.com/gobuffalo/buffalo-cli/v2/internal/v1/genny/docker"
 	"github.com/gobuffalo/genny/gentest"
 	"github.com/gobuffalo/meta"
 	"github.com/stretchr/testify/require"

@@ -1,8 +1,8 @@
 package refresh
 
 import (
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/develop"
-	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/develop"
+	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 )
 
 var _ plugins.Plugin = &Developer{}

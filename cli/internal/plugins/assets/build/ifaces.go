@@ -4,7 +4,7 @@ import (
 	"context"
 	"os/exec"
 
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/assets/internal/ifaces"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/assets/internal/ifaces"
 )
 
 // Tooler returns the name of the asset tool to use.

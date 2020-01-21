@@ -6,7 +6,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/gobuffalo/buffalo-cli/internal/garlic"
+	"github.com/gobuffalo/buffalo-cli/v2/internal/garlic"
 )
 
 func Tidy(ctx context.Context) error {

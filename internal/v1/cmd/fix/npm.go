@@ -10,7 +10,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/assets/webpack"
+	"github.com/gobuffalo/buffalo-cli/v2/internal/v1/genny/assets/webpack"
 )
 
 // AddPackageJSONScripts rewrites the package.json file

@@ -3,7 +3,7 @@ package built
 import (
 	"context"
 
-	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 	"github.com/gobuffalo/pop/v5"
 	"github.com/markbates/pkger"
 )
