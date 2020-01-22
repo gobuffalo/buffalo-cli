@@ -130,9 +130,9 @@ func (v WidgetsResource) Create(c buffalo.Context) error {
 
       return c.Render(http.StatusUnprocessableEntity, r.HTML("/widgets/new.plush.html"))
     }).Wants("json", func (c buffalo.Context) error {
-      return c.Error(http.StatusUnprocessableEntity, r.JSON(widget))
+      return c.Render(http.StatusUnprocessableEntity, r.JSON(verrs))
     }).Wants("xml", func (c buffalo.Context) error {
-      return c.Error(http.StatusUnprocessableEntity, r.XML(widget))
+      return c.Render(http.StatusUnprocessableEntity, r.XML(verrs))
     }).Respond(c)
   }
 
@@ -206,9 +206,9 @@ func (v WidgetsResource) Update(c buffalo.Context) error {
 
       return c.Render(http.StatusUnprocessableEntity, r.HTML("/widgets/edit.plush.html"))
     }).Wants("json", func (c buffalo.Context) error {
-      return c.Error(http.StatusUnprocessableEntity, r.JSON(widget))
+      return c.Render(http.StatusUnprocessableEntity, r.JSON(verrs))
     }).Wants("xml", func (c buffalo.Context) error {
-      return c.Error(http.StatusUnprocessableEntity, r.XML(widget))
+      return c.Render(http.StatusUnprocessableEntity, r.XML(verrs))
     }).Respond(c)
   }
 
