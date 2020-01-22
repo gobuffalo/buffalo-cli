@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 )
 
 // Versioner ...

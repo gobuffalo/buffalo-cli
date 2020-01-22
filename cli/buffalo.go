@@ -73,7 +73,8 @@ func NewWithInfo(inf here.Info) (*Buffalo, error) {
 	if _, err := os.Stat(filepath.Join(inf.Dir, ".git")); err == nil {
 		b.Plugins = append(b.Plugins, git.Plugins()...)
 	}
-	if _, err := os.Stat(filepath.Join(info.Dir, ".bzr")); err == nil {
+
+	if _, err := os.Stat(filepath.Join(inf.Dir, ".bzr")); err == nil {
 		b.Plugins = append(b.Plugins, bzr.Plugins()...)
 	}
 
