@@ -5,9 +5,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/assets/internal/scripts"
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/develop"
-	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/assets/internal/scripts"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/develop"
+	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 )
 
 var _ develop.Developer = &Developer{}

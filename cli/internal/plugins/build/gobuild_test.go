@@ -18,7 +18,7 @@ func Test_Cmd_GoCmd(t *testing.T) {
 	cmd, err := bc.GoCmd(ctx)
 	r.NoError(err)
 
-	cli := filepath.Join("bin", "buffalo-cli")
+	cli := filepath.Join("bin", "bufcli")
 	if runtime.GOOS == "windows" {
 		cli += ".exe"
 	}

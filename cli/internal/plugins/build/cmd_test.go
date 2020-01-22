@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 	"github.com/gobuffalo/here"
 	"github.com/stretchr/testify/require"
 )
@@ -15,7 +15,7 @@ func newRef(t *testing.T, root string) here.Info {
 	info := here.Info{
 		Dir:        root,
 		ImportPath: "github.com/markbates/coke",
-		Name:       "main",
+		Name:       "coke",
 		Root:       root,
 		Module: here.Module{
 			Path:  "github.com/markbates/coke",

@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"testing"
 
-	bufcli "github.com/gobuffalo/buffalo-cli"
-	"github.com/gobuffalo/buffalo-cli/plugins"
+	bufcli "github.com/gobuffalo/buffalo-cli/v2"
+	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 	"github.com/stretchr/testify/require"
 )
 

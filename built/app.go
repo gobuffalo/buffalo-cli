@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/gobuffalo/buffalo-cli/internal/garlic"
-	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/v2/internal/garlic"
+	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 )
 
 type App struct {

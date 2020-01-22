@@ -8,7 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 	"github.com/gobuffalo/here"
 	"github.com/markbates/jim"
 	"github.com/markbates/safe"
@@ -19,6 +19,7 @@ type tasker interface {
 }
 
 func isBuffalo(mod string) bool {
+
 	if _, err := os.Stat(mod); err != nil {
 		return false
 	}
@@ -32,7 +33,12 @@ func isBuffalo(mod string) bool {
 }
 
 func Run(ctx context.Context, args []string) error {
-	info, err := here.Dir(".")
+	pwd, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+
+	info, err := here.Dir(pwd)
 	if err != nil {
 		return err
 	}
@@ -55,7 +61,7 @@ func Run(ctx context.Context, args []string) error {
 
 	cmd := plugins.Cmd(ctx, "go", bargs...)
 	err = safe.RunE(func() error {
-		fmt.Println(cmd.Args)
+		// fmt.Println(cmd.Args)
 		return cmd.Run()
 	})
 	if err != nil {

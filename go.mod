@@ -1,21 +1,21 @@
-module github.com/gobuffalo/buffalo-cli
+module github.com/gobuffalo/buffalo-cli/v2
 
 go 1.13
 
-replace github.com/gobuffalo/buffalo-cli/plugins => ./plugins
+replace github.com/gobuffalo/buffalo-cli/v2/plugins => ./plugins
 
 require (
 	github.com/gobuffalo/attrs v0.1.0
-	github.com/gobuffalo/buffalo-cli/plugins v0.0.0-00010101000000-000000000000
+	github.com/gobuffalo/buffalo-cli/v2/plugins v0.0.0-00010101000000-000000000000
 	github.com/gobuffalo/fizz v1.9.5
 	github.com/gobuffalo/flect v0.2.0
-	github.com/gobuffalo/genny/v2 v2.0.1
-	github.com/gobuffalo/helpers v0.6.0 // indirect
+	github.com/gobuffalo/genny/v2 v2.0.5
 	github.com/gobuffalo/here v0.6.0
 	github.com/gobuffalo/meta/v2 v2.0.0
 	github.com/gobuffalo/packr/v2 v2.7.1
 	github.com/gobuffalo/plush v3.8.3+incompatible
-	github.com/gobuffalo/pop/v5 v5.0.6
+	github.com/gobuffalo/pop/v5 v5.0.7
+	github.com/gobuffalo/tags v2.1.7+incompatible // indirect
 	github.com/markbates/grift v1.5.0
 	github.com/markbates/jim v0.5.0
 	github.com/markbates/pkger v0.14.0

@@ -4,7 +4,7 @@ import (
 	"context"
 	"flag"
 
-	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 	"github.com/spf13/pflag"
 )
 

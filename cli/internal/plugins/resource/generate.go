@@ -7,9 +7,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/generate"
-	"github.com/gobuffalo/buffalo-cli/plugins"
-	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/generate"
+	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
 	"github.com/gobuffalo/flect/name"
 	"github.com/gobuffalo/genny/v2"
 	"github.com/gobuffalo/genny/v2/gogen"

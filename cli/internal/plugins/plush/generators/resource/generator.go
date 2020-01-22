@@ -10,9 +10,9 @@ import (
 	"text/template"
 
 	"github.com/gobuffalo/attrs"
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/resource"
-	"github.com/gobuffalo/buffalo-cli/plugins"
-	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/resource"
+	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
 	"github.com/gobuffalo/flect/name"
 	"github.com/markbates/pkger"
 	"github.com/spf13/pflag"
@@ -59,7 +59,7 @@ func (g *Generator) GenerateResourceTemplates(ctx context.Context, root string, 
 	}
 	opts.Folder = opts.Name.Folder().Pluralize().String()
 
-	fp := pkger.Include("github.com/gobuffalo/buffalo-cli:/cli/internal/plugins/plush/internal/generators/resource/templates")
+	fp := pkger.Include("github.com/gobuffalo/buffalo-cli/v2:/cli/internal/plugins/plush/internal/generators/resource/templates")
 
 	err = pkger.Walk(fp, func(path string, info os.FileInfo, err error) error {
 		if err != nil {

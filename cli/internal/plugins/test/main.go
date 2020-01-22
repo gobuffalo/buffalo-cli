@@ -6,8 +6,8 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/gobuffalo/buffalo-cli/plugins"
-	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
+	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
 )
 
 func (tc *Cmd) Main(ctx context.Context, args []string) error {

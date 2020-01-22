@@ -4,13 +4,12 @@ import (
 	"context"
 	"fmt"
 	"os/exec"
-	"path"
 	"path/filepath"
 	"runtime"
 	"strings"
 	"testing"
 
-	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 	"github.com/markbates/safe"
 )
 
@@ -24,7 +23,7 @@ func (bc *Cmd) GoCmd(ctx context.Context) (*exec.Cmd, error) {
 
 	bin := bc.Bin
 	if len(bin) == 0 {
-		bin = filepath.Join("bin", path.Base(info.Module.Path))
+		bin = filepath.Join("bin", info.Name)
 	}
 
 	if runtime.GOOS == "windows" {

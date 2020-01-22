@@ -1,8 +1,8 @@
 package generate
 
 import (
-	"github.com/gobuffalo/buffalo-cli/plugins"
-	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
+	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
 	"github.com/gobuffalo/here"
 	"github.com/spf13/pflag"
 )
