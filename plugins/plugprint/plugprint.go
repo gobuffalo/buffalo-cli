@@ -3,11 +3,12 @@ package plugprint
 import (
 	"fmt"
 	"io"
+	"path"
 	"sort"
 	"strings"
 	"text/tabwriter"
 
-	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 )
 
 // Print will try and print a helpful Usage printing
@@ -143,5 +144,5 @@ func cmdName(p plugins.Plugin) string {
 	if d, ok := p.(NamedCommand); ok {
 		return d.CmdName()
 	}
-	return p.Name()
+	return path.Base(p.Name())
 }

@@ -1,7 +1,7 @@
 package plugins
 
 import (
-	"github.com/gobuffalo/buffalo-cli/internal/v1/cmd/plugins/internal/cache"
+	"github.com/gobuffalo/buffalo-cli/v2/internal/v1/cmd/plugins/internal/cache"
 	"github.com/spf13/cobra"
 )
 
@@ -17,6 +17,6 @@ var cacheCmd = &cobra.Command{
 func init() {
 	cacheCmd.AddCommand(cache.CleanCmd)
 	cacheCmd.AddCommand(cache.ListCmd)
-	cacheCmd.AddCommand(cache.BuildCmd)
+	cacheCmd.AddCommand(cache.Cmd)
 	PluginsCmd.AddCommand(cacheCmd)
 }

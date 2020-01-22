@@ -4,34 +4,32 @@ import (
 	"context"
 	"os"
 
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/grifts/internal/griftgen"
-	"github.com/gobuffalo/buffalo-cli/plugins"
-	"github.com/gobuffalo/buffalo-cli/plugins/plugprint"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/generate"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/grifts/internal/griftgen"
+	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
 	"github.com/gobuffalo/genny/v2"
 	"github.com/gobuffalo/genny/v2/gogen"
 )
 
-type Generator struct{}
-
+var _ generate.Generator = Generator{}
+var _ plugins.NamedCommand = Generator{}
 var _ plugins.Plugin = Generator{}
+var _ plugprint.Describer = Generator{}
+
+type Generator struct{}
 
 func (Generator) Name() string {
 	return "grifts/generator"
 }
 
-var _ plugins.NamedCommand = Generator{}
-
 func (Generator) CmdName() string {
 	return "grift"
 }
 
-var _ plugins.Aliases = Buffalo{}
-
 func (Generator) Aliases() []string {
 	return []string{"task"}
 }
-
-var _ plugprint.Describer = Generator{}
 
 func (Generator) Description() string {
 	return "Generate a grift task"

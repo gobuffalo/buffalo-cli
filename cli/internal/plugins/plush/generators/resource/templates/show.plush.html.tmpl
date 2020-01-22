@@ -1,0 +1,24 @@
+<div class="py-4 mb-2">
+  <h3 class="d-inline-block">{{.Model.Proper}} Details</h3>
+
+  <div class="float-right">
+    <%= linkTo({{.Name.VarCasePlural}}Path(), {class: "btn btn-info"}) { %>
+      Back to all {{.Model.Group}}
+    <% } %>
+    <%= linkTo(edit{{.Name.Proper}}Path({ {{.Name.ParamID}}: {{.Model.VarCaseSingle}}.ID }), {class: "btn btn-warning", body: "Edit"}) %>
+    <%= linkTo({{.Name.VarCaseSingle}}Path({ {{.Name.ParamID}}: {{.Model.VarCaseSingle}}.ID }), {class: "btn btn-danger", "data-method": "DELETE", "data-confirm": "Are you sure?", body: "Destroy"}) %>
+  </div>
+</div>
+
+
+
+<ul class="list-group mb-2 ">
+{{ range $p := .Attrs -}}
+
+  <li class="list-group-item pb-1">
+    <label class="small d-block">{{ $p.Name.Pascalize }}</label>
+    <p class="d-inline-block"><%= {{$.Model.VarCaseSingle}}.{{$p.Name.Pascalize}} %></p>
+  </li>
+
+{{ end -}}
+</ul>

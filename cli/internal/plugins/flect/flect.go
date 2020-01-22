@@ -5,31 +5,37 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/gobuffalo/buffalo-cli/cli/internal/plugins/buildcmd"
-	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/build"
+	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 	"github.com/gobuffalo/flect"
 	"github.com/markbates/pkger"
 )
 
+func Plugins() []plugins.Plugin {
+	return []plugins.Plugin{
+		&Filer{},
+	}
+}
+
 const filePath = "/inflections.json"
 
-type Buffalo struct{}
+type Filer struct{}
 
-var _ buildcmd.PackFiler = &Buffalo{}
+var _ build.PackFiler = &Filer{}
 
-func (f *Buffalo) PackageFiles(ctx context.Context, root string) ([]string, error) {
+func (f *Filer) PackageFiles(ctx context.Context, root string) ([]string, error) {
 	return []string{
 		filepath.Join(root, filePath),
 	}, nil
 }
 
-var _ plugins.Plugin = &Buffalo{}
+var _ plugins.Plugin = &Filer{}
 
-func (Buffalo) Name() string {
+func (Filer) Name() string {
 	return "flect"
 }
 
-func (fl *Buffalo) BuiltInit(ctx context.Context, args []string) error {
+func (fl *Filer) BuiltInit(ctx context.Context, args []string) error {
 	f, err := pkger.Open(filePath)
 	if err != nil {
 		return fmt.Errorf("failed to load inflections %s", err)

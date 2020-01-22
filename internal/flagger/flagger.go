@@ -2,26 +2,21 @@ package flagger
 
 import (
 	"flag"
-	"fmt"
-	"path"
 
-	"github.com/gobuffalo/buffalo-cli/plugins"
+	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 	"github.com/spf13/pflag"
 )
 
-func CleanPflags(p plugins.Plugin, flags []*pflag.Flag) []*pflag.Flag {
-	for i, f := range flags {
-		f.Name = fmt.Sprintf("%s-%s", path.Base(p.Name()), f.Name)
-		f.Shorthand = ""
-		flags[i] = f
-	}
-	return flags
-}
+func CleanPflags(p plugins.Plugin, pflags []*pflag.Flag) []*flag.Flag {
 
-func CleanFlags(p plugins.Plugin, flags []*flag.Flag) []*flag.Flag {
-	for i, f := range flags {
-		f.Name = fmt.Sprintf("%s-%s", path.Base(p.Name()), f.Name)
-		flags[i] = f
+	flags := make([]*flag.Flag, len(pflags))
+	for i, f := range pflags {
+		flags[i] = &flag.Flag{
+			// DefValue: f.DefValue,
+			Name:  f.Name,
+			Usage: f.Usage,
+			Value: f.Value,
+		}
 	}
-	return flags
+	return plugins.CleanFlags(p, flags)
 }

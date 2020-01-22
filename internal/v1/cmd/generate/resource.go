@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/gobuffalo/attrs"
-	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/resource"
+	"github.com/gobuffalo/buffalo-cli/v2/internal/v1/genny/resource"
 	"github.com/gobuffalo/genny/v2"
 	"github.com/gobuffalo/logger"
 	"github.com/spf13/cobra"

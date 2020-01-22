@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	pluginscmd "github.com/gobuffalo/buffalo-cli/internal/v1/cmd/plugins"
-	"github.com/gobuffalo/buffalo-cli/internal/v1/plugins"
+	pluginscmd "github.com/gobuffalo/buffalo-cli/v2/internal/v1/cmd/plugins"
+	"github.com/gobuffalo/buffalo-cli/v2/internal/v1/plugins"
 	"github.com/markbates/oncer"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
