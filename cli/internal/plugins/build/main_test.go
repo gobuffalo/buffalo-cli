@@ -14,12 +14,9 @@ import (
 func Test_Cmd_Main(t *testing.T) {
 	r := require.New(t)
 
-	info := newRef(t, "")
-
 	bc := &Cmd{}
-	bc.WithHereInfo(info)
 
-	bn := filepath.Join("bin", "coke")
+	bn := filepath.Join("bin", "build")
 	if runtime.GOOS == "windows" {
 		bn += ".exe"
 	}
@@ -31,7 +28,7 @@ func Test_Cmd_Main(t *testing.T) {
 	})
 
 	var args []string
-	err := bc.Main(context.Background(), "", args)
+	err := bc.Main(context.Background(), ".", args)
 	r.NoError(err)
 	r.NotNil(br.cmd)
 	r.Equal(exp, br.cmd.Args)
@@ -49,7 +46,7 @@ func Test_Cmd_Main_SubCommand(t *testing.T) {
 
 	args := []string{p.name, "a", "b", "c"}
 
-	err := bc.Main(context.Background(), "", args)
+	err := bc.Main(context.Background(), ".", args)
 	r.NoError(err)
 	r.Equal([]string{"a", "b", "c"}, p.args)
 }
@@ -66,7 +63,7 @@ func Test_Cmd_Main_SubCommand_err(t *testing.T) {
 
 	args := []string{p.name, "a", "b", "c"}
 
-	err := bc.Main(context.Background(), "", args)
+	err := bc.Main(context.Background(), ".", args)
 	r.Error(err)
 }
 
@@ -76,21 +73,15 @@ func Test_Cmd_Main_ValidateTemplates(t *testing.T) {
 	p := &templatesValidator{}
 	plugs := plugins.Plugins{p, &bladeRunner{}}
 
-	info := newRef(t, "")
-
 	bc := &Cmd{
 		pluginsFn: plugs.ScopedPlugins,
 	}
-	bc.WithHereInfo(info)
 
 	args := []string{}
 
-	err := bc.Main(context.Background(), "", args)
+	err := bc.Main(context.Background(), ".", args)
 	r.NoError(err)
 
-	bi, err := bc.HereInfo()
-	r.NoError(err)
-	r.Equal(bi.Root, p.root)
 }
 
 func Test_Cmd_Main_ValidateTemplates_err(t *testing.T) {
@@ -105,7 +96,7 @@ func Test_Cmd_Main_ValidateTemplates_err(t *testing.T) {
 
 	args := []string{}
 
-	err := bc.Main(context.Background(), "", args)
+	err := bc.Main(context.Background(), ".", args)
 	r.Error(err)
 }
 
@@ -121,7 +112,7 @@ func Test_Cmd_Main_BeforeBuilders(t *testing.T) {
 
 	var args []string
 
-	err := bc.Main(context.Background(), "", args)
+	err := bc.Main(context.Background(), ".", args)
 	r.NoError(err)
 }
 
@@ -137,7 +128,7 @@ func Test_Cmd_Main_BeforeBuilders_err(t *testing.T) {
 
 	var args []string
 
-	err := bc.Main(context.Background(), "", args)
+	err := bc.Main(context.Background(), ".", args)
 	r.Error(err)
 }
 
@@ -153,7 +144,7 @@ func Test_Cmd_Main_AfterBuilders(t *testing.T) {
 
 	var args []string
 
-	err := bc.Main(context.Background(), "", args)
+	err := bc.Main(context.Background(), ".", args)
 	r.NoError(err)
 }
 
@@ -170,7 +161,7 @@ func Test_Cmd_Main_AfterBuilders_err(t *testing.T) {
 
 	var args []string
 
-	err := bc.Main(context.Background(), "", args)
+	err := bc.Main(context.Background(), ".", args)
 	r.Error(err)
 	r.Equal(err, a.err)
 }

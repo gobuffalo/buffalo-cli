@@ -102,14 +102,6 @@ func NewWithInfo(inf here.Info) (*Buffalo, error) {
 		f.WithPlugins(pfn)
 	}
 
-	for _, b := range b.Plugins {
-		f, ok := b.(WithHere)
-		if !ok {
-			continue
-		}
-		f.WithHereInfo(inf)
-	}
-
 	return b, nil
 }
 

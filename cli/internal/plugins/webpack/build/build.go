@@ -41,12 +41,7 @@ func (bc *Builder) Build(ctx context.Context, root string, args []string) error 
 
 	os.Setenv("NODE_ENV", bc.Environment)
 
-	info, err := bc.HereInfo()
-	if err != nil {
-		return err
-	}
-
-	c, err := bc.cmd(ctx, info.Dir, args)
+	c, err := bc.cmd(ctx, root, args)
 	if err != nil {
 		return err
 	}
@@ -65,7 +60,7 @@ func (bc *Builder) Build(ctx context.Context, root string, args []string) error 
 		return err
 	}
 
-	if err := bc.archive(ctx, info.Dir, args); err != nil {
+	if err := bc.archive(ctx, root, args); err != nil {
 		return err
 	}
 

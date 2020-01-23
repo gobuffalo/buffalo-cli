@@ -6,6 +6,7 @@ import (
 
 	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
+	"github.com/gobuffalo/here"
 	"github.com/markbates/safe"
 )
 
@@ -55,7 +56,7 @@ func (bc *Cmd) Main(ctx context.Context, root string, args []string) error {
 
 	var build builder = bc.build
 
-	info, err := bc.HereInfo()
+	info, err := here.Dir(root)
 	if err != nil {
 		return err
 	}

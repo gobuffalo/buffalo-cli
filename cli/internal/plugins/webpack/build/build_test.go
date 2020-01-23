@@ -73,7 +73,6 @@ func Test_Builder_Build(t *testing.T) {
 	root := info.Dir
 
 	bc := &Builder{}
-	bc.WithHereInfo(info)
 
 	br := &bladeRunner{}
 	bc.WithPlugins(func() []plugins.Plugin {
