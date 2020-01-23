@@ -33,13 +33,8 @@ func isBuffalo(mod string) bool {
 	return bytes.Contains(b, []byte("github.com/gobuffalo/buffalo"))
 }
 
-func Run(ctx context.Context, args []string) error {
-	pwd, err := os.Getwd()
-	if err != nil {
-		return err
-	}
-
-	info, err := here.Dir(pwd)
+func Run(ctx context.Context, root string, args []string) error {
+	info, err := here.Dir(root)
 	if err != nil {
 		return err
 	}
@@ -50,13 +45,13 @@ func Run(ctx context.Context, args []string) error {
 		return fmt.Errorf("%s is not a buffalo app", info.Module)
 	}
 
-	main := filepath.Join(info.Dir, "cmd", "buffalo")
+	main := filepath.Join(root, "cmd", "buffalo")
 	if _, err := os.Stat(filepath.Dir(main)); err != nil {
 		buff, err := cli.NewWithInfo(info)
 		if err != nil {
 			return err
 		}
-		return buff.Main(ctx, args)
+		return buff.Main(ctx, root, args)
 	}
 
 	bargs := []string{"run", "./cmd/buffalo"}

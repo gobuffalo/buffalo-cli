@@ -27,7 +27,7 @@ func Test_Cmd_Package(t *testing.T) {
 	bc := &Cmd{}
 	bc.WithPlugins(plugs.ScopedPlugins)
 
-	err := bc.Main(context.Background(), nil)
+	err := bc.Main(context.Background(), "", nil)
 	r.NoError(err)
 
 	r.Len(pkg.files, 2)

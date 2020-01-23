@@ -18,7 +18,12 @@ func main() {
 	ctx := context.Background()
 	defer Tidy(ctx)
 
-	if err := garlic.Run(ctx, os.Args[1:]); err != nil {
+	pwd, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if err := garlic.Run(ctx, pwd, os.Args[1:]); err != nil {
 		Tidy(ctx)
 		log.Fatal(err)
 	}

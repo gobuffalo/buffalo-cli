@@ -3,10 +3,11 @@ package cli
 import "context"
 
 type cp struct {
-	name    string
-	cmdName string
 	aliases []string
 	args    []string
+	cmdName string
+	name    string
+	root    string
 }
 
 func (c *cp) Name() string {
@@ -23,8 +24,9 @@ func (c *cp) CmdName() string {
 	return c.cmdName
 }
 
-func (c *cp) Main(ctx context.Context, args []string) error {
+func (c *cp) Main(ctx context.Context, root string, args []string) error {
 	c.args = args
+	c.root = root
 	return nil
 }
 

@@ -25,7 +25,7 @@ func (b *App) ScopedPlugins() []plugins.Plugin {
 	return b.Plugger.ScopedPlugins()
 }
 
-func (b *App) Main(ctx context.Context, args []string) error {
+func (b *App) Main(ctx context.Context, root string, args []string) error {
 	plugs := b.ScopedPlugins()
 
 	for _, p := range plugs {
@@ -70,5 +70,5 @@ func (b *App) Main(ctx context.Context, args []string) error {
 	if b.Fallthrough != nil {
 		return b.Fallthrough(ctx, args)
 	}
-	return garlic.Run(ctx, args)
+	return garlic.Run(ctx, root, args)
 }

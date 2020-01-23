@@ -14,7 +14,7 @@ type Aliases = plugins.Aliases
 // `Main` method is called to run that command.
 type Command interface {
 	plugins.Plugin
-	Main(ctx context.Context, args []string) error
+	Main(ctx context.Context, root string, args []string) error
 }
 
 // type NamedCommand interface {

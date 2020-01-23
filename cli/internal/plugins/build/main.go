@@ -39,7 +39,7 @@ func (bc *Cmd) afterBuild(ctx context.Context, args []string, err error) error {
 	return err
 }
 
-func (bc *Cmd) Main(ctx context.Context, args []string) error {
+func (bc *Cmd) Main(ctx context.Context, root string, args []string) error {
 	flags := bc.Flags()
 	if err := flags.Parse(args); err != nil {
 		return err
