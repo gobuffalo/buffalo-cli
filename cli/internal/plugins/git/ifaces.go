@@ -12,15 +12,15 @@ import (
 // control of the exec.Cmd to the first plugin that implements this
 // interface.
 type CommandRunner interface {
-	RunGitCommand(ctx context.Context, cmd *exec.Cmd) error
+	RunGitCommand(ctx context.Context, root string, cmd *exec.Cmd) error
 }
 
-type cmdRunnerFn func(ctx context.Context, cmd *exec.Cmd) error
+type cmdRunnerFn func(ctx context.Context, root string, cmd *exec.Cmd) error
 
 func (cmdRunnerFn) Name() string {
 	return "cmdRunnerFn"
 }
 
-func (fn cmdRunnerFn) RunGitCommand(ctx context.Context, cmd *exec.Cmd) error {
-	return fn(ctx, cmd)
+func (fn cmdRunnerFn) RunGitCommand(ctx context.Context, root string, cmd *exec.Cmd) error {
+	return fn(ctx, root, cmd)
 }

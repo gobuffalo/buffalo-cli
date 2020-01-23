@@ -46,7 +46,7 @@ func (b *Versioner) BuildVersion(ctx context.Context, root string) (string, erro
 	bb := &bytes.Buffer{}
 	cmd.Stdout = bb
 
-	var fn cmdRunnerFn = func(ctx context.Context, cmd *exec.Cmd) error {
+	var fn cmdRunnerFn = func(ctx context.Context, root string, cmd *exec.Cmd) error {
 		return cmd.Run()
 	}
 
@@ -56,7 +56,7 @@ func (b *Versioner) BuildVersion(ctx context.Context, root string) (string, erro
 			break
 		}
 	}
-	if err := fn(ctx, cmd); err != nil {
+	if err := fn(ctx, root, cmd); err != nil {
 		return "", err
 	}
 	return strings.TrimSpace(bb.String()), nil
