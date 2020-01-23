@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/gobuffalo/buffalo-cli/v2/cli"
 	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 	"github.com/gobuffalo/here"
 	"github.com/markbates/jim"
@@ -51,9 +52,11 @@ func Run(ctx context.Context, args []string) error {
 
 	main := filepath.Join(info.Dir, "cmd", "buffalo")
 	if _, err := os.Stat(filepath.Dir(main)); err != nil {
-		if err := NewApp(ctx, info.Dir, args); err != nil {
+		buff, err := cli.NewWithInfo(info)
+		if err != nil {
 			return err
 		}
+		return buff.Main(ctx, args)
 	}
 
 	bargs := []string{"run", "./cmd/buffalo"}
