@@ -8,7 +8,6 @@ import (
 
 	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
-	"github.com/gobuffalo/here"
 )
 
 func (tc *Cmd) Main(ctx context.Context, root string, args []string) error {
@@ -172,18 +171,13 @@ func (tc *Cmd) reducePairedArg(key string, args []string) []string {
 }
 
 func (tc *Cmd) pluginArgs(ctx context.Context, root string, args []string) ([]string, error) {
-	info, err := here.Dir(root)
-	if err != nil {
-		return nil, err
-	}
-
 	plugs := tc.ScopedPlugins()
 	for _, p := range plugs {
 		bt, ok := p.(Argumenter)
 		if !ok {
 			continue
 		}
-		tgs, err := bt.TestArgs(ctx, info.Dir)
+		tgs, err := bt.TestArgs(ctx, root)
 		if err != nil {
 			return nil, err
 		}

@@ -47,7 +47,7 @@ func Run(ctx context.Context, root string, args []string) error {
 
 	main := filepath.Join(root, "cmd", "buffalo")
 	if _, err := os.Stat(filepath.Dir(main)); err != nil {
-		buff, err := cli.NewWithInfo(info)
+		buff, err := cli.NewFromRoot(root)
 		if err != nil {
 			return err
 		}

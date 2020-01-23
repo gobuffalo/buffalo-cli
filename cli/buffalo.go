@@ -31,7 +31,6 @@ import (
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/webpack"
 	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
-	"github.com/gobuffalo/here"
 )
 
 var _ plugins.Plugin = &Buffalo{}
@@ -44,8 +43,7 @@ type Buffalo struct {
 	plugins.Plugins
 }
 
-func NewWithInfo(inf here.Info) (*Buffalo, error) {
-	root := inf.Dir
+func NewFromRoot(root string) (*Buffalo, error) {
 	b := &Buffalo{}
 
 	pfn := func() []plugins.Plugin {
@@ -106,11 +104,11 @@ func NewWithInfo(inf here.Info) (*Buffalo, error) {
 }
 
 func New() (*Buffalo, error) {
-	info, err := here.Current()
+	pwd, err := os.Getwd()
 	if err != nil {
 		return nil, err
 	}
-	return NewWithInfo(info)
+	return NewFromRoot(pwd)
 }
 
 func (b Buffalo) ScopedPlugins() []plugins.Plugin {

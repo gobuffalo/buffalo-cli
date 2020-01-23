@@ -13,7 +13,6 @@ import (
 	"github.com/gobuffalo/flect/name"
 	"github.com/gobuffalo/genny/v2"
 	"github.com/gobuffalo/genny/v2/gogen"
-	"github.com/gobuffalo/here"
 	"github.com/markbates/safe"
 	"github.com/spf13/pflag"
 )
@@ -125,7 +124,7 @@ func (g *Generator) ScopedPlugins() []plugins.Plugin {
 	return builders
 }
 
-func (g *Generator) beforeGenerate(ctx context.Context, info here.Info, args []string) error {
+func (g *Generator) beforeGenerate(ctx context.Context, root string, args []string) error {
 	plugs := g.ScopedPlugins()
 
 	for _, p := range plugs {
@@ -135,7 +134,7 @@ func (g *Generator) beforeGenerate(ctx context.Context, info here.Info, args []s
 		}
 		err := safe.RunE(func() error {
 			fmt.Printf("[Resource] BeforeGenerator %s\n", p.Name())
-			return b.BeforeGenerateResource(ctx, info.Dir, args)
+			return b.BeforeGenerateResource(ctx, root, args)
 		})
 		if err != nil {
 			return err
@@ -144,8 +143,8 @@ func (g *Generator) beforeGenerate(ctx context.Context, info here.Info, args []s
 	return nil
 }
 
-func (g *Generator) addResource(info here.Info, n string) error {
-	fp := filepath.Join(info.Dir, "actions", "app.go")
+func (g *Generator) addResource(root string, n string) error {
+	fp := filepath.Join(root, "actions", "app.go")
 
 	b, err := ioutil.ReadFile(fp)
 	if err != nil {
@@ -172,11 +171,11 @@ func (g *Generator) addResource(info here.Info, n string) error {
 
 	return nil
 }
-func (g *Generator) afterGenerate(ctx context.Context, info here.Info, args []string, err error) error {
+func (g *Generator) afterGenerate(ctx context.Context, root string, args []string, err error) error {
 	plugs := g.ScopedPlugins()
 
 	if err == nil && len(args) > 0 {
-		if err := g.addResource(info, args[0]); err != nil {
+		if err := g.addResource(root, args[0]); err != nil {
 			return err
 		}
 	}
@@ -188,7 +187,7 @@ func (g *Generator) afterGenerate(ctx context.Context, info here.Info, args []st
 		}
 		err := safe.RunE(func() error {
 			fmt.Printf("[Resource] AfterGenerator %s\n", p.Name())
-			return b.AfterGenerateResource(ctx, info.Dir, args, err)
+			return b.AfterGenerateResource(ctx, root, args, err)
 		})
 		if err != nil {
 			return err
@@ -215,15 +214,10 @@ func (g *Generator) Generate(ctx context.Context, root string, args []string) er
 		return plugprint.Print(ioe.Stdout(), g)
 	}
 
-	info, err := here.Dir(root)
-	if err != nil {
-		return err
-	}
-
 	plugs := g.ScopedPlugins()
 
-	if err := g.beforeGenerate(ctx, info, args); err != nil {
-		return g.afterGenerate(ctx, info, args, err)
+	if err := g.beforeGenerate(ctx, root, args); err != nil {
+		return g.afterGenerate(ctx, root, args, err)
 	}
 
 	for _, p := range plugs {
@@ -233,12 +227,12 @@ func (g *Generator) Generate(ctx context.Context, root string, args []string) er
 		}
 		err := safe.RunE(func() error {
 			fmt.Printf("[Resource] ResourceGenerator %s\n", p.Name())
-			return gr.GenerateResource(ctx, info.Dir, args)
+			return gr.GenerateResource(ctx, root, args)
 		})
-		return g.afterGenerate(ctx, info, args, err)
+		return g.afterGenerate(ctx, root, args, err)
 	}
 
-	type step func(context.Context, here.Info, []string) error
+	type step func(context.Context, string, []string) error
 
 	steps := []step{
 		g.generateActionTests,
@@ -252,16 +246,16 @@ func (g *Generator) Generate(ctx context.Context, root string, args []string) er
 	}
 
 	for _, step := range steps {
-		if err := step(ctx, info, args); err != nil {
+		if err := step(ctx, root, args); err != nil {
 			return err
 		}
 	}
 
-	return g.afterGenerate(ctx, info, args, nil)
+	return g.afterGenerate(ctx, root, args, nil)
 
 }
 
-func (g *Generator) generateActions(ctx context.Context, info here.Info, args []string) error {
+func (g *Generator) generateActions(ctx context.Context, root string, args []string) error {
 	if g.SkipActions {
 		return nil
 	}
@@ -272,13 +266,13 @@ func (g *Generator) generateActions(ctx context.Context, info here.Info, args []
 		}
 		return safe.RunE(func() error {
 			fmt.Printf("[Resource] Actioner %s\n", p.Name())
-			return ag.GenerateResourceActions(ctx, info.Dir, args)
+			return ag.GenerateResourceActions(ctx, root, args)
 		})
 	}
 	return nil
 }
 
-func (g *Generator) generateActionTests(ctx context.Context, info here.Info, args []string) error {
+func (g *Generator) generateActionTests(ctx context.Context, root string, args []string) error {
 	if g.SkipActionTests {
 		return nil
 	}
@@ -289,13 +283,13 @@ func (g *Generator) generateActionTests(ctx context.Context, info here.Info, arg
 		}
 		return safe.RunE(func() error {
 			fmt.Printf("[Resource] ActionTester %s\n", p.Name())
-			return ag.GenerateResourceActionTests(ctx, info.Dir, args)
+			return ag.GenerateResourceActionTests(ctx, root, args)
 		})
 	}
 	return nil
 }
 
-func (g *Generator) generateTemplates(ctx context.Context, info here.Info, args []string) error {
+func (g *Generator) generateTemplates(ctx context.Context, root string, args []string) error {
 	if g.SkipTemplates {
 		return nil
 	}
@@ -306,13 +300,13 @@ func (g *Generator) generateTemplates(ctx context.Context, info here.Info, args 
 		}
 		return safe.RunE(func() error {
 			fmt.Printf("[Resource] Templater %s\n", p.Name())
-			return ag.GenerateResourceTemplates(ctx, info.Dir, args)
+			return ag.GenerateResourceTemplates(ctx, root, args)
 		})
 	}
 	return nil
 }
 
-func (g *Generator) generateTemplateTests(ctx context.Context, info here.Info, args []string) error {
+func (g *Generator) generateTemplateTests(ctx context.Context, root string, args []string) error {
 	if g.SkipTemplateTests {
 		return nil
 	}
@@ -323,13 +317,13 @@ func (g *Generator) generateTemplateTests(ctx context.Context, info here.Info, a
 		}
 		return safe.RunE(func() error {
 			fmt.Printf("[Resource] TemplateTester %s\n", p.Name())
-			return ag.GenerateResourceTemplateTests(ctx, info.Dir, args)
+			return ag.GenerateResourceTemplateTests(ctx, root, args)
 		})
 	}
 	return nil
 }
 
-func (g *Generator) generateModels(ctx context.Context, info here.Info, args []string) error {
+func (g *Generator) generateModels(ctx context.Context, root string, args []string) error {
 	if g.SkipModels {
 		return nil
 	}
@@ -340,13 +334,13 @@ func (g *Generator) generateModels(ctx context.Context, info here.Info, args []s
 		}
 		return safe.RunE(func() error {
 			fmt.Printf("[Resource] Modeler %s\n", p.Name())
-			return ag.GenerateResourceModels(ctx, info.Dir, args)
+			return ag.GenerateResourceModels(ctx, root, args)
 		})
 	}
 	return nil
 }
 
-func (g *Generator) generateModelTests(ctx context.Context, info here.Info, args []string) error {
+func (g *Generator) generateModelTests(ctx context.Context, root string, args []string) error {
 	if g.SkipModelTests {
 		return nil
 	}
@@ -357,13 +351,13 @@ func (g *Generator) generateModelTests(ctx context.Context, info here.Info, args
 		}
 		return safe.RunE(func() error {
 			fmt.Printf("[Resource] ModelTester %s\n", p.Name())
-			return ag.GenerateResourceModelTests(ctx, info.Dir, args)
+			return ag.GenerateResourceModelTests(ctx, root, args)
 		})
 	}
 	return nil
 }
 
-func (g *Generator) generateMigrations(ctx context.Context, info here.Info, args []string) error {
+func (g *Generator) generateMigrations(ctx context.Context, root string, args []string) error {
 	if g.SkipMigrations {
 		return nil
 	}
@@ -374,13 +368,13 @@ func (g *Generator) generateMigrations(ctx context.Context, info here.Info, args
 		}
 		return safe.RunE(func() error {
 			fmt.Printf("[Resource] Migrationer %s\n", p.Name())
-			return ag.GenerateResourceMigrations(ctx, info.Dir, args)
+			return ag.GenerateResourceMigrations(ctx, root, args)
 		})
 	}
 	return nil
 }
 
-func (g *Generator) generateMigrationTests(ctx context.Context, info here.Info, args []string) error {
+func (g *Generator) generateMigrationTests(ctx context.Context, root string, args []string) error {
 	if g.SkipMigrationTests {
 		return nil
 	}
@@ -391,7 +385,7 @@ func (g *Generator) generateMigrationTests(ctx context.Context, info here.Info, 
 		}
 		return safe.RunE(func() error {
 			fmt.Printf("[Resource] MigrationTester %s\n", p.Name())
-			return ag.GenerateResourceMigrationTests(ctx, info.Dir, args)
+			return ag.GenerateResourceMigrationTests(ctx, root, args)
 		})
 	}
 	return nil
