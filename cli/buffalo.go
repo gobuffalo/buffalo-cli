@@ -5,7 +5,6 @@ import (
 	"path/filepath"
 	"sort"
 
-	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/assets"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/build"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/bzr"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/develop"
@@ -27,6 +26,7 @@ import (
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/soda"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/test"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/version"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/webpack"
 	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
 	"github.com/gobuffalo/here"
@@ -43,13 +43,13 @@ type Buffalo struct {
 }
 
 func NewWithInfo(inf here.Info) (*Buffalo, error) {
+	root := inf.Dir
 	b := &Buffalo{}
 
 	pfn := func() []plugins.Plugin {
 		return b.Plugins
 	}
 
-	b.Plugins = append(b.Plugins, assets.Plugins()...)
 	b.Plugins = append(b.Plugins, build.Plugins()...)
 	b.Plugins = append(b.Plugins, develop.Plugins()...)
 	b.Plugins = append(b.Plugins, fizz.Plugins()...)
@@ -70,11 +70,15 @@ func NewWithInfo(inf here.Info) (*Buffalo, error) {
 	b.Plugins = append(b.Plugins, test.Plugins()...)
 	b.Plugins = append(b.Plugins, version.Plugins()...)
 
-	if _, err := os.Stat(filepath.Join(inf.Dir, ".git")); err == nil {
+	if _, err := os.Stat(filepath.Join(root, "package.json")); err == nil {
+		b.Plugins = append(b.Plugins, webpack.Plugins()...)
+	}
+
+	if _, err := os.Stat(filepath.Join(root, ".git")); err == nil {
 		b.Plugins = append(b.Plugins, git.Plugins()...)
 	}
 
-	if _, err := os.Stat(filepath.Join(inf.Dir, ".bzr")); err == nil {
+	if _, err := os.Stat(filepath.Join(root, ".bzr")); err == nil {
 		b.Plugins = append(b.Plugins, bzr.Plugins()...)
 	}
 

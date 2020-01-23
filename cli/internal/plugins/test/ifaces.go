@@ -8,7 +8,7 @@ import (
 )
 
 // Tester is a sub-command of buffalo test.
-// 	buffalo test assets
+// 	buffalo test webpack
 type Tester interface {
 	plugins.Plugin
 	Test(ctx context.Context, args []string) error

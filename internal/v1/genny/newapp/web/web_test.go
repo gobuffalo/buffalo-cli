@@ -55,8 +55,8 @@ func Test_New(t *testing.T) {
 		"models/models.go",
 		"go.mod",
 		".buffalo.dev.yml",
-		"assets/css/application.scss.css",
-		"public/assets/application.js",
+		"webpack/css/application.scss.css",
+		"public/webpack/application.js",
 	}
 
 	for _, u := range unexpected {
