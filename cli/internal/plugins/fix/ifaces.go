@@ -13,7 +13,7 @@ import (
 // to the current version of the plugin.
 // The expectation is fixing of only one major revision.
 type Fixer interface {
-	Fix(ctx context.Context, args []string) error
+	Fix(ctx context.Context, root string, args []string) error
 }
 
 type Flagger interface {

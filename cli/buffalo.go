@@ -5,9 +5,11 @@ import (
 	"path/filepath"
 	"sort"
 
+	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/clifix"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/build"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/bzr"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/develop"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/fix"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/fizz"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/flect"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/generate"
@@ -51,7 +53,9 @@ func NewWithInfo(inf here.Info) (*Buffalo, error) {
 	}
 
 	b.Plugins = append(b.Plugins, build.Plugins()...)
+	b.Plugins = append(b.Plugins, clifix.Plugins()...)
 	b.Plugins = append(b.Plugins, develop.Plugins()...)
+	b.Plugins = append(b.Plugins, fix.Plugins()...)
 	b.Plugins = append(b.Plugins, fizz.Plugins()...)
 	b.Plugins = append(b.Plugins, flect.Plugins()...)
 	b.Plugins = append(b.Plugins, generate.Plugins()...)
