@@ -35,14 +35,14 @@ func Test_Tester_BeforeTest_widgets_migrations(t *testing.T) {
 	ref, err := testerRef()
 	r.NoError(err)
 
-	mf := filepath.Join(ref.Dir, "migrations", "1_widgets.up.fizz")
-	r.NoError(writeFile(mf, dbWidgetsMigration))
+	root := ref.Dir
 
-	tc.WithHereInfo(ref.Info)
+	mf := filepath.Join(root, "migrations", "1_widgets.up.fizz")
+	r.NoError(writeFile(mf, dbWidgetsMigration))
 
 	args := []string{}
 
-	err = tc.BeforeTest(ref.Context(), args)
+	err = tc.BeforeTest(ref.Context(), root, args)
 	r.NoError(err)
 
 	tx := ref.TX
@@ -61,14 +61,13 @@ func Test_Tester_BeforeTest_force_migrations(t *testing.T) {
 
 	r.NoError(writeSchema(ref.Info, dbEmptySchema))
 
-	mf := filepath.Join(ref.Dir, "migrations", "1_widgets.up.fizz")
+	root := ref.Dir
+	mf := filepath.Join(root, "migrations", "1_widgets.up.fizz")
 	r.NoError(writeFile(mf, dbWidgetsMigration))
-
-	tc.WithHereInfo(ref.Info)
 
 	args := []string{"--force-migrations"}
 
-	err = tc.BeforeTest(ref.Context(), args)
+	err = tc.BeforeTest(ref.Context(), root, args)
 	r.NoError(err)
 
 	tx := ref.TX
@@ -87,11 +86,9 @@ func Test_Tester_BeforeTest_widgets_schema(t *testing.T) {
 
 	r.NoError(writeSchema(ref.Info, dbWidgetsSchema))
 
-	tc.WithHereInfo(ref.Info)
-
 	args := []string{}
 
-	err = tc.BeforeTest(ref.Context(), args)
+	err = tc.BeforeTest(ref.Context(), ref.Dir, args)
 	r.NoError(err)
 
 	tx := ref.TX
@@ -110,11 +107,9 @@ func Test_Tester_BeforeTest_empty_schema(t *testing.T) {
 
 	r.NoError(writeSchema(ref.Info, dbEmptySchema))
 
-	tc.WithHereInfo(ref.Info)
-
 	args := []string{}
 
-	err = tc.BeforeTest(ref.Context(), args)
+	err = tc.BeforeTest(ref.Context(), ref.Dir, args)
 	r.NoError(err)
 }
 
@@ -126,9 +121,7 @@ func Test_Tester_BeforeTest_no_schema(t *testing.T) {
 	ref, err := testerRef()
 	r.NoError(err)
 
-	tc.WithHereInfo(ref.Info)
-
 	args := []string{}
-	err = tc.BeforeTest(ref.Context(), args)
+	err = tc.BeforeTest(ref.Context(), ref.Dir, args)
 	r.NoError(err)
 }

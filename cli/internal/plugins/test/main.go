@@ -8,9 +8,10 @@ import (
 
 	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
+	"github.com/gobuffalo/here"
 )
 
-func (tc *Cmd) Main(ctx context.Context, args []string) error {
+func (tc *Cmd) Main(ctx context.Context, root string, args []string) error {
 	ioe := plugins.CtxIO(ctx)
 
 	plugs := tc.ScopedPlugins()
@@ -29,7 +30,7 @@ func (tc *Cmd) Main(ctx context.Context, args []string) error {
 		}
 	}
 	if ti != nil {
-		return ti.Test(ctx, args[1:])
+		return ti.Test(ctx, root, args[1:])
 	}
 
 	for _, a := range args {
@@ -46,39 +47,39 @@ func (tc *Cmd) Main(ctx context.Context, args []string) error {
 			if !ok {
 				err = fmt.Errorf("%s", e)
 			}
-			tc.afterTest(ctx, args, err)
+			tc.afterTest(ctx, root, args, err)
 		}
 	}()
 
-	if err = tc.beforeTest(ctx, args); err != nil {
-		return tc.afterTest(ctx, args, err)
+	if err = tc.beforeTest(ctx, root, args); err != nil {
+		return tc.afterTest(ctx, root, args, err)
 	}
 
-	err = tc.test(ctx, args) // go build ...
-	return tc.afterTest(ctx, args, err)
+	err = tc.test(ctx, root, args) // go build ...
+	return tc.afterTest(ctx, root, args, err)
 
 }
 
-func (tc *Cmd) test(ctx context.Context, args []string) error {
-	cmd, err := tc.Cmd(ctx, args)
+func (tc *Cmd) test(ctx context.Context, root string, args []string) error {
+	cmd, err := tc.Cmd(ctx, root, args)
 	if err != nil {
 		return err
 	}
 
 	for _, p := range tc.ScopedPlugins() {
 		if br, ok := p.(Runner); ok {
-			return br.RunTests(ctx, cmd)
+			return br.RunTests(ctx, root, cmd)
 		}
 	}
 
 	return cmd.Run()
 }
 
-func (tc *Cmd) beforeTest(ctx context.Context, args []string) error {
+func (tc *Cmd) beforeTest(ctx context.Context, root string, args []string) error {
 	testers := tc.ScopedPlugins()
 	for _, p := range testers {
 		if bb, ok := p.(BeforeTester); ok {
-			if err := bb.BeforeTest(ctx, args); err != nil {
+			if err := bb.BeforeTest(ctx, root, args); err != nil {
 				return err
 			}
 		}
@@ -86,11 +87,11 @@ func (tc *Cmd) beforeTest(ctx context.Context, args []string) error {
 	return nil
 }
 
-func (tc *Cmd) afterTest(ctx context.Context, args []string, err error) error {
+func (tc *Cmd) afterTest(ctx context.Context, root string, args []string, err error) error {
 	testers := tc.ScopedPlugins()
 	for _, p := range testers {
 		if bb, ok := p.(AfterTester); ok {
-			if err := bb.AfterTest(ctx, args, err); err != nil {
+			if err := bb.AfterTest(ctx, root, args, err); err != nil {
 				return err
 			}
 		}
@@ -98,12 +99,12 @@ func (tc *Cmd) afterTest(ctx context.Context, args []string, err error) error {
 	return err
 }
 
-func (tc *Cmd) Cmd(ctx context.Context, args []string) (*exec.Cmd, error) {
+func (tc *Cmd) Cmd(ctx context.Context, root string, args []string) (*exec.Cmd, error) {
 	if len(args) == 0 {
 		args = append(args, "./...")
 	}
 
-	args, err := tc.buildArgs(ctx, args)
+	args, err := tc.buildArgs(ctx, root, args)
 	if err != nil {
 		return nil, err
 	}
@@ -123,8 +124,8 @@ func (tc *Cmd) Cmd(ctx context.Context, args []string) (*exec.Cmd, error) {
 	return c, nil
 }
 
-func (tc *Cmd) buildArgs(ctx context.Context, args []string) ([]string, error) {
-	args, err := tc.pluginArgs(ctx, args)
+func (tc *Cmd) buildArgs(ctx context.Context, root string, args []string) ([]string, error) {
+	args, err := tc.pluginArgs(ctx, root, args)
 	if err != nil {
 		return nil, err
 	}
@@ -170,8 +171,8 @@ func (tc *Cmd) reducePairedArg(key string, args []string) []string {
 	return nargs
 }
 
-func (tc *Cmd) pluginArgs(ctx context.Context, args []string) ([]string, error) {
-	info, err := tc.HereInfo()
+func (tc *Cmd) pluginArgs(ctx context.Context, root string, args []string) ([]string, error) {
+	info, err := here.Dir(root)
 	if err != nil {
 		return nil, err
 	}

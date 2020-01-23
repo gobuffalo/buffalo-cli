@@ -20,7 +20,7 @@ func (b *tester) Name() string {
 	return b.name
 }
 
-func (b *tester) Test(ctx context.Context, args []string) error {
+func (b *tester) Test(ctx context.Context, root string, args []string) error {
 	b.args = args
 	return b.err
 }
@@ -40,7 +40,7 @@ func (b *beforeTester) Name() string {
 	return b.name
 }
 
-func (b *beforeTester) BeforeTest(ctx context.Context, args []string) error {
+func (b *beforeTester) BeforeTest(ctx context.Context, root string, args []string) error {
 	b.args = args
 	return b.err
 }
@@ -60,7 +60,7 @@ func (b *afterTester) Name() string {
 	return b.name
 }
 
-func (b *afterTester) AfterTest(ctx context.Context, args []string, err error) error {
+func (b *afterTester) AfterTest(ctx context.Context, root string, args []string, err error) error {
 	b.args = args
 	b.err = err
 	return err
@@ -94,7 +94,7 @@ func (bladeRunner) Name() string {
 	return "blade"
 }
 
-func (b *bladeRunner) RunTests(ctx context.Context, cmd *exec.Cmd) error {
+func (b *bladeRunner) RunTests(ctx context.Context, root string, cmd *exec.Cmd) error {
 	b.cmd = cmd
 	return b.err
 }

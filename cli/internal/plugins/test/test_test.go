@@ -22,7 +22,7 @@ func Test_Cmd_Main(t *testing.T) {
 	})
 
 	var args []string
-	err := bc.Main(context.Background(), args)
+	err := bc.Main(context.Background(), ".", args)
 	r.NoError(err)
 	r.NotNil(br.cmd)
 	r.Equal(exp, br.cmd.Args)
@@ -40,7 +40,7 @@ func Test_Cmd_Main_SubCommand(t *testing.T) {
 
 	args := []string{p.name, "a", "b", "c"}
 
-	err := bc.Main(context.Background(), args)
+	err := bc.Main(context.Background(), ".", args)
 	r.NoError(err)
 	r.Equal([]string{"a", "b", "c"}, p.args)
 }
@@ -57,7 +57,7 @@ func Test_Cmd_Main_SubCommand_err(t *testing.T) {
 
 	args := []string{p.name, "a", "b", "c"}
 
-	err := bc.Main(context.Background(), args)
+	err := bc.Main(context.Background(), ".", args)
 	r.Error(err)
 }
 
@@ -73,7 +73,7 @@ func Test_Cmd_Main_BeforeTesters(t *testing.T) {
 
 	var args []string
 
-	err := bc.Main(context.Background(), args)
+	err := bc.Main(context.Background(), ".", args)
 	r.NoError(err)
 }
 
@@ -89,7 +89,7 @@ func Test_Cmd_Main_BeforeTesters_err(t *testing.T) {
 
 	var args []string
 
-	err := bc.Main(context.Background(), args)
+	err := bc.Main(context.Background(), ".", args)
 	r.Error(err)
 }
 
@@ -105,7 +105,7 @@ func Test_Cmd_Main_AfterTesters(t *testing.T) {
 
 	var args []string
 
-	err := bc.Main(context.Background(), args)
+	err := bc.Main(context.Background(), ".", args)
 	r.NoError(err)
 }
 
@@ -122,7 +122,7 @@ func Test_Cmd_Main_AfterTesters_err(t *testing.T) {
 
 	var args []string
 
-	err := bc.Main(context.Background(), args)
+	err := bc.Main(context.Background(), ".", args)
 	r.Error(err)
 	r.Equal(err, a.err)
 }

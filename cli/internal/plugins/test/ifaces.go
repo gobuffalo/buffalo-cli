@@ -11,22 +11,22 @@ import (
 // 	buffalo test webpack
 type Tester interface {
 	plugins.Plugin
-	Test(ctx context.Context, args []string) error
+	Test(ctx context.Context, root string, args []string) error
 }
 
 type BeforeTester interface {
 	plugins.Plugin
-	BeforeTest(ctx context.Context, args []string) error
+	BeforeTest(ctx context.Context, root string, args []string) error
 }
 
 type AfterTester interface {
 	plugins.Plugin
-	AfterTest(ctx context.Context, args []string, err error) error
+	AfterTest(ctx context.Context, root string, args []string, err error) error
 }
 
 type Runner interface {
 	plugins.Plugin
-	RunTests(ctx context.Context, cmd *exec.Cmd) error
+	RunTests(ctx context.Context, root string, cmd *exec.Cmd) error
 }
 
 type Argumenter interface {

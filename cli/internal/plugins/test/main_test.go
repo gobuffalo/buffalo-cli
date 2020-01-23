@@ -26,7 +26,7 @@ func Test_Cmd_Cmd(t *testing.T) {
 
 	tc := &Cmd{}
 
-	cmd, err := tc.Cmd(ctx, args)
+	cmd, err := tc.Cmd(ctx, ".", args)
 	r.NoError(err)
 
 	cmpCmd(t, "go test ./...", cmd)
@@ -40,21 +40,21 @@ func Test_Cmd_Cmd_paths(t *testing.T) {
 
 	tc := &Cmd{}
 
-	cmd, err := tc.Cmd(ctx, args)
+	cmd, err := tc.Cmd(ctx, ".", args)
 	r.NoError(err)
 
 	cmpCmd(t, "go test ./...", cmd)
 
 	args = append(args, "-v")
 
-	cmd, err = tc.Cmd(ctx, args)
+	cmd, err = tc.Cmd(ctx, ".", args)
 	r.NoError(err)
 
 	cmpCmd(t, "go test -v ./...", cmd)
 
 	args = append(args, "./a")
 
-	cmd, err = tc.Cmd(ctx, args)
+	cmd, err = tc.Cmd(ctx, ".", args)
 	r.NoError(err)
 
 	cmpCmd(t, "go test -v ./a", cmd)
@@ -68,14 +68,14 @@ func Test_Cmd_Cmd_buildArgs(t *testing.T) {
 
 	tc := &Cmd{}
 
-	cmd, err := tc.Cmd(ctx, args)
+	cmd, err := tc.Cmd(ctx, ".", args)
 	r.NoError(err)
 
 	cmpCmd(t, "go test -tags you're ./...", cmd)
 
 	args = append(args, "-run", "Foo", "-tags", "it", "-v", "./...")
 
-	cmd, err = tc.Cmd(ctx, args)
+	cmd, err = tc.Cmd(ctx, ".", args)
 	r.NoError(err)
 
 	cmpCmd(t, "go test -tags you're it -run Foo -v ./...", cmd)
@@ -88,7 +88,7 @@ func Test_Cmd_Cmd_buildArgs(t *testing.T) {
 		}
 	})
 
-	cmd, err = tc.Cmd(ctx, args)
+	cmd, err = tc.Cmd(ctx, ".", args)
 	r.NoError(err)
 	cmpCmd(t, "go test -tags i you're it -failfast -run Foo -v ./...", cmd)
 }
