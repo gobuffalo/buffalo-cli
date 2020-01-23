@@ -14,5 +14,5 @@ type Tooler = ifaces.Tooler
 type Scripter = ifaces.Scripter
 
 type AssetBuilder interface {
-	BuildAssets(ctx context.Context, cmd *exec.Cmd) error
+	BuildAssets(ctx context.Context, root string, cmd *exec.Cmd) error
 }

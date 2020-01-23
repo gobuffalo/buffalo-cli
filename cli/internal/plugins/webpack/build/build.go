@@ -55,7 +55,7 @@ func (bc *Builder) Build(ctx context.Context, root string, args []string) error 
 	for _, p := range bc.ScopedPlugins() {
 		if br, ok := p.(AssetBuilder); ok {
 			fn = func() error {
-				return br.BuildAssets(ctx, c)
+				return br.BuildAssets(ctx, root, c)
 			}
 			break
 		}
