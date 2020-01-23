@@ -47,7 +47,7 @@ func (MigrationGen) Description() string {
 	return "Generate a fizz migration"
 }
 
-func (mg *MigrationGen) Generate(ctx context.Context, args []string) error {
+func (mg *MigrationGen) Generate(ctx context.Context, root string, args []string) error {
 	args = append([]string{"generate", "migration"}, args...)
 	cmd.RootCmd.SetArgs(args)
 	return cmd.RootCmd.Execute()

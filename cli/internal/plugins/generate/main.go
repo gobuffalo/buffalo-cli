@@ -9,7 +9,7 @@ import (
 )
 
 // Main implements cli.Cmd and is the entry point for `buffalo generate`
-func (cmd *Cmd) Main(ctx context.Context, args []string) error {
+func (cmd *Cmd) Main(ctx context.Context, root string, args []string) error {
 	ioe := plugins.CtxIO(ctx)
 	if len(args) == 0 {
 		if err := plugprint.Print(ioe.Stdout(), cmd); err != nil {
@@ -36,5 +36,5 @@ func (cmd *Cmd) Main(ctx context.Context, args []string) error {
 		return fmt.Errorf("unknown command %q", n)
 	}
 
-	return b.Generate(ctx, args[1:])
+	return b.Generate(ctx, root, args[1:])
 }

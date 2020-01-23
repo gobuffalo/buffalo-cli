@@ -44,7 +44,7 @@ func (Generator) Description() string {
 }
 
 // Generate implements generate.Generator and is the entry point for `buffalo generate model`
-func (mg *Generator) Generate(ctx context.Context, args []string) error {
+func (mg *Generator) Generate(ctx context.Context, root string, args []string) error {
 	args = append([]string{"generate", "model"}, args...)
 	cmd.RootCmd.SetArgs(args)
 	return cmd.RootCmd.Execute()
@@ -91,5 +91,5 @@ func (mg *Generator) GenerateResourceModels(ctx context.Context, root string, ar
 	}
 
 	run.With(g)
-	return mg.Generate(ctx, args)
+	return mg.Generate(ctx, root, args)
 }

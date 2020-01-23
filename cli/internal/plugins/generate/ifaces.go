@@ -10,5 +10,5 @@ import (
 // 	buffalo generate model
 type Generator interface {
 	plugins.Plugin
-	Generate(ctx context.Context, args []string) error
+	Generate(ctx context.Context, root string, args []string) error
 }

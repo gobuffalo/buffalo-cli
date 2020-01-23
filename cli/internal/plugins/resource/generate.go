@@ -210,7 +210,7 @@ func (g *Generator) afterGenerate(ctx context.Context, info here.Info, args []st
 }
 
 // Generate implements generate.Generator and is the entry point for `buffalo generate resource`
-func (g *Generator) Generate(ctx context.Context, args []string) error {
+func (g *Generator) Generate(ctx context.Context, root string, args []string) error {
 	if len(args) == 0 {
 		return fmt.Errorf("you must specify a name for the resource")
 	}
