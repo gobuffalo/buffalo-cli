@@ -36,23 +36,11 @@ type Generator struct {
 
 	flags     *pflag.FlagSet
 	help      bool
-	info      here.Info
 	pluginsFn plugins.PluginFeeder
 }
 
 func (g *Generator) WithPlugins(f plugins.PluginFeeder) {
 	g.pluginsFn = f
-}
-
-func (g *Generator) WithHereInfo(i here.Info) {
-	g.info = i
-}
-
-func (g *Generator) HereInfo() (here.Info, error) {
-	if g.info.IsZero() {
-		return here.Current()
-	}
-	return g.info, nil
 }
 
 func (g Generator) Name() string {
@@ -227,7 +215,7 @@ func (g *Generator) Generate(ctx context.Context, root string, args []string) er
 		return plugprint.Print(ioe.Stdout(), g)
 	}
 
-	info, err := g.HereInfo()
+	info, err := here.Dir(root)
 	if err != nil {
 		return err
 	}
