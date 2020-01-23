@@ -48,11 +48,11 @@ func (b *Builder) ScopedPlugins() []plugins.Plugin {
 }
 
 func (b *Builder) Build(ctx context.Context, root string, args []string) error {
-	return b.Package(ctx, ".", nil)
+	return b.Package(ctx, root, nil)
 }
 
 func (b *Builder) Package(ctx context.Context, root string, files []string) error {
-	info, err := here.Current()
+	info, err := here.Dir(root)
 	if err != nil {
 		return err
 	}
