@@ -34,13 +34,13 @@ func (cmd *Cmd) Description() string {
 
 // Info runs all of the plugins that implement the
 // `Informer` interface in order.
-func (cmd *Cmd) plugins(ctx context.Context, args []string) error {
+func (cmd *Cmd) plugins(ctx context.Context, root string, args []string) error {
 	for _, p := range cmd.ScopedPlugins() {
 		i, ok := p.(Informer)
 		if !ok {
 			continue
 		}
-		if err := i.Info(ctx, args); err != nil {
+		if err := i.Info(ctx, root, args); err != nil {
 			return err
 		}
 	}
@@ -65,6 +65,6 @@ func (cmd *Cmd) ScopedPlugins() []plugins.Plugin {
 // Main implements the `buffalo info` command. Buffalo's checks
 // are run first, then any plugins that implement plugins.Informer
 // will be run in order at the end.
-func (cmd *Cmd) Main(ctx context.Context, args []string) error {
+func (cmd *Cmd) Main(ctx context.Context, root string, args []string) error {
 	return nil
 }

@@ -10,5 +10,5 @@ import (
 // to `buffalo info`
 type Informer interface {
 	plugins.Plugin
-	Info(ctx context.Context, args []string) error
+	Info(ctx context.Context, root string, args []string) error
 }
