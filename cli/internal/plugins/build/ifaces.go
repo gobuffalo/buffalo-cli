@@ -10,7 +10,7 @@ import (
 )
 
 // Builder is a sub-command of buffalo build.
-// 	buffalo build assets
+// 	buffalo build webpack
 type Builder interface {
 	plugins.Plugin
 	Build(ctx context.Context, args []string) error

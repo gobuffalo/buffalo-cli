@@ -67,7 +67,7 @@ func (b Cmd) String() string {
 }
 
 func (Cmd) Description() string {
-	return "Build the application binary, including bundling of assets (packr & webpack)"
+	return "Build the application binary, including bundling of webpack (packr & webpack)"
 }
 
 func (bc *Cmd) SubCommands() []plugins.Plugin {

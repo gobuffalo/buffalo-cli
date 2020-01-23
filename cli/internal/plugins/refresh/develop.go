@@ -105,7 +105,7 @@ func (dev *Developer) config(root string) (*refresh.Configuration, error) {
 
 	c := &refresh.Configuration{
 		AppRoot:            root,
-		IgnoredFolders:     []string{"vendor", "log", "logs", "assets", "public", "grifts", "tmp", "bin", "node_modules", ".sass-cache"},
+		IgnoredFolders:     []string{"vendor", "log", "logs", "webpack", "public", "grifts", "tmp", "bin", "node_modules", ".sass-cache"},
 		IncludedExtensions: []string{".go", ".mod", ".env"},
 		BuildPath:          "tmp",
 		BuildDelay:         dur,
