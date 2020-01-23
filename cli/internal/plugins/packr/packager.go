@@ -17,7 +17,7 @@ var _ plugprint.NamedCommand
 
 type Packager struct{}
 
-func (b *Packager) BeforeBuild(ctx context.Context, args []string) error {
+func (b *Packager) BeforeBuild(ctx context.Context, root string, args []string) error {
 	return jam.Clean()
 }
 

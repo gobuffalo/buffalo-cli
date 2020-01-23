@@ -74,7 +74,7 @@ func (bc *Cmd) GoCmd(ctx context.Context) (*exec.Cmd, error) {
 	return cmd, nil
 }
 
-func (bc *Cmd) build(ctx context.Context, args []string) error {
+func (bc *Cmd) build(ctx context.Context, root string, args []string) error {
 	cmd, err := bc.GoCmd(ctx)
 	if err != nil {
 		return err

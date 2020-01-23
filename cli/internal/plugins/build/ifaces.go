@@ -13,17 +13,17 @@ import (
 // 	buffalo build webpack
 type Builder interface {
 	plugins.Plugin
-	Build(ctx context.Context, args []string) error
+	Build(ctx context.Context, root string, args []string) error
 }
 
 type BeforeBuilder interface {
 	plugins.Plugin
-	BeforeBuild(ctx context.Context, args []string) error
+	BeforeBuild(ctx context.Context, root string, args []string) error
 }
 
 type AfterBuilder interface {
 	plugins.Plugin
-	AfterBuild(ctx context.Context, args []string, err error) error
+	AfterBuild(ctx context.Context, root string, args []string, err error) error
 }
 
 type Flagger interface {

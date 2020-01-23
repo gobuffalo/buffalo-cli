@@ -147,7 +147,7 @@ func (bc *MainFile) generateNewMain(ctx context.Context, info here.Info, version
 	return nil
 }
 
-func (bc *MainFile) BeforeBuild(ctx context.Context, args []string) error {
+func (bc *MainFile) BeforeBuild(ctx context.Context, root string, args []string) error {
 	info, err := here.Current()
 	if err != nil {
 		return err
@@ -171,7 +171,7 @@ func (bc *MainFile) BeforeBuild(ctx context.Context, args []string) error {
 
 var _ AfterBuilder = &MainFile{}
 
-func (bc *MainFile) AfterBuild(ctx context.Context, args []string, err error) error {
+func (bc *MainFile) AfterBuild(ctx context.Context, root string, args []string, err error) error {
 	info, err := here.Current()
 	if err != nil {
 		return err

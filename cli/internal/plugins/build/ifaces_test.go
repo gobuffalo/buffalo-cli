@@ -23,7 +23,7 @@ func (b *builder) Name() string {
 	return b.name
 }
 
-func (b *builder) Build(ctx context.Context, args []string) error {
+func (b *builder) Build(ctx context.Context, root string, args []string) error {
 	b.args = args
 	return b.err
 }
@@ -43,7 +43,7 @@ func (b *beforeBuilder) Name() string {
 	return b.name
 }
 
-func (b *beforeBuilder) BeforeBuild(ctx context.Context, args []string) error {
+func (b *beforeBuilder) BeforeBuild(ctx context.Context, root string, args []string) error {
 	b.args = args
 	return b.err
 }
@@ -63,7 +63,7 @@ func (b *afterBuilder) Name() string {
 	return b.name
 }
 
-func (b *afterBuilder) AfterBuild(ctx context.Context, args []string, err error) error {
+func (b *afterBuilder) AfterBuild(ctx context.Context, root string, args []string, err error) error {
 	b.args = args
 	b.err = err
 	return err

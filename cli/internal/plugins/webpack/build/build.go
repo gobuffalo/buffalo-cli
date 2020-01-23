@@ -17,13 +17,13 @@ type packageJSON struct {
 
 // BeforeBuild implements the build.BeforeBuilder interface to
 // hook into the `buffalo build` lifecycle.
-func (a *Builder) BeforeBuild(ctx context.Context, args []string) error {
-	return a.Build(ctx, args)
+func (a *Builder) BeforeBuild(ctx context.Context, root string, args []string) error {
+	return a.Build(ctx, root, args)
 }
 
 // Build implements the build.Builder interface to so it can be run
 // as `buffalo build webpack`.
-func (bc *Builder) Build(ctx context.Context, args []string) error {
+func (bc *Builder) Build(ctx context.Context, root string, args []string) error {
 	var help bool
 	flags := bc.Flags()
 	flags.StringVarP(&bc.Environment, "environment", "", "development", "set the environment for the binary")
