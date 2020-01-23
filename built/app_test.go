@@ -11,10 +11,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type IniterFn func(ctx context.Context, args []string) error
+type IniterFn func(ctx context.Context, root string, args []string) error
 
-func (i IniterFn) BuiltInit(ctx context.Context, args []string) error {
-	return i(ctx, args)
+func (i IniterFn) BuiltInit(ctx context.Context, root string, args []string) error {
+	return i(ctx, root, args)
 }
 
 func WithIniter(p plugins.Plugin, fn IniterFn) plugins.Plugin {
@@ -50,7 +50,7 @@ func Test_App_No_Args_Fallthrough(t *testing.T) {
 
 	var res bool
 	app := &App{
-		Fallthrough: func(ctx context.Context, args []string) error {
+		Fallthrough: func(ctx context.Context, root string, args []string) error {
 			res = true
 			return nil
 		},
@@ -68,7 +68,7 @@ func Test_App_With_Args_Fallthrough(t *testing.T) {
 
 	var res bool
 	app := &App{
-		Fallthrough: func(ctx context.Context, args []string) error {
+		Fallthrough: func(ctx context.Context, root string, args []string) error {
 			res = true
 			return nil
 		},
@@ -86,7 +86,7 @@ func Test_App_Init_Plugins(t *testing.T) {
 	var res bool
 	var pres bool
 
-	fn := func(ctx context.Context, args []string) error {
+	fn := func(ctx context.Context, root string, args []string) error {
 		pres = true
 		return nil
 	}
@@ -116,7 +116,7 @@ func Test_App_Init_Plugins_Error(t *testing.T) {
 	var res bool
 	var pres bool
 	exp := fmt.Errorf("boom")
-	fn := func(ctx context.Context, args []string) error {
+	fn := func(ctx context.Context, root string, args []string) error {
 		return exp
 	}
 
