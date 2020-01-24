@@ -2,11 +2,8 @@ module github.com/gobuffalo/buffalo-cli/v2
 
 go 1.13
 
-replace github.com/gobuffalo/buffalo-cli/v2/plugins => ./plugins
-
 require (
 	github.com/gobuffalo/attrs v0.1.0
-	github.com/gobuffalo/buffalo-cli/v2/plugins v0.0.0-00010101000000-000000000000
 	github.com/gobuffalo/fizz v1.9.5
 	github.com/gobuffalo/flect v0.2.0
 	github.com/gobuffalo/genny/v2 v2.0.5
