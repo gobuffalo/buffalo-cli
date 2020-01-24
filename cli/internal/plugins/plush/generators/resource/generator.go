@@ -59,7 +59,7 @@ func (g *Generator) GenerateResourceTemplates(ctx context.Context, root string, 
 	}
 	opts.Folder = opts.Name.Folder().Pluralize().String()
 
-	fp := pkger.Include("github.com/gobuffalo/buffalo-cli/v2:/cli/internal/plugins/plush/internal/generators/resource/templates")
+	fp := pkger.Include("github.com/gobuffalo/buffalo-cli/v2:/cli/internal/plugins/plush/generators/resource/templates")
 
 	err = pkger.Walk(fp, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
