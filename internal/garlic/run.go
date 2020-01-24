@@ -69,20 +69,3 @@ func Run(ctx context.Context, root string, args []string) error {
 	return nil
 
 }
-
-func buildTags(ctx context.Context, info here.Info) ([]string, error) {
-	var args []string
-	dy := filepath.Join(info.Dir, "database.yml")
-	if _, err := os.Stat(dy); err != nil {
-		return args, nil
-	}
-
-	b, err := ioutil.ReadFile(dy)
-	if err != nil {
-		return nil, err
-	}
-	if bytes.Contains(b, []byte("sqlite")) {
-		args = append(args, "-tags", "sqlite")
-	}
-	return args, nil
-}

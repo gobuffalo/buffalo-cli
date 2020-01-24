@@ -73,6 +73,7 @@ func (bc *MainFile) Version(ctx context.Context, root string) (string, error) {
 		if !ok {
 			continue
 		}
+
 		s, err := bv.BuildVersion(ctx, root)
 		if err != nil {
 			return "", err
@@ -86,14 +87,13 @@ func (bc *MainFile) Version(ctx context.Context, root string) (string, error) {
 }
 
 func (bc *MainFile) generateNewMain(ctx context.Context, info here.Info, version string, ws ...io.Writer) error {
-	fmt.Println("version --> ", version)
-
 	var imports []string
 	for _, p := range bc.ScopedPlugins() {
 		bi, ok := p.(Importer)
 		if !ok {
 			continue
 		}
+
 		i, err := bi.BuildImports(ctx, info.Dir)
 		if err != nil {
 			return err
@@ -163,7 +163,7 @@ func (bc *MainFile) BeforeBuild(ctx context.Context, root string, args []string)
 		return err
 	}
 
-	if err := bc.generateNewMain(ctx, info, version, os.Stdout); err != nil {
+	if err := bc.generateNewMain(ctx, info, version); err != nil {
 		return err
 	}
 	return nil
@@ -172,7 +172,7 @@ func (bc *MainFile) BeforeBuild(ctx context.Context, root string, args []string)
 var _ AfterBuilder = &MainFile{}
 
 func (bc *MainFile) AfterBuild(ctx context.Context, root string, args []string, err error) error {
-	info, err := here.Current()
+	info, err := here.Dir(root)
 	if err != nil {
 		return err
 	}
@@ -189,7 +189,6 @@ func (bc *MainFile) renameMain(info here.Info, from string, to string) error {
 	if info.Name != "main" {
 		return fmt.Errorf("module %s is not a main", info.Name)
 	}
-	fmt.Println(from, "-->", to)
 
 	fset := token.NewFileSet()
 	pkgs, err := parser.ParseDir(fset, info.Dir, nil, 0)

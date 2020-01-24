@@ -65,3 +65,8 @@ type Runner interface {
 	plugins.Plugin
 	RunBuild(ctx context.Context, cmd *exec.Cmd) error
 }
+
+type Tagger interface {
+	plugins.Plugin
+	BuildTags(ctx context.Context, root string) ([]string, error)
+}

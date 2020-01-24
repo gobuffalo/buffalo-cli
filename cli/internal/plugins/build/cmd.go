@@ -76,6 +76,8 @@ func (bc *Cmd) ScopedPlugins() []plugins.Plugin {
 	var builders []plugins.Plugin
 	for _, p := range plugs {
 		switch p.(type) {
+		case Tagger:
+			builders = append(builders, p)
 		case Builder:
 			builders = append(builders, p)
 		case BeforeBuilder:
