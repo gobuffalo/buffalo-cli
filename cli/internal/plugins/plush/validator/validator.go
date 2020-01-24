@@ -12,15 +12,14 @@ import (
 	"github.com/gobuffalo/plush"
 )
 
-type Validator struct{}
-
+var _ build.TemplatesValidator = &Validator{}
 var _ plugins.Plugin = Validator{}
+
+type Validator struct{}
 
 func (b Validator) Name() string {
 	return "plush/validator"
 }
-
-var _ build.TemplatesValidator = &Validator{}
 
 func (b *Validator) ValidateTemplates(root string) error {
 	root = filepath.Join(root, "templates")
