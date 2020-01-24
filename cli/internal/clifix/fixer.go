@@ -91,7 +91,7 @@ import (
 	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 )
 
-func Buffalo(ctx context.Context, args []string) error {
+func Buffalo(ctx context.Context, root string, args []string) error {
 	fmt.Println("~~~~ Using {{.Name}}/cli.Buffalo ~~~")
 
 	buffalo, err := cli.New()
@@ -103,7 +103,7 @@ func Buffalo(ctx context.Context, args []string) error {
 		// prepend your plugins here
 	}, buffalo.Plugins...)
 
-	return buffalo.Main(ctx, args)
+	return buffalo.Main(ctx, root, args)
 }
 `
 
@@ -119,7 +119,11 @@ import (
 
 func main() {
 	ctx := context.Background()
-	if err := cli.Buffalo(ctx, os.Args[1:]); err != nil {
+	pwd, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err := cli.Buffalo(ctx, pwd, os.Args[1:]); err != nil {
 		log.Fatal(err)
 	}
 }
