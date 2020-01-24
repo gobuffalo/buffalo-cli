@@ -1,7 +1,10 @@
 package builder
 
 import (
+	"bytes"
 	"context"
+	"io/ioutil"
+	"os"
 	"path/filepath"
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/build"
@@ -12,6 +15,7 @@ import (
 
 var _ build.Importer = Builder{}
 var _ build.PackFiler = &Builder{}
+var _ build.Tagger = &Builder{}
 var _ build.Versioner = &Builder{}
 var _ plugins.Plugin = Builder{}
 
@@ -21,6 +25,23 @@ type Builder struct{}
 
 func (Builder) Name() string {
 	return "pop/builder"
+}
+
+func (bd *Builder) BuildTags(ctx context.Context, root string) ([]string, error) {
+	var args []string
+	dy := filepath.Join(root, "database.yml")
+	if _, err := os.Stat(dy); err != nil {
+		return args, nil
+	}
+
+	b, err := ioutil.ReadFile(dy)
+	if err != nil {
+		return nil, err
+	}
+	if bytes.Contains(b, []byte("sqlite")) {
+		args = append(args, "sqlite")
+	}
+	return args, nil
 }
 
 func (b *Builder) BuildVersion(ctx context.Context, root string) (string, error) {

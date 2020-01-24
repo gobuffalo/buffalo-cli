@@ -23,7 +23,10 @@ func (b *Packager) BeforeBuild(ctx context.Context, root string, args []string) 
 
 func (b *Packager) Package(ctx context.Context, root string, files []string) error {
 	if len(files) > 0 {
-		fmt.Printf("%s does not support additional files", b.Name())
+		fmt.Printf("%s does not support additional files\n", b.Name())
+		for _, f := range files {
+			fmt.Printf("\t> %s\n", f)
+		}
 	}
 	return jam.Pack(jam.PackOptions{
 		Roots: []string{root},

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"strings"
 	"time"
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/develop"
@@ -18,12 +19,15 @@ import (
 var _ develop.Developer = &Developer{}
 var _ plugins.NamedCommand = &Developer{}
 var _ plugins.Plugin = &Developer{}
+var _ plugins.PluginNeeder = &Developer{}
+var _ plugins.PluginScoper = &Developer{}
 
 type Developer struct {
-	Debug  bool
-	Config string
-	help   bool
-	flags  *pflag.FlagSet
+	Debug     bool
+	Config    string
+	help      bool
+	pluginsFn plugins.PluginFeeder
+	flags     *pflag.FlagSet
 }
 
 func (dev *Developer) Name() string {
@@ -32,6 +36,26 @@ func (dev *Developer) Name() string {
 
 func (dev *Developer) CmdName() string {
 	return "refresh"
+}
+
+func (dev *Developer) WithPlugins(f plugins.PluginFeeder) {
+	dev.pluginsFn = f
+}
+
+func (dev *Developer) ScopedPlugins() []plugins.Plugin {
+	var plugs []plugins.Plugin
+
+	if dev.pluginsFn == nil {
+		return plugs
+	}
+
+	for _, p := range dev.pluginsFn() {
+		switch p.(type) {
+		case Tagger:
+			plugs = append(plugs, p)
+		}
+	}
+	return plugs
 }
 
 func (dev *Developer) Develop(ctx context.Context, root string, args []string) error {
@@ -47,7 +71,7 @@ func (dev *Developer) Develop(ctx context.Context, root string, args []string) e
 
 	args = flags.Args()
 
-	c, err := dev.config(root)
+	c, err := dev.config(ctx, root)
 	if err != nil {
 		return err
 	}
@@ -68,7 +92,7 @@ func (dev *Developer) Develop(ctx context.Context, root string, args []string) e
 	return r.Start()
 }
 
-func (dev *Developer) config(root string) (*refresh.Configuration, error) {
+func (dev *Developer) config(ctx context.Context, root string) (*refresh.Configuration, error) {
 	if len(dev.Config) == 0 {
 		if _, err := os.Stat("./.buffalo.dev.yml"); err == nil {
 			dev.Config = "./.buffalo.dev.yml"
@@ -92,15 +116,42 @@ func (dev *Developer) config(root string) (*refresh.Configuration, error) {
 		return nil, err
 	}
 
+	var bflags []string
+	tags, err := dev.buildTags(ctx, root)
+	if err != nil {
+		return nil, err
+	}
+	if len(tags) > 0 {
+		bflags = append(bflags, "-tags", strings.Join(tags, " "))
+	}
+
 	c := &refresh.Configuration{
 		AppRoot:            root,
 		IgnoredFolders:     []string{"vendor", "log", "logs", "webpack", "public", "grifts", "tmp", "bin", "node_modules", ".sass-cache"},
 		IncludedExtensions: []string{".go", ".mod", ".env"},
 		BuildPath:          "tmp",
 		BuildDelay:         dur,
+		BuildFlags:         bflags,
 		BinaryName:         "",
 		EnableColors:       true,
 		LogName:            "buffalo",
 	}
 	return c, nil
+}
+
+func (dev *Developer) buildTags(ctx context.Context, root string) ([]string, error) {
+	var tags []string
+	for _, p := range dev.ScopedPlugins() {
+		t, ok := p.(Tagger)
+		if !ok {
+			continue
+		}
+		bt, err := t.BuildTags(ctx, root)
+		if err != nil {
+			return nil, err
+		}
+		tags = append(tags, bt...)
+	}
+
+	return tags, nil
 }

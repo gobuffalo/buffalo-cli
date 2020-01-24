@@ -7,6 +7,7 @@ import (
 	"context"
 	"log"
 	"os"
+	"time"
 
   {{if .WithFallthrough -}}
 	appcli "{{.Info.Module.Path}}/cli"
@@ -45,7 +46,11 @@ func main() {
 		}
 
 		ctx := context.Background()
-		return b.Main(ctx, os.Args[1:])
+		pwd, err := os.Getwd()
+		if err != nil {
+				return err
+		}
+		return b.Main(ctx, pwd, os.Args[1:])
 	}()
 
 	if err != nil {

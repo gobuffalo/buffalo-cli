@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
-	"testing"
 
 	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 	"github.com/gobuffalo/here"
@@ -43,8 +42,13 @@ func (bc *Cmd) GoCmd(ctx context.Context, root string) (*exec.Cmd, error) {
 
 	buildArgs = append(buildArgs, bc.BuildFlags...)
 
-	if len(bc.Tags) > 0 {
-		buildArgs = append(buildArgs, "-tags", bc.Tags)
+	tags, err := bc.buildTags(ctx, root)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(tags) > 0 {
+		buildArgs = append(buildArgs, "-tags", strings.Join(tags, " "))
 	}
 
 	flags := []string{}
@@ -68,11 +72,28 @@ func (bc *Cmd) GoCmd(ctx context.Context, root string) (*exec.Cmd, error) {
 	cmd.Stderr = ioe.Stderr()
 	cmd.Stdin = ioe.Stdin()
 
-	if testing.Verbose() {
-		fmt.Fprintln(ioe.Stdout(), cmd.Args)
+	return cmd, nil
+}
+
+func (cmd *Cmd) buildTags(ctx context.Context, root string) ([]string, error) {
+	var tags []string
+	if len(cmd.Tags) > 0 {
+		tags = append(tags, cmd.Tags)
 	}
 
-	return cmd, nil
+	for _, p := range cmd.ScopedPlugins() {
+		t, ok := p.(Tagger)
+		if !ok {
+			continue
+		}
+		bt, err := t.BuildTags(ctx, root)
+		if err != nil {
+			return nil, err
+		}
+		tags = append(tags, bt...)
+	}
+
+	return tags, nil
 }
 
 func (bc *Cmd) build(ctx context.Context, root string, args []string) error {
@@ -80,6 +101,7 @@ func (bc *Cmd) build(ctx context.Context, root string, args []string) error {
 	if err != nil {
 		return err
 	}
+	fmt.Println(cmd.Args)
 
 	for _, p := range bc.ScopedPlugins() {
 		if br, ok := p.(Runner); ok {
