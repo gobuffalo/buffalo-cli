@@ -7,9 +7,10 @@ import (
 )
 
 func (dev *Developer) Flags() *pflag.FlagSet {
-	if dev.flags != nil {
+	if dev.flags != nil && dev.flags.Parsed() {
 		return dev.flags
 	}
+
 	flags := pflag.NewFlagSet(dev.Name(), pflag.ContinueOnError)
 	flags.BoolVarP(&dev.help, "help", "h", false, "print this help")
 	flags.BoolVarP(&dev.Debug, "debug", "d", false, "turn on delve debugging")

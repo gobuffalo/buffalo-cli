@@ -15,10 +15,10 @@ func Test_Cmd_GoCmd(t *testing.T) {
 	bc := &Cmd{}
 
 	ctx := context.Background()
-	cmd, err := bc.GoCmd(ctx)
+	cmd, err := bc.GoCmd(ctx, ".")
 	r.NoError(err)
 
-	cli := filepath.Join("bin", "bufcli")
+	cli := filepath.Join("bin", "build")
 	if runtime.GOOS == "windows" {
 		cli += ".exe"
 	}
@@ -34,7 +34,7 @@ func Test_Cmd_GoCmd_Bin(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	cmd, err := bc.GoCmd(ctx)
+	cmd, err := bc.GoCmd(ctx, ".")
 	r.NoError(err)
 
 	n := "cli"
@@ -55,7 +55,7 @@ func Test_Cmd_GoCmd_Mod(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	cmd, err := bc.GoCmd(ctx)
+	cmd, err := bc.GoCmd(ctx, ".")
 	r.NoError(err)
 
 	n := "cli"
@@ -76,7 +76,7 @@ func Test_Cmd_GoCmd_Tags(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	cmd, err := bc.GoCmd(ctx)
+	cmd, err := bc.GoCmd(ctx, ".")
 	r.NoError(err)
 
 	n := "cli"
@@ -97,7 +97,7 @@ func Test_Cmd_GoCmd_Static(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	cmd, err := bc.GoCmd(ctx)
+	cmd, err := bc.GoCmd(ctx, ".")
 	r.NoError(err)
 
 	n := "cli"
@@ -118,7 +118,7 @@ func Test_Cmd_GoCmd_LDFlags(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	cmd, err := bc.GoCmd(ctx)
+	cmd, err := bc.GoCmd(ctx, ".")
 	r.NoError(err)
 
 	n := "cli"

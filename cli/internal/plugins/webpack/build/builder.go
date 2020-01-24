@@ -4,7 +4,6 @@ import (
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/build"
 	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
-	"github.com/gobuffalo/here"
 	"github.com/spf13/pflag"
 )
 
@@ -31,7 +30,6 @@ type Builder struct {
 	Skip       bool
 	Tool       string // default is npm
 
-	info      here.Info
 	pluginsFn plugins.PluginFeeder
 	flags     *pflag.FlagSet
 }
@@ -58,17 +56,6 @@ func (bc *Builder) ScopedPlugins() []plugins.Plugin {
 		}
 	}
 	return builders
-}
-
-func (a *Builder) WithHereInfo(i here.Info) {
-	a.info = i
-}
-
-func (a *Builder) HereInfo() (here.Info, error) {
-	if !a.info.IsZero() {
-		return a.info, nil
-	}
-	return here.Current()
 }
 
 func (a Builder) Name() string {

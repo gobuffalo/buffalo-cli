@@ -10,7 +10,6 @@ import (
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/test"
 	"github.com/gobuffalo/buffalo-cli/v2/plugins"
-	"github.com/gobuffalo/here"
 	"github.com/gobuffalo/pop/v5"
 )
 
@@ -19,7 +18,6 @@ var _ test.Argumenter = &Tester{}
 var _ test.BeforeTester = &Tester{}
 
 type Tester struct {
-	info here.Info
 }
 
 func (t *Tester) TestArgs(ctx context.Context, root string) ([]string, error) {
@@ -40,34 +38,19 @@ func (t *Tester) TestArgs(ctx context.Context, root string) ([]string, error) {
 	return args, nil
 }
 
-func (t *Tester) WithHereInfo(i here.Info) {
-	t.info = i
-}
-
-func (t *Tester) HereInfo() (here.Info, error) {
-	if t.info.IsZero() {
-		return here.Current()
-	}
-	return t.info, nil
-}
-
 func (Tester) Name() string {
 	return "pop/tester"
 }
 
-func (t *Tester) BeforeTest(ctx context.Context, args []string) error {
-	info, err := t.HereInfo()
-	if err != nil {
+func (t *Tester) BeforeTest(ctx context.Context, root string, args []string) error {
+	if err := pop.AddLookupPaths(root); err != nil {
 		return err
 	}
 
-	if err := pop.AddLookupPaths(info.Dir, info.Module.Dir); err != nil {
-		return err
-	}
-
+	var err error
 	db, ok := ctx.Value("tx").(*pop.Connection)
 	if !ok {
-		if _, err := os.Stat(filepath.Join(info.Dir, "database.yml")); err != nil {
+		if _, err := os.Stat(filepath.Join(root, "database.yml")); err != nil {
 			return err
 		}
 
@@ -80,22 +63,22 @@ func (t *Tester) BeforeTest(ctx context.Context, args []string) error {
 	db.Dialect.DropDB()
 
 	// create the test db:
-	if err = db.Dialect.CreateDB(); err != nil {
+	if err := db.Dialect.CreateDB(); err != nil {
 		return err
 	}
 
 	for _, a := range args {
 		if a == "--force-migrations" {
-			return t.forceMigrations(db)
+			return t.forceMigrations(root, db)
 		}
 	}
 
-	schema, err := t.findSchema()
+	schema, err := t.findSchema(root)
 	if err != nil {
 		return err
 	}
 	if schema == nil {
-		return t.forceMigrations(db)
+		return t.forceMigrations(root, db)
 	}
 
 	if err = db.Dialect.LoadSchema(schema); err != nil {
@@ -104,13 +87,9 @@ func (t *Tester) BeforeTest(ctx context.Context, args []string) error {
 	return nil
 }
 
-func (t *Tester) forceMigrations(db *pop.Connection) error {
-	info, err := t.HereInfo()
-	if err != nil {
-		return err
-	}
+func (t *Tester) forceMigrations(root string, db *pop.Connection) error {
 
-	ms := filepath.Join(info.Dir, "migrations")
+	ms := filepath.Join(root, "migrations")
 	fm, err := pop.NewFileMigrator(ms, db)
 	if err != nil {
 		return err
@@ -118,13 +97,8 @@ func (t *Tester) forceMigrations(db *pop.Connection) error {
 	return fm.Up()
 }
 
-func (t *Tester) findSchema() (io.Reader, error) {
-	info, err := t.HereInfo()
-	if err != nil {
-		return nil, err
-	}
-
-	ms := filepath.Join(info.Dir, "migrations", "schema.sql")
+func (t *Tester) findSchema(root string) (io.Reader, error) {
+	ms := filepath.Join(root, "migrations", "schema.sql")
 	if f, err := os.Open(ms); err == nil {
 		return f, nil
 	}

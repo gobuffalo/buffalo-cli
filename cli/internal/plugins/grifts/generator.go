@@ -2,7 +2,6 @@ package grifts
 
 import (
 	"context"
-	"os"
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/generate"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/grifts/internal/griftgen"
@@ -35,7 +34,7 @@ func (Generator) Description() string {
 	return "Generate a grift task"
 }
 
-func (Generator) Generate(ctx context.Context, args []string) error {
+func (Generator) Generate(ctx context.Context, root string, args []string) error {
 	run := genny.WetRunner(context.Background())
 
 	opts := &griftgen.Options{}
@@ -46,8 +45,7 @@ func (Generator) Generate(ctx context.Context, args []string) error {
 	}
 	run.With(g)
 
-	pwd, _ := os.Getwd()
-	g, err = gogen.Fmt(pwd)
+	g, err = gogen.Fmt(root)
 	if err != nil {
 		return err
 	}

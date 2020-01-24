@@ -17,7 +17,7 @@ func (v *commandRunner) Name() string {
 	return "commandRunner"
 }
 
-func (v *commandRunner) RunBzrCommand(ctx context.Context, cmd *exec.Cmd) error {
+func (v *commandRunner) RunBzrCommand(ctx context.Context, root string, cmd *exec.Cmd) error {
 	v.cmd = cmd
 	if len(v.stdout) > 0 {
 		v.cmd.Stdout.Write([]byte(v.stdout))

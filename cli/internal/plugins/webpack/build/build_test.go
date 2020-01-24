@@ -56,7 +56,7 @@ func Test_Builder_Build_Help(t *testing.T) {
 	ctx = plugins.WithStdout(ctx, stdout)
 	args := []string{"-h"}
 
-	err := bc.Build(ctx, args)
+	err := bc.Build(ctx, "", args)
 	r.NoError(err)
 	r.Contains(stdout.String(), bc.Description())
 }
@@ -70,14 +70,9 @@ func Test_Builder_Build(t *testing.T) {
 
 	defer os.RemoveAll(info.Dir)
 
-	pwd, err := os.Getwd()
-	r.NoError(err)
-	defer os.Chdir(pwd)
-
-	os.Chdir(info.Dir)
+	root := info.Dir
 
 	bc := &Builder{}
-	bc.WithHereInfo(info)
 
 	br := &bladeRunner{}
 	bc.WithPlugins(func() []plugins.Plugin {
@@ -90,7 +85,7 @@ func Test_Builder_Build(t *testing.T) {
 
 	args := []string{}
 
-	err = bc.Build(ctx, args)
+	err := bc.Build(ctx, root, args)
 	r.NoError(err)
 	r.Equal(exp, br.cmd.Args)
 }
@@ -114,7 +109,7 @@ func Test_Builder_Build_Skip(t *testing.T) {
 
 	args := []string{"--skip-webpack"}
 
-	err := bc.Build(ctx, args)
+	err := bc.Build(ctx, "", args)
 	r.NoError(err)
 	r.Empty(stdout.String())
 }

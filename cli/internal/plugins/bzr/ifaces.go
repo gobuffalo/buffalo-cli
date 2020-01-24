@@ -12,14 +12,14 @@ import (
 // control of the exec.Cmd to the first plugin that implements this
 // interface.
 type CommandRunner interface {
-	RunBzrCommand(ctx context.Context, cmd *exec.Cmd) error
+	RunBzrCommand(ctx context.Context, root string, cmd *exec.Cmd) error
 }
 
 //cmdRunnerFn ...
-type cmdRunnerFn func(ctx context.Context, cmd *exec.Cmd) error
+type cmdRunnerFn func(ctx context.Context, root string, cmd *exec.Cmd) error
 
-func (fn cmdRunnerFn) RunBzrCommand(ctx context.Context, cmd *exec.Cmd) error {
-	return fn(ctx, cmd)
+func (fn cmdRunnerFn) RunBzrCommand(ctx context.Context, root string, cmd *exec.Cmd) error {
+	return fn(ctx, root, cmd)
 }
 
 func (cmdRunnerFn) Name() string {

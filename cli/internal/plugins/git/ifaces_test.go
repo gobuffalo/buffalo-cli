@@ -6,6 +6,7 @@ import (
 )
 
 type commandRunner struct {
+	root   string
 	cmd    *exec.Cmd
 	stdout string
 	err    error
@@ -17,8 +18,9 @@ func (v *commandRunner) Name() string {
 
 var _ CommandRunner = &commandRunner{}
 
-func (v *commandRunner) RunGitCommand(ctx context.Context, cmd *exec.Cmd) error {
+func (v *commandRunner) RunGitCommand(ctx context.Context, root string, cmd *exec.Cmd) error {
 	v.cmd = cmd
+	v.root = root
 	if len(v.stdout) > 0 {
 		v.cmd.Stdout.Write([]byte(v.stdout))
 	}

@@ -10,13 +10,14 @@ import (
 	"testing"
 
 	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/here"
 	"github.com/markbates/safe"
 )
 
-func (bc *Cmd) GoCmd(ctx context.Context) (*exec.Cmd, error) {
+func (bc *Cmd) GoCmd(ctx context.Context, root string) (*exec.Cmd, error) {
 	buildArgs := []string{"build"}
 
-	info, err := bc.HereInfo()
+	info, err := here.Dir(root)
 	if err != nil {
 		return nil, err
 	}
@@ -74,8 +75,8 @@ func (bc *Cmd) GoCmd(ctx context.Context) (*exec.Cmd, error) {
 	return cmd, nil
 }
 
-func (bc *Cmd) build(ctx context.Context, args []string) error {
-	cmd, err := bc.GoCmd(ctx)
+func (bc *Cmd) build(ctx context.Context, root string, args []string) error {
+	cmd, err := bc.GoCmd(ctx, root)
 	if err != nil {
 		return err
 	}

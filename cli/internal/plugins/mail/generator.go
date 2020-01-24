@@ -2,7 +2,6 @@ package mail
 
 import (
 	"context"
-	"os"
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/generate"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/mail/internal/mailgen"
@@ -31,7 +30,7 @@ func (Generator) Description() string {
 	return "Generate a new mailer for Buffalo"
 }
 
-func (Generator) Generate(ctx context.Context, args []string) error {
+func (Generator) Generate(ctx context.Context, root string, args []string) error {
 	run := genny.WetRunner(context.Background())
 
 	opts := &mailgen.Options{
@@ -43,8 +42,7 @@ func (Generator) Generate(ctx context.Context, args []string) error {
 	}
 	run.WithGroup(gg)
 
-	pwd, _ := os.Getwd()
-	g, err := gogen.Fmt(pwd)
+	g, err := gogen.Fmt(root)
 	if err != nil {
 		return err
 	}

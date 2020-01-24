@@ -33,7 +33,6 @@ func Test_Builder_archive(t *testing.T) {
 	bc := &Builder{
 		Extract: true,
 	}
-	bc.WithHereInfo(info)
 
 	err = bc.archive(ctx, info.Dir, nil)
 	r.NoError(err)
@@ -66,7 +65,6 @@ func Test_Builder_archive_extract_to(t *testing.T) {
 		Extract:   true,
 		ExtractTo: "wolverine",
 	}
-	bc.WithHereInfo(info)
 
 	err = bc.archive(ctx, info.Dir, nil)
 	r.NoError(err)

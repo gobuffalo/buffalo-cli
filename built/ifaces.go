@@ -12,5 +12,5 @@ import (
 // are run.
 type Initer interface {
 	plugins.Plugin
-	BuiltInit(ctx context.Context, args []string) error
+	BuiltInit(ctx context.Context, root string, args []string) error
 }

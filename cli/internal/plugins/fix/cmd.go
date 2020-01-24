@@ -6,7 +6,6 @@ import (
 
 	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
-	"github.com/gobuffalo/here"
 	"github.com/markbates/safe"
 	"github.com/spf13/pflag"
 )
@@ -18,21 +17,9 @@ var _ plugprint.Describer = &Cmd{}
 var _ plugprint.SubCommander = &Cmd{}
 
 type Cmd struct {
-	info      here.Info
 	flags     *pflag.FlagSet
 	help      bool
 	pluginsFn plugins.PluginFeeder
-}
-
-func (cmd *Cmd) WithHereInfo(i here.Info) {
-	cmd.info = i
-}
-
-func (cmd *Cmd) HereInfo() (here.Info, error) {
-	if cmd.info.IsZero() {
-		return here.Current()
-	}
-	return cmd.info, nil
 }
 
 func (fc *Cmd) WithPlugins(f plugins.PluginFeeder) {
@@ -102,7 +89,7 @@ func (fc *Cmd) fixPlugins(ctx context.Context, root string, args []string) error
 
 }
 
-func (fc *Cmd) Main(ctx context.Context, args []string) error {
+func (fc *Cmd) Main(ctx context.Context, root string, args []string) error {
 	flags := fc.Flags()
 
 	if err := flags.Parse(args); err != nil {
@@ -115,12 +102,6 @@ func (fc *Cmd) Main(ctx context.Context, args []string) error {
 	if fc.help {
 		return plugprint.Print(out, fc)
 	}
-
-	info, err := fc.HereInfo()
-	if err != nil {
-		return err
-	}
-	root := info.Dir
 
 	if len(args) > 0 {
 		return fc.fixPlugins(ctx, root, args)

@@ -2,26 +2,13 @@ package develop
 
 import (
 	"github.com/gobuffalo/buffalo-cli/v2/plugins"
-	"github.com/gobuffalo/here"
 	"github.com/spf13/pflag"
 )
 
 type Cmd struct {
 	pluginsFn plugins.PluginFeeder
-	info      here.Info
 	flags     *pflag.FlagSet
 	help      bool
-}
-
-func (cmd *Cmd) WithHereInfo(i here.Info) {
-	cmd.info = i
-}
-
-func (cmd *Cmd) HereInfo() (here.Info, error) {
-	if cmd.info.IsZero() {
-		return here.Current()
-	}
-	return cmd.info, nil
 }
 
 func (cmd *Cmd) WithPlugins(f plugins.PluginFeeder) {

@@ -21,7 +21,7 @@ func Test_Buffalo_Help(t *testing.T) {
 
 	args := []string{"-h"}
 
-	err := b.Main(ctx, args)
+	err := b.Main(ctx, "", args)
 	r.NoError(err)
 
 	r.Contains(bb.String(), b.Description())
@@ -44,7 +44,7 @@ func Test_Buffalo_Main_SubCommand(t *testing.T) {
 	exp := []string{"hello"}
 	args = append(args, exp...)
 
-	err := b.Main(ctx, args)
+	err := b.Main(ctx, "", args)
 	r.NoError(err)
 	r.Equal(exp, c.args)
 }
@@ -66,7 +66,7 @@ func Test_Buffalo_Main_SubCommand_Alias(t *testing.T) {
 	exp := []string{"hello"}
 	args = append(args, exp...)
 
-	err := b.Main(ctx, args)
+	err := b.Main(ctx, "", args)
 	r.NoError(err)
 	r.Equal(exp, c.args)
 }

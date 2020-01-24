@@ -58,7 +58,7 @@ func (vc *Cmd) Flags() *pflag.FlagSet {
 	return flags
 }
 
-func (vc *Cmd) Main(ctx context.Context, args []string) error {
+func (vc *Cmd) Main(ctx context.Context, root string, args []string) error {
 	flags := vc.Flags()
 	if err := flags.Parse(args); err != nil {
 		return err

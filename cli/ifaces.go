@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/gobuffalo/buffalo-cli/v2/plugins"
-	"github.com/gobuffalo/here"
 )
 
 type Aliases = plugins.Aliases
@@ -14,14 +13,5 @@ type Aliases = plugins.Aliases
 // `Main` method is called to run that command.
 type Command interface {
 	plugins.Plugin
-	Main(ctx context.Context, args []string) error
-}
-
-// type NamedCommand interface {
-// 	Command
-// 	CmdName() string
-// }
-
-type WithHere interface {
-	WithHereInfo(i here.Info)
+	Main(ctx context.Context, root string, args []string) error
 }

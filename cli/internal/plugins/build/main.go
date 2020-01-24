@@ -6,15 +6,16 @@ import (
 
 	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
+	"github.com/gobuffalo/here"
 	"github.com/markbates/safe"
 )
 
-func (bc *Cmd) beforeBuild(ctx context.Context, args []string) error {
+func (bc *Cmd) beforeBuild(ctx context.Context, root string, args []string) error {
 	builders := bc.ScopedPlugins()
 	for _, p := range builders {
 		if bb, ok := p.(BeforeBuilder); ok {
 			err := safe.RunE(func() error {
-				return bb.BeforeBuild(ctx, args)
+				return bb.BeforeBuild(ctx, root, args)
 			})
 			if err != nil {
 				return err
@@ -24,12 +25,12 @@ func (bc *Cmd) beforeBuild(ctx context.Context, args []string) error {
 	return nil
 }
 
-func (bc *Cmd) afterBuild(ctx context.Context, args []string, err error) error {
+func (bc *Cmd) afterBuild(ctx context.Context, root string, args []string, err error) error {
 	builders := bc.ScopedPlugins()
 	for _, p := range builders {
 		if bb, ok := p.(AfterBuilder); ok {
 			err := safe.RunE(func() error {
-				return bb.AfterBuild(ctx, args, err)
+				return bb.AfterBuild(ctx, root, args, err)
 			})
 			if err != nil {
 				return err
@@ -39,7 +40,7 @@ func (bc *Cmd) afterBuild(ctx context.Context, args []string, err error) error {
 	return err
 }
 
-func (bc *Cmd) Main(ctx context.Context, args []string) error {
+func (bc *Cmd) Main(ctx context.Context, root string, args []string) error {
 	flags := bc.Flags()
 	if err := flags.Parse(args); err != nil {
 		return err
@@ -51,11 +52,11 @@ func (bc *Cmd) Main(ctx context.Context, args []string) error {
 		return plugprint.Print(ioe.Stdout(), bc)
 	}
 
-	type builder func(ctx context.Context, args []string) error
+	type builder func(ctx context.Context, root string, args []string) error
 
 	var build builder = bc.build
 
-	info, err := bc.HereInfo()
+	info, err := here.Dir(root)
 	if err != nil {
 		return err
 	}
@@ -77,8 +78,8 @@ func (bc *Cmd) Main(ctx context.Context, args []string) error {
 		args = args[1:]
 	}
 
-	if err = bc.beforeBuild(ctx, args); err != nil {
-		return bc.afterBuild(ctx, args, err)
+	if err = bc.beforeBuild(ctx, root, args); err != nil {
+		return bc.afterBuild(ctx, root, args, err)
 	}
 
 	if !bc.SkipTemplateValidation {
@@ -91,7 +92,7 @@ func (bc *Cmd) Main(ctx context.Context, args []string) error {
 				return tv.ValidateTemplates(info.Dir)
 			})
 			if err != nil {
-				return bc.afterBuild(ctx, args, err)
+				return bc.afterBuild(ctx, root, args, err)
 			}
 		}
 	}
@@ -100,12 +101,12 @@ func (bc *Cmd) Main(ctx context.Context, args []string) error {
 		return bc.pack(ctx, info, plugs)
 	})
 	if err != nil {
-		return bc.afterBuild(ctx, args, err)
+		return bc.afterBuild(ctx, root, args, err)
 	}
 
 	err = safe.RunE(func() error {
-		return build(ctx, args)
+		return build(ctx, root, args)
 	})
 
-	return bc.afterBuild(ctx, args, err)
+	return bc.afterBuild(ctx, root, args, err)
 }

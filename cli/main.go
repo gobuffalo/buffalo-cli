@@ -11,7 +11,7 @@ import (
 )
 
 // Main is the entry point of the `buffalo` command
-func (b *Buffalo) Main(ctx context.Context, args []string) error {
+func (b *Buffalo) Main(ctx context.Context, root string, args []string) error {
 	var help bool
 	flags := pflag.NewFlagSet(b.String(), pflag.ContinueOnError)
 	flags.BoolVarP(&help, "help", "h", false, "print this help")
@@ -42,7 +42,7 @@ func (b *Buffalo) Main(ctx context.Context, args []string) error {
 	name := args[0]
 	if c, err := cmds.Find(name); err == nil {
 		return safe.RunE(func() error {
-			return c.Main(ctx, args[1:])
+			return c.Main(ctx, root, args[1:])
 		})
 	}
 	return fmt.Errorf("unknown command %s", name)

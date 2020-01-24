@@ -16,7 +16,7 @@ func (bladeRunner) Name() string {
 	return "blade"
 }
 
-func (b *bladeRunner) BuildAssets(ctx context.Context, cmd *exec.Cmd) error {
+func (b *bladeRunner) BuildAssets(ctx context.Context, root string, cmd *exec.Cmd) error {
 	b.cmd = cmd
 	return b.err
 }

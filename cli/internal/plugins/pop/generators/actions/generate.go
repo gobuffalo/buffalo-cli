@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 
 	"github.com/gobuffalo/flect/name"
+	"github.com/gobuffalo/here"
 	"github.com/gobuffalo/meta/v2"
 )
 
@@ -17,7 +18,7 @@ func (mg *Generator) GenerateResourceActions(ctx context.Context, root string, a
 		return fmt.Errorf("you must specify a resource")
 	}
 
-	info, err := mg.HereInfo()
+	info, err := here.Dir(root)
 	if err != nil {
 		return err
 	}

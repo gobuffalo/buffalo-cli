@@ -3,8 +3,13 @@ package test
 import (
 	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
-	"github.com/gobuffalo/here"
 )
+
+var _ plugins.Plugin = &Cmd{}
+var _ plugins.PluginNeeder = &Cmd{}
+var _ plugins.PluginScoper = &Cmd{}
+var _ plugprint.Describer = &Cmd{}
+var _ plugprint.SubCommander = &Cmd{}
 
 func Plugins() []plugins.Plugin {
 	return []plugins.Plugin{
@@ -13,40 +18,20 @@ func Plugins() []plugins.Plugin {
 }
 
 type Cmd struct {
-	Info      here.Info
 	pluginsFn plugins.PluginFeeder
 }
-
-var _ plugins.Plugin = &Cmd{}
 
 func (Cmd) Name() string {
 	return "test"
 }
 
-var _ plugprint.Describer = &Cmd{}
-
 func (Cmd) Description() string {
 	return "Run the tests for the Buffalo app."
 }
 
-func (b *Cmd) WithHereInfo(i here.Info) {
-	b.Info = i
-}
-
-func (b *Cmd) HereInfo() (here.Info, error) {
-	if !b.Info.IsZero() {
-		return b.Info, nil
-	}
-	return here.Current()
-}
-
-var _ plugins.PluginNeeder = &Cmd{}
-
 func (b *Cmd) WithPlugins(f plugins.PluginFeeder) {
 	b.pluginsFn = f
 }
-
-var _ plugins.PluginScoper = &Cmd{}
 
 func (bc *Cmd) ScopedPlugins() []plugins.Plugin {
 	var plugs []plugins.Plugin
@@ -71,8 +56,6 @@ func (bc *Cmd) ScopedPlugins() []plugins.Plugin {
 	}
 	return builders
 }
-
-var _ plugprint.SubCommander = &Cmd{}
 
 func (bc *Cmd) SubCommands() []plugins.Plugin {
 	var plugs []plugins.Plugin

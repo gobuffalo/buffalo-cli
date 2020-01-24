@@ -18,7 +18,7 @@ func Test_Commands_Find(t *testing.T) {
 	r.NoError(err)
 
 	exp := []string{"hi"}
-	err = cp.Main(context.Background(), exp)
+	err = cp.Main(context.Background(), "", exp)
 	r.NoError(err)
 	r.Equal(exp, c.args)
 }
@@ -34,7 +34,7 @@ func Test_Commands_Find_Aliases(t *testing.T) {
 	r.NoError(err)
 
 	exp := []string{"hi"}
-	err = cp.Main(context.Background(), exp)
+	err = cp.Main(context.Background(), "", exp)
 	r.NoError(err)
 	r.Equal(exp, c.args)
 
@@ -42,7 +42,7 @@ func Test_Commands_Find_Aliases(t *testing.T) {
 	r.NoError(err)
 
 	exp = []string{"hello", "goodbye"}
-	err = cp.Main(context.Background(), exp)
+	err = cp.Main(context.Background(), "", exp)
 	r.NoError(err)
 	r.Equal(exp, c.args)
 }
@@ -60,7 +60,7 @@ func Test_Commands_Find_NamedCommand(t *testing.T) {
 	r.NoError(err)
 
 	exp := []string{"hi"}
-	err = cp.Main(context.Background(), exp)
+	err = cp.Main(context.Background(), "", exp)
 	r.NoError(err)
 	r.Equal(exp, c.args)
 }

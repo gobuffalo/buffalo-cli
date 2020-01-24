@@ -24,17 +24,6 @@ type Developer struct {
 	Config string
 	help   bool
 	flags  *pflag.FlagSet
-	info   here.Info
-}
-
-func (dev *Developer) WithHereInfo(i here.Info) {
-	dev.info = i
-}
-func (dev *Developer) HereInfo() (here.Info, error) {
-	if dev.info.IsZero() {
-		return here.Current()
-	}
-	return dev.info, nil
 }
 
 func (dev *Developer) Name() string {
@@ -63,7 +52,7 @@ func (dev *Developer) Develop(ctx context.Context, root string, args []string) e
 		return err
 	}
 
-	info, err := dev.HereInfo()
+	info, err := here.Dir(root)
 	if err != nil {
 		return err
 	}

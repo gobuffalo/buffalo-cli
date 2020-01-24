@@ -20,6 +20,6 @@ func (Cmd) Aliases() []string {
 	return []string{"task", "tasks", "t"}
 }
 
-func (cmd *Cmd) Main(ctx context.Context, args []string) error {
+func (cmd *Cmd) Main(ctx context.Context, root string, args []string) error {
 	return grifts.Run("buffalo grifts", args)
 }

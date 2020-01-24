@@ -3,7 +3,6 @@ package build
 import (
 	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
-	"github.com/gobuffalo/here"
 	"github.com/spf13/pflag"
 )
 
@@ -34,20 +33,8 @@ type Cmd struct {
 	SkipTemplateValidation bool
 
 	help      bool
-	info      here.Info
 	pluginsFn plugins.PluginFeeder
 	flags     *pflag.FlagSet
-}
-
-func (cmd *Cmd) WithHereInfo(i here.Info) {
-	cmd.info = i
-}
-
-func (cmd *Cmd) HereInfo() (here.Info, error) {
-	if !cmd.info.IsZero() {
-		return cmd.info, nil
-	}
-	return here.Current()
 }
 
 func (cmd *Cmd) WithPlugins(f plugins.PluginFeeder) {

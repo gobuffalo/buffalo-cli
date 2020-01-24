@@ -10,7 +10,7 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-func (cmd *Cmd) SubCommand(ctx context.Context, name string, args []string) error {
+func (cmd *Cmd) SubCommand(ctx context.Context, root string, name string, args []string) error {
 	cmds := plugins.Commands(cmd.SubCommands())
 	p, err := cmds.Find(name)
 	if err != nil {
@@ -22,14 +22,10 @@ func (cmd *Cmd) SubCommand(ctx context.Context, name string, args []string) erro
 		return fmt.Errorf("%s is not a developer", name)
 	}
 
-	info, err := cmd.HereInfo()
-	if err != nil {
-		return err
-	}
-	return d.Develop(ctx, info.Dir, args)
+	return d.Develop(ctx, root, args)
 }
 
-func (cmd *Cmd) Main(ctx context.Context, args []string) error {
+func (cmd *Cmd) Main(ctx context.Context, root string, args []string) error {
 	if len(args) == 1 && args[0] == "-h" {
 		ioe := plugins.CtxIO(ctx)
 		return plugprint.Print(ioe.Stdout(), cmd)
@@ -40,7 +36,7 @@ func (cmd *Cmd) Main(ctx context.Context, args []string) error {
 			if strings.HasPrefix(n, "-") {
 				continue
 			}
-			return cmd.SubCommand(ctx, n, args[1:])
+			return cmd.SubCommand(ctx, root, n, args[1:])
 		}
 
 	}
@@ -52,11 +48,6 @@ func (cmd *Cmd) Main(ctx context.Context, args []string) error {
 
 	args = flags.Args()
 
-	info, err := cmd.HereInfo()
-	if err != nil {
-		return err
-	}
-
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
@@ -65,7 +56,7 @@ func (cmd *Cmd) Main(ctx context.Context, args []string) error {
 	for _, p := range cmd.ScopedPlugins() {
 		if d, ok := p.(Developer); ok {
 			wg.Go(func() error {
-				return d.Develop(ctx, info.Dir, args)
+				return d.Develop(ctx, root, args)
 			})
 		}
 	}

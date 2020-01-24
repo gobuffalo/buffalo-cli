@@ -13,7 +13,7 @@ type App struct {
 	Plugger      plugins.PluginScoper
 	BuildTime    string
 	BuildVersion string
-	Fallthrough  func(ctx context.Context, args []string) error
+	Fallthrough  func(ctx context.Context, root string, args []string) error
 	OriginalMain func()
 }
 
@@ -25,7 +25,7 @@ func (b *App) ScopedPlugins() []plugins.Plugin {
 	return b.Plugger.ScopedPlugins()
 }
 
-func (b *App) Main(ctx context.Context, args []string) error {
+func (b *App) Main(ctx context.Context, root string, args []string) error {
 	plugs := b.ScopedPlugins()
 
 	for _, p := range plugs {
@@ -33,7 +33,7 @@ func (b *App) Main(ctx context.Context, args []string) error {
 		if !ok {
 			continue
 		}
-		if err := bl.BuiltInit(ctx, args); err != nil {
+		if err := bl.BuiltInit(ctx, root, args); err != nil {
 			return err
 		}
 	}
@@ -49,7 +49,7 @@ func (b *App) Main(ctx context.Context, args []string) error {
 	if len(args) == 0 {
 		if b.OriginalMain == nil {
 			if b.Fallthrough != nil {
-				return b.Fallthrough(ctx, args)
+				return b.Fallthrough(ctx, root, args)
 			}
 			return nil
 		}
@@ -68,7 +68,7 @@ func (b *App) Main(ctx context.Context, args []string) error {
 		return nil
 	}
 	if b.Fallthrough != nil {
-		return b.Fallthrough(ctx, args)
+		return b.Fallthrough(ctx, root, args)
 	}
-	return garlic.Run(ctx, args)
+	return garlic.Run(ctx, root, args)
 }

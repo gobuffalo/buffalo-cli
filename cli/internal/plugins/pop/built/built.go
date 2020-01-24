@@ -16,7 +16,7 @@ func (Initer) Name() string {
 	return "pop/built/initer"
 }
 
-func (p *Initer) BuiltInit(ctx context.Context, args []string) error {
+func (p *Initer) BuiltInit(ctx context.Context, root string, args []string) error {
 	f, err := pkger.Open("/database.yml")
 	if err != nil {
 		return err

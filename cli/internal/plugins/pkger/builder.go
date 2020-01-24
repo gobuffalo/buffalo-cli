@@ -29,7 +29,7 @@ func (b *Builder) WithPlugins(f plugins.PluginFeeder) {
 	b.pluginsFn = f
 }
 
-func (b *Builder) AfterBuild(ctx context.Context, args []string, err error) error {
+func (b *Builder) AfterBuild(ctx context.Context, root string, args []string, err error) error {
 	p := b.OutPath
 	if len(p) == 0 {
 		p = outPath
@@ -47,12 +47,12 @@ func (b *Builder) ScopedPlugins() []plugins.Plugin {
 	return plugs
 }
 
-func (b *Builder) Build(ctx context.Context, args []string) error {
-	return b.Package(ctx, ".", nil)
+func (b *Builder) Build(ctx context.Context, root string, args []string) error {
+	return b.Package(ctx, root, nil)
 }
 
 func (b *Builder) Package(ctx context.Context, root string, files []string) error {
-	info, err := here.Current()
+	info, err := here.Dir(root)
 	if err != nil {
 		return err
 	}

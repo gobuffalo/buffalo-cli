@@ -23,7 +23,7 @@ func Test_Cmd(t *testing.T) {
 
 	args := []string{}
 
-	err := vc.Main(ctx, args)
+	err := vc.Main(ctx, ".", args)
 	r.NoError(err)
 
 	r.Contains(bb.String(), bufcli.Version)
@@ -41,7 +41,7 @@ func Test_Cmd_JSON(t *testing.T) {
 
 	args := []string{"--json"}
 
-	err := vc.Main(ctx, args)
+	err := vc.Main(ctx, ".", args)
 	r.NoError(err)
 
 	r.Contains(bb.String(), fmt.Sprintf("%q: %q", "version", bufcli.Version))
