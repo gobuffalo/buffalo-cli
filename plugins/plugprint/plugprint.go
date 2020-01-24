@@ -130,7 +130,7 @@ func stringer(p plugins.Plugin) string {
 	if s, ok := p.(fmt.Stringer); ok {
 		return s.String()
 	}
-	return p.Name()
+	return cmdName(p)
 }
 
 func desc(p plugins.Plugin) string {
