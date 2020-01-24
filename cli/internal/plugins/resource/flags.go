@@ -28,7 +28,7 @@ func (g *Generator) Flags() *pflag.FlagSet {
 	flags.BoolVar(&g.SkipModelTests, "skip-model-tests", false, "skip generating model tests")
 	flags.BoolVar(&g.SkipModels, "skip-models", false, "skip generating models")
 	flags.BoolVar(&g.SkipTemplateTests, "skip-template-tests", false, "skip generating template tests")
-	flags.BoolVar(&g.SkipTemplates, "Skip-templates", false, "skip generating templates")
+	flags.BoolVar(&g.SkipTemplates, "skip-templates", false, "skip generating templates")
 	flags.BoolVarP(&g.help, "help", "h", false, "print this help")
 
 	plugs := g.ScopedPlugins()

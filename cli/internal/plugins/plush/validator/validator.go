@@ -17,7 +17,7 @@ type Validator struct{}
 var _ plugins.Plugin = Validator{}
 
 func (b Validator) Name() string {
-	return "plush"
+	return "plush/validator"
 }
 
 var _ build.TemplatesValidator = &Validator{}
