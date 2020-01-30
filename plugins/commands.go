@@ -16,7 +16,7 @@ type Commands []Plugin
 func (commands Commands) Find(name string) (Plugin, error) {
 	name = path.Base(name)
 	for _, c := range commands {
-		names := []string{c.Name()}
+		names := []string{c.PluginName()}
 		if a, ok := c.(NamedCommand); ok {
 			names = append(names, a.CmdName())
 		}

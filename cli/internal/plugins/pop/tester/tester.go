@@ -38,7 +38,7 @@ func (t *Tester) TestArgs(ctx context.Context, root string) ([]string, error) {
 	return args, nil
 }
 
-func (Tester) Name() string {
+func (Tester) PluginName() string {
 	return "pop/tester"
 }
 

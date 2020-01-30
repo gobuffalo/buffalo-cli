@@ -41,7 +41,7 @@ func (cmd *Cmd) SubCommands() []plugins.Plugin {
 	return plugs
 }
 
-func (cmd *Cmd) Name() string {
+func (cmd *Cmd) PluginName() string {
 	return "develop/cmd"
 }
 

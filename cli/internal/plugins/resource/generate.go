@@ -42,7 +42,7 @@ func (g *Generator) WithPlugins(f plugins.PluginFeeder) {
 	g.pluginsFn = f
 }
 
-func (g Generator) Name() string {
+func (g Generator) PluginName() string {
 	return "resource"
 }
 
@@ -133,7 +133,7 @@ func (g *Generator) beforeGenerate(ctx context.Context, root string, args []stri
 			continue
 		}
 		err := safe.RunE(func() error {
-			fmt.Printf("[Resource] BeforeGenerator %s\n", p.Name())
+			fmt.Printf("[Resource] BeforeGenerator %s\n", p.PluginName())
 			return b.BeforeGenerateResource(ctx, root, args)
 		})
 		if err != nil {
@@ -186,7 +186,7 @@ func (g *Generator) afterGenerate(ctx context.Context, root string, args []strin
 			continue
 		}
 		err := safe.RunE(func() error {
-			fmt.Printf("[Resource] AfterGenerator %s\n", p.Name())
+			fmt.Printf("[Resource] AfterGenerator %s\n", p.PluginName())
 			return b.AfterGenerateResource(ctx, root, args, err)
 		})
 		if err != nil {
@@ -226,7 +226,7 @@ func (g *Generator) Generate(ctx context.Context, root string, args []string) er
 			continue
 		}
 		err := safe.RunE(func() error {
-			fmt.Printf("[Resource] ResourceGenerator %s\n", p.Name())
+			fmt.Printf("[Resource] ResourceGenerator %s\n", p.PluginName())
 			return gr.GenerateResource(ctx, root, args)
 		})
 		return g.afterGenerate(ctx, root, args, err)
@@ -265,7 +265,7 @@ func (g *Generator) generateActions(ctx context.Context, root string, args []str
 			continue
 		}
 		return safe.RunE(func() error {
-			fmt.Printf("[Resource] Actioner %s\n", p.Name())
+			fmt.Printf("[Resource] Actioner %s\n", p.PluginName())
 			return ag.GenerateResourceActions(ctx, root, args)
 		})
 	}
@@ -282,7 +282,7 @@ func (g *Generator) generateActionTests(ctx context.Context, root string, args [
 			continue
 		}
 		return safe.RunE(func() error {
-			fmt.Printf("[Resource] ActionTester %s\n", p.Name())
+			fmt.Printf("[Resource] ActionTester %s\n", p.PluginName())
 			return ag.GenerateResourceActionTests(ctx, root, args)
 		})
 	}
@@ -299,7 +299,7 @@ func (g *Generator) generateTemplates(ctx context.Context, root string, args []s
 			continue
 		}
 		return safe.RunE(func() error {
-			fmt.Printf("[Resource] Templater %s\n", p.Name())
+			fmt.Printf("[Resource] Templater %s\n", p.PluginName())
 			return ag.GenerateResourceTemplates(ctx, root, args)
 		})
 	}
@@ -316,7 +316,7 @@ func (g *Generator) generateTemplateTests(ctx context.Context, root string, args
 			continue
 		}
 		return safe.RunE(func() error {
-			fmt.Printf("[Resource] TemplateTester %s\n", p.Name())
+			fmt.Printf("[Resource] TemplateTester %s\n", p.PluginName())
 			return ag.GenerateResourceTemplateTests(ctx, root, args)
 		})
 	}
@@ -333,7 +333,7 @@ func (g *Generator) generateModels(ctx context.Context, root string, args []stri
 			continue
 		}
 		return safe.RunE(func() error {
-			fmt.Printf("[Resource] Modeler %s\n", p.Name())
+			fmt.Printf("[Resource] Modeler %s\n", p.PluginName())
 			return ag.GenerateResourceModels(ctx, root, args)
 		})
 	}
@@ -350,7 +350,7 @@ func (g *Generator) generateModelTests(ctx context.Context, root string, args []
 			continue
 		}
 		return safe.RunE(func() error {
-			fmt.Printf("[Resource] ModelTester %s\n", p.Name())
+			fmt.Printf("[Resource] ModelTester %s\n", p.PluginName())
 			return ag.GenerateResourceModelTests(ctx, root, args)
 		})
 	}
@@ -367,7 +367,7 @@ func (g *Generator) generateMigrations(ctx context.Context, root string, args []
 			continue
 		}
 		return safe.RunE(func() error {
-			fmt.Printf("[Resource] Migrationer %s\n", p.Name())
+			fmt.Printf("[Resource] Migrationer %s\n", p.PluginName())
 			return ag.GenerateResourceMigrations(ctx, root, args)
 		})
 	}
@@ -384,7 +384,7 @@ func (g *Generator) generateMigrationTests(ctx context.Context, root string, arg
 			continue
 		}
 		return safe.RunE(func() error {
-			fmt.Printf("[Resource] MigrationTester %s\n", p.Name())
+			fmt.Printf("[Resource] MigrationTester %s\n", p.PluginName())
 			return ag.GenerateResourceMigrationTests(ctx, root, args)
 		})
 	}

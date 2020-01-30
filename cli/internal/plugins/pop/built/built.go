@@ -12,7 +12,7 @@ var _ plugins.Plugin = Initer{}
 
 type Initer struct{}
 
-func (Initer) Name() string {
+func (Initer) PluginName() string {
 	return "pop/built/initer"
 }
 

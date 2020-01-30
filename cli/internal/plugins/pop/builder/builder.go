@@ -23,7 +23,7 @@ const filePath = "/database.yml"
 
 type Builder struct{}
 
-func (Builder) Name() string {
+func (Builder) PluginName() string {
 	return "pop/builder"
 }
 

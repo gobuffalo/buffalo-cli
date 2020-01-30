@@ -27,7 +27,7 @@ func (g *MigrationGen) Flags() *pflag.FlagSet {
 		return g.flags
 	}
 
-	flags := pflag.NewFlagSet(g.Name(), pflag.ContinueOnError)
+	flags := pflag.NewFlagSet(g.PluginName(), pflag.ContinueOnError)
 
 	flags.StringVarP(&g.Env, "env", "e", "development", "The environment you want to run migrations against. Will use $GO_ENV if set.")
 	flags.StringVarP(&g.MigrationType, "type", "", "fizz", "sets the type of migration files for model (sql or fizz)")

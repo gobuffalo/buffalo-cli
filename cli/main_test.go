@@ -39,7 +39,7 @@ func Test_Buffalo_Main_SubCommand(t *testing.T) {
 
 	ctx := context.Background()
 
-	args := []string{c.Name()}
+	args := []string{c.PluginName()}
 
 	exp := []string{"hello"}
 	args = append(args, exp...)

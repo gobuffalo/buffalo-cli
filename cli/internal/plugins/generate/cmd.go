@@ -28,7 +28,7 @@ func (*Cmd) Aliases() []string {
 	return []string{"g"}
 }
 
-func (b Cmd) Name() string {
+func (b Cmd) PluginName() string {
 	return "generate"
 }
 

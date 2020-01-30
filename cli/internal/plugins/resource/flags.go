@@ -20,7 +20,7 @@ func (g *Generator) Flags() *pflag.FlagSet {
 		return g.flags
 	}
 
-	flags := pflag.NewFlagSet(g.Name(), pflag.ContinueOnError)
+	flags := pflag.NewFlagSet(g.PluginName(), pflag.ContinueOnError)
 	flags.BoolVar(&g.SkipActionTests, "skip-action-tests", false, "skip generating action tests")
 	flags.BoolVar(&g.SkipActions, "skip-actions", false, "skip generating actions")
 	flags.BoolVar(&g.SkipMigrationTests, "skip-migration-tests", false, "skip generating migration tests")

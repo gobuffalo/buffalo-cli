@@ -12,7 +12,7 @@ type bladeRunner struct {
 	err error
 }
 
-func (bladeRunner) Name() string {
+func (bladeRunner) PluginName() string {
 	return "blade"
 }
 
@@ -29,7 +29,7 @@ type tooler struct {
 	err  error
 }
 
-func (tooler) Name() string {
+func (tooler) PluginName() string {
 	return "tooler"
 }
 

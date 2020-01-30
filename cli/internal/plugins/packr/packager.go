@@ -23,7 +23,7 @@ func (b *Packager) BeforeBuild(ctx context.Context, root string, args []string) 
 
 func (b *Packager) Package(ctx context.Context, root string, files []string) error {
 	if len(files) > 0 {
-		fmt.Printf("%s does not support additional files\n", b.Name())
+		fmt.Printf("%s does not support additional files\n", b.PluginName())
 		for _, f := range files {
 			fmt.Printf("\t> %s\n", f)
 		}
@@ -33,7 +33,7 @@ func (b *Packager) Package(ctx context.Context, root string, files []string) err
 	})
 }
 
-func (b Packager) Name() string {
+func (b Packager) PluginName() string {
 	return "packr"
 }
 

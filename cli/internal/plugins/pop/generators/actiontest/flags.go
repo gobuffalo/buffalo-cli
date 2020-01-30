@@ -26,7 +26,7 @@ func (g *Generator) Flags() *pflag.FlagSet {
 	if g.flags != nil && g.flags.Parsed() {
 		return g.flags
 	}
-	flags := pflag.NewFlagSet(g.Name(), pflag.ContinueOnError)
+	flags := pflag.NewFlagSet(g.PluginName(), pflag.ContinueOnError)
 
 	flags.StringVarP(&g.TestPkg, "test-pkg", "t", "", "name of the test package to use [default 'actions']")
 

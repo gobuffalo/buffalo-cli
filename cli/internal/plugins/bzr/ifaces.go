@@ -22,6 +22,6 @@ func (fn cmdRunnerFn) RunBzrCommand(ctx context.Context, root string, cmd *exec.
 	return fn(ctx, root, cmd)
 }
 
-func (cmdRunnerFn) Name() string {
+func (cmdRunnerFn) PluginName() string {
 	return "cmdRunnerFn"
 }

@@ -28,7 +28,7 @@ type Generator struct {
 	flags     *pflag.FlagSet
 }
 
-func (g *Generator) Name() string {
+func (g *Generator) PluginName() string {
 	return "plush/templates"
 }
 

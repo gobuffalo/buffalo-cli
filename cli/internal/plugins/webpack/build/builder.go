@@ -58,7 +58,7 @@ func (bc *Builder) ScopedPlugins() []plugins.Plugin {
 	return builders
 }
 
-func (a Builder) Name() string {
+func (a Builder) PluginName() string {
 	return "webpack/builder"
 }
 
@@ -71,5 +71,5 @@ func (a Builder) Description() string {
 }
 
 func (a Builder) String() string {
-	return a.Name()
+	return a.PluginName()
 }

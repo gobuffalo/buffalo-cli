@@ -65,7 +65,7 @@ func (b *Versioner) BuildVersion(ctx context.Context, root string) (string, erro
 // Name is the name of the plugin.
 // This will also be used for the cli sub-command
 // 	"pop" | "heroku" | "auth" | etc...
-func (b Versioner) Name() string {
+func (b Versioner) PluginName() string {
 	return "bzr"
 }
 

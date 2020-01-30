@@ -18,7 +18,7 @@ var _ plugprint.Describer = Generator{}
 
 type Generator struct{}
 
-func (Generator) Name() string {
+func (Generator) PluginName() string {
 	return "mail/generator"
 }
 

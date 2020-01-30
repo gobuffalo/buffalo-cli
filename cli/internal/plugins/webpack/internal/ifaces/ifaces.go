@@ -16,7 +16,7 @@ func (fn ToolerFn) AssetTool(ctx context.Context, root string) (string, error) {
 	return fn(ctx, root)
 }
 
-func (ToolerFn) Name() string {
+func (ToolerFn) PluginName() string {
 	return "ToolerFn"
 }
 

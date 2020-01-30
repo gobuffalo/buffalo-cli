@@ -14,7 +14,7 @@ func Test_Commands_Find(t *testing.T) {
 
 	cmds := Commands{c}
 
-	cp, err := cmds.Find(c.Name())
+	cp, err := cmds.Find(c.PluginName())
 	r.NoError(err)
 
 	exp := []string{"hi"}
@@ -30,7 +30,7 @@ func Test_Commands_Find_Aliases(t *testing.T) {
 
 	cmds := Commands{c}
 
-	cp, err := cmds.Find(c.Name())
+	cp, err := cmds.Find(c.PluginName())
 	r.NoError(err)
 
 	exp := []string{"hi"}

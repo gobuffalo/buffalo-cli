@@ -26,5 +26,5 @@ func name(p Plugin) string {
 	if c, ok := p.(cmdName); ok {
 		return c.CmdName()
 	}
-	return p.Name()
+	return p.PluginName()
 }

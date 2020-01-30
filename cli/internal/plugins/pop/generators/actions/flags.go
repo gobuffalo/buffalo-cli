@@ -27,7 +27,7 @@ func (g *Generator) Flags() *pflag.FlagSet {
 		return g.flags
 	}
 
-	flags := pflag.NewFlagSet(g.Name(), pflag.ContinueOnError)
+	flags := pflag.NewFlagSet(g.PluginName(), pflag.ContinueOnError)
 
 	flags.StringVarP(&g.ModelName, "model-name", "n", "", "name of the model to use [defaults to resource name]")
 	flags.StringVarP(&g.ModelsPkg, "model-pkg", "p", "", "full import path of models package [default is <module>/models]")

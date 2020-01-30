@@ -2,7 +2,7 @@ package plugins
 
 // Plugin is the most basic interface a plugin can implement.
 type Plugin interface {
-	Name() string
+	PluginName() string
 }
 
 type Plugins []Plugin
@@ -23,12 +23,8 @@ func (plugs Plugins) ExposedPlugins() []Plugin {
 
 var _ Plugin = Background("")
 
-func Background(name string) Plugin {
-	return background(name)
-}
+type Background string
 
-type background string
-
-func (b background) Name() string {
+func (b Background) PluginName() string {
 	return string(b)
 }
