@@ -12,7 +12,7 @@ var _ plugins.Aliases = &Cmd{}
 
 type Cmd struct{}
 
-func (Cmd) Name() string {
+func (Cmd) PluginName() string {
 	return "grifts"
 }
 

@@ -41,7 +41,7 @@ func (g *Generator) ScopedPlugins() []plugins.Plugin {
 	return scoped
 }
 
-func (g *Generator) Name() string {
+func (g *Generator) PluginName() string {
 	return "i18n"
 }
 

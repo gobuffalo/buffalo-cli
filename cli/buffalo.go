@@ -85,7 +85,7 @@ func NewFromRoot(root string) (*Buffalo, error) {
 	}
 
 	sort.Slice(b.Plugins, func(i, j int) bool {
-		return b.Plugins[i].Name() < b.Plugins[j].Name()
+		return b.Plugins[i].PluginName() < b.Plugins[j].PluginName()
 	})
 
 	pfn = func() []plugins.Plugin {
@@ -126,7 +126,7 @@ func (b Buffalo) SubCommands() []plugins.Plugin {
 }
 
 // Name ...
-func (Buffalo) Name() string {
+func (Buffalo) PluginName() string {
 	return "buffalo"
 }
 

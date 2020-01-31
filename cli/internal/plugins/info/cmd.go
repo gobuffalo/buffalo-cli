@@ -24,7 +24,7 @@ func (cmd *Cmd) WithPlugins(f plugins.PluginFeeder) {
 	cmd.pluginsFn = f
 }
 
-func (cmd *Cmd) Name() string {
+func (cmd *Cmd) PluginName() string {
 	return "info"
 }
 

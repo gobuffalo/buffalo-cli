@@ -77,6 +77,6 @@ func (b *Builder) Package(ctx context.Context, root string, files []string) erro
 	return nil
 }
 
-func (b Builder) Name() string {
+func (b Builder) PluginName() string {
 	return "pkger"
 }

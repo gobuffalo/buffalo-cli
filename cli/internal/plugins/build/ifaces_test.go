@@ -16,7 +16,7 @@ type builder struct {
 	err  error
 }
 
-func (b *builder) Name() string {
+func (b *builder) PluginName() string {
 	if len(b.name) == 0 {
 		return "builder"
 	}
@@ -36,7 +36,7 @@ type beforeBuilder struct {
 	err  error
 }
 
-func (b *beforeBuilder) Name() string {
+func (b *beforeBuilder) PluginName() string {
 	if len(b.name) == 0 {
 		return "beforeBuilder"
 	}
@@ -56,7 +56,7 @@ type afterBuilder struct {
 	err  error
 }
 
-func (b *afterBuilder) Name() string {
+func (b *afterBuilder) PluginName() string {
 	if len(b.name) == 0 {
 		return "afterBuilder"
 	}
@@ -76,7 +76,7 @@ type buildFlagger struct {
 	flags []*flag.Flag
 }
 
-func (b *buildFlagger) Name() string {
+func (b *buildFlagger) PluginName() string {
 	if len(b.name) == 0 {
 		return "buildFlagger"
 	}
@@ -94,7 +94,7 @@ type buildPflagger struct {
 	flags []*pflag.Flag
 }
 
-func (b *buildPflagger) Name() string {
+func (b *buildPflagger) PluginName() string {
 	if len(b.name) == 0 {
 		return "buildPflagger"
 	}
@@ -113,7 +113,7 @@ type templatesValidator struct {
 	err  error
 }
 
-func (b *templatesValidator) Name() string {
+func (b *templatesValidator) PluginName() string {
 	if len(b.name) == 0 {
 		return "templatesValidator"
 	}
@@ -134,7 +134,7 @@ type packager struct {
 	err   error
 }
 
-func (b *packager) Name() string {
+func (b *packager) PluginName() string {
 	if len(b.name) == 0 {
 		return "packager"
 	}
@@ -161,7 +161,7 @@ func (b *packFiler) PackageFiles(ctx context.Context, root string) ([]string, er
 	return b.files, b.err
 }
 
-func (b *packFiler) Name() string {
+func (b *packFiler) PluginName() string {
 	if len(b.name) == 0 {
 		return "packFiler"
 	}
@@ -177,7 +177,7 @@ type buildVersioner struct {
 	err     error
 }
 
-func (b *buildVersioner) Name() string {
+func (b *buildVersioner) PluginName() string {
 	if len(b.name) == 0 {
 		return "buildVersioner"
 	}
@@ -198,7 +198,7 @@ type buildImporter struct {
 	err     error
 }
 
-func (b *buildImporter) Name() string {
+func (b *buildImporter) PluginName() string {
 	if len(b.name) == 0 {
 		return "buildImporter"
 	}
@@ -217,7 +217,7 @@ type bladeRunner struct {
 	err error
 }
 
-func (bladeRunner) Name() string {
+func (bladeRunner) PluginName() string {
 	return "blade"
 }
 

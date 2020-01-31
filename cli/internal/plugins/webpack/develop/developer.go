@@ -42,7 +42,7 @@ func (d *Developer) ScopedPlugins() []plugins.Plugin {
 	return plugs
 }
 
-func (d *Developer) Name() string {
+func (d *Developer) PluginName() string {
 	return "webpack/develop"
 }
 

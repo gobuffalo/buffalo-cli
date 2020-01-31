@@ -17,7 +17,7 @@ type CommandRunner interface {
 
 type cmdRunnerFn func(ctx context.Context, root string, cmd *exec.Cmd) error
 
-func (cmdRunnerFn) Name() string {
+func (cmdRunnerFn) PluginName() string {
 	return "cmdRunnerFn"
 }
 

@@ -36,7 +36,7 @@ func (vc *Cmd) PrintFlags(w io.Writer) error {
 
 var _ plugins.Plugin = &Cmd{}
 
-func (vc *Cmd) Name() string {
+func (vc *Cmd) PluginName() string {
 	return "version"
 }
 
@@ -47,7 +47,7 @@ func (vc *Cmd) Description() string {
 }
 
 func (i Cmd) String() string {
-	return i.Name()
+	return i.PluginName()
 }
 
 func (vc *Cmd) Flags() *pflag.FlagSet {

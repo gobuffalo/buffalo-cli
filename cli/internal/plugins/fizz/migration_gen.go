@@ -35,7 +35,7 @@ type MigrationGen struct {
 	flags *pflag.FlagSet
 }
 
-func (MigrationGen) Name() string {
+func (MigrationGen) PluginName() string {
 	return "fizz/migration"
 }
 

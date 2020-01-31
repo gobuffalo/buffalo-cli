@@ -30,7 +30,7 @@ type Developer struct {
 	flags     *pflag.FlagSet
 }
 
-func (dev *Developer) Name() string {
+func (dev *Developer) PluginName() string {
 	return "refresh/developer"
 }
 

@@ -46,6 +46,6 @@ func (t *Templater) ValidateTemplates(root string) error {
 	})
 }
 
-func (t Templater) Name() string {
+func (t Templater) PluginName() string {
 	return "templates"
 }

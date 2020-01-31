@@ -21,7 +21,7 @@ type Cmd struct {
 	pluginsFn plugins.PluginFeeder
 }
 
-func (Cmd) Name() string {
+func (Cmd) PluginName() string {
 	return "test"
 }
 

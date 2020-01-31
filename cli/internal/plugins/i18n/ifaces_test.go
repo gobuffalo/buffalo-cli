@@ -12,7 +12,7 @@ type namedWriter struct {
 	err  error
 }
 
-func (namedWriter) Name() string {
+func (namedWriter) PluginName() string {
 	return "namedWriter"
 }
 

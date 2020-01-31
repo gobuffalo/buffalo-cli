@@ -31,7 +31,7 @@ func (f *Filer) PackageFiles(ctx context.Context, root string) ([]string, error)
 
 var _ plugins.Plugin = &Filer{}
 
-func (Filer) Name() string {
+func (Filer) PluginName() string {
 	return "flect"
 }
 

@@ -20,7 +20,7 @@ type Generator struct {
 	flags        *pflag.FlagSet
 }
 
-func (Generator) Name() string {
+func (Generator) PluginName() string {
 	return "pop/action"
 }
 

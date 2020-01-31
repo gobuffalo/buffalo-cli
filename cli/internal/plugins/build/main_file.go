@@ -45,7 +45,7 @@ func (bc *MainFile) WithPlugins(f plugins.PluginFeeder) {
 
 func (MainFile) HidePlugin() {}
 
-func (MainFile) Name() string {
+func (MainFile) PluginName() string {
 	return "main"
 }
 
@@ -81,7 +81,7 @@ func (bc *MainFile) Version(ctx context.Context, root string) (string, error) {
 		if len(s) == 0 {
 			continue
 		}
-		versions[p.Name()] = strings.TrimSpace(s)
+		versions[p.PluginName()] = strings.TrimSpace(s)
 	}
 	return m()
 }

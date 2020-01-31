@@ -45,12 +45,12 @@ func (*Cmd) Aliases() []string {
 	return []string{"b", "install"}
 }
 
-func (b Cmd) Name() string {
+func (b Cmd) PluginName() string {
 	return "build"
 }
 
 func (b Cmd) String() string {
-	return b.Name()
+	return b.PluginName()
 }
 
 func (Cmd) Description() string {

@@ -62,7 +62,7 @@ func (b *Versioner) BuildVersion(ctx context.Context, root string) (string, erro
 	return strings.TrimSpace(bb.String()), nil
 }
 
-func (b Versioner) Name() string {
+func (b Versioner) PluginName() string {
 	return "git/versioner"
 }
 

@@ -27,7 +27,7 @@ func (g *Generator) Flags() *pflag.FlagSet {
 		return g.flags
 	}
 
-	flags := pflag.NewFlagSet(g.Name(), pflag.ContinueOnError)
+	flags := pflag.NewFlagSet(g.PluginName(), pflag.ContinueOnError)
 
 	flags.StringVarP(&g.ModelPath, "path", "", "models", "the path the model will be created in")
 	flags.StringVarP(&g.ModelPkg, "pkg", "", "models", "the import part the model will be created in")

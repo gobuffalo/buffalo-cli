@@ -13,7 +13,7 @@ func (cmd *Cmd) Flags() *pflag.FlagSet {
 		return cmd.flags
 	}
 
-	flags := pflag.NewFlagSet(cmd.Name(), pflag.ContinueOnError)
+	flags := pflag.NewFlagSet(cmd.PluginName(), pflag.ContinueOnError)
 	flags.BoolVarP(&cmd.help, "help", "h", false, "print this help")
 
 	for _, p := range cmd.ScopedPlugins() {

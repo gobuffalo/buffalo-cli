@@ -13,7 +13,7 @@ type tester struct {
 	err  error
 }
 
-func (b *tester) Name() string {
+func (b *tester) PluginName() string {
 	if len(b.name) == 0 {
 		return "tester"
 	}
@@ -33,7 +33,7 @@ type beforeTester struct {
 	err  error
 }
 
-func (b *beforeTester) Name() string {
+func (b *beforeTester) PluginName() string {
 	if len(b.name) == 0 {
 		return "beforeTester"
 	}
@@ -53,7 +53,7 @@ type afterTester struct {
 	err  error
 }
 
-func (b *afterTester) Name() string {
+func (b *afterTester) PluginName() string {
 	if len(b.name) == 0 {
 		return "afterTester"
 	}
@@ -74,7 +74,7 @@ type tagger struct {
 	err  error
 }
 
-func (tagger) Name() string {
+func (tagger) PluginName() string {
 	return "tagger"
 }
 
@@ -90,7 +90,7 @@ type bladeRunner struct {
 	err error
 }
 
-func (bladeRunner) Name() string {
+func (bladeRunner) PluginName() string {
 	return "blade"
 }
 

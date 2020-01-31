@@ -10,7 +10,7 @@ type cp struct {
 	root    string
 }
 
-func (c *cp) Name() string {
+func (c *cp) PluginName() string {
 	if len(c.name) == 0 {
 		return "commander"
 	}
@@ -19,7 +19,7 @@ func (c *cp) Name() string {
 
 func (c *cp) CmdName() string {
 	if len(c.cmdName) == 0 {
-		return c.Name()
+		return c.PluginName()
 	}
 	return c.cmdName
 }

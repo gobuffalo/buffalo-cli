@@ -21,7 +21,7 @@ var _ fix.Fixer = &Fixer{}
 type Fixer struct {
 }
 
-func (*Fixer) Name() string {
+func (*Fixer) PluginName() string {
 	return "cli/fixer"
 }
 

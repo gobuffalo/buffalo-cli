@@ -17,7 +17,7 @@ var _ plugins.Plugin = Validator{}
 
 type Validator struct{}
 
-func (b Validator) Name() string {
+func (b Validator) PluginName() string {
 	return "plush/validator"
 }
 

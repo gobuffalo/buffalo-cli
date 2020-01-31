@@ -14,7 +14,7 @@ var _ plugins.Plugin = Importer{}
 
 type Importer struct{}
 
-func (Importer) Name() string {
+func (Importer) PluginName() string {
 	return "grifts/importer"
 }
 

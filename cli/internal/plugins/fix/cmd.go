@@ -26,7 +26,7 @@ func (fc *Cmd) WithPlugins(f plugins.PluginFeeder) {
 	fc.pluginsFn = f
 }
 
-func (fc *Cmd) Name() string {
+func (fc *Cmd) PluginName() string {
 	return "fix"
 }
 
@@ -35,7 +35,7 @@ func (fc *Cmd) Description() string {
 }
 
 func (f Cmd) String() string {
-	return f.Name()
+	return f.PluginName()
 }
 
 // Fix runs any Fixers that are in the Plugins.
@@ -70,7 +70,7 @@ func (fc *Cmd) fixPlugins(ctx context.Context, root string, args []string) error
 			continue
 		}
 
-		fixers[p.Name()] = f
+		fixers[p.PluginName()] = f
 	}
 
 	for _, a := range args {

@@ -12,7 +12,7 @@ type commandRunner struct {
 	err    error
 }
 
-func (v *commandRunner) Name() string {
+func (v *commandRunner) PluginName() string {
 	return "commandRunner"
 }
 

@@ -14,7 +14,7 @@ var _ plugprint.NamedCommand = Cmd{}
 
 type Cmd struct{}
 
-func (Cmd) Name() string {
+func (Cmd) PluginName() string {
 	return "soda/cmd"
 }
 

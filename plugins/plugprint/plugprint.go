@@ -109,7 +109,7 @@ func printCommands(w io.Writer, main plugins.Plugin) error {
 	}
 
 	sort.Slice(plugs, func(i, j int) bool {
-		return plugs[i].Name() < plugs[j].Name()
+		return plugs[i].PluginName() < plugs[j].PluginName()
 	})
 
 	const ac = "\nAvailable Commands:\n"
@@ -144,5 +144,5 @@ func cmdName(p plugins.Plugin) string {
 	if d, ok := p.(NamedCommand); ok {
 		return d.CmdName()
 	}
-	return path.Base(p.Name())
+	return path.Base(p.PluginName())
 }

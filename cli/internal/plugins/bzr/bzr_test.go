@@ -12,7 +12,7 @@ func Test_Bzr_Generalities(t *testing.T) {
 	r := require.New(t)
 	b := Versioner{}
 
-	r.Equal("bzr", b.Name(), "Name should be bzr")
+	r.Equal("bzr", b.PluginName(), "Name should be bzr")
 	r.Equal("Provides bzr related hooks to Buffalo applications.", b.Description(), "Description does not match")
 }
 
