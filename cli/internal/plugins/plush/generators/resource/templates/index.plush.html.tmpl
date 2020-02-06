@@ -1,0 +1,41 @@
+<div class="py-4 mb-2">
+  <h3 class="d-inline-block">{{.Model.Group}}</h3>
+  <div class="float-right">
+    <%= linkTo(new{{.Name.Resource}}Path(), {class: "btn btn-primary"}) { %>
+      Create New {{.Model.Proper}}
+    <% } %>
+  </div>
+</div>
+
+<table class="table table-hover table-bordered">
+  <thead class="thead-light">
+    {{ range $p := .Attrs -}}
+      {{- if ne $p.CommonType "text" -}}
+      <th>{{ $p.Name.Pascalize }}</th>
+      {{- end -}}
+    {{- end }}
+    <th>&nbsp;</th>
+  </thead>
+  <tbody>
+    <%= for ({{.Model.VarCaseSingle}}) in {{.Model.VarCasePlural}} { %>
+      <tr>
+        {{ range $mp := .Attrs -}}
+          {{- if ne $mp.CommonType "text" -}}
+        <td class="align-middle"><%= {{$.Model.VarCaseSingle}}.{{$mp.Name.Pascalize}} %></td>
+          {{- end -}}
+        {{- end }}
+        <td>
+          <div class="float-right">
+            <%= linkTo({{.Name.VarCaseSingle}}Path({ {{.Name.ParamID}}: {{.Model.VarCaseSingle}}.ID }), {class: "btn btn-info", body: "View"}) %>
+            <%= linkTo(edit{{.Name.Proper}}Path({ {{.Name.ParamID}}: {{.Model.VarCaseSingle}}.ID }), {class: "btn btn-warning", body: "Edit"}) %>
+            <%= linkTo({{.Name.VarCaseSingle}}Path({ {{.Name.ParamID}}: {{.Model.VarCaseSingle}}.ID }), {class: "btn btn-danger", "data-method": "DELETE", "data-confirm": "Are you sure?", body: "Destroy"}) %>
+          </div>
+        </td>
+      </tr>
+    <% } %>
+  </tbody>
+</table>
+
+<div class="text-center">
+  <%= paginator(pagination) %>
+</div>

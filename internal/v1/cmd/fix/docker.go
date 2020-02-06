@@ -7,8 +7,8 @@ import (
 	"regexp"
 	"strings"
 
-	bufcli "github.com/gobuffalo/buffalo-cli"
-	"github.com/gobuffalo/genny"
+	bufcli "github.com/gobuffalo/buffalo-cli/v2"
+	"github.com/gobuffalo/genny/v2"
 )
 
 func fixDocker(r *Runner) error {

@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	bufcli "github.com/gobuffalo/buffalo-cli"
+	bufcli "github.com/gobuffalo/buffalo-cli/v2"
 	"github.com/gobuffalo/meta"
-	"github.com/gobuffalo/pop"
+	"github.com/gobuffalo/pop/v5"
 )
 
 // Available CI implementations

@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/gobuffalo/buffalo-cli/internal/v1/cmd/generate"
+	"github.com/gobuffalo/buffalo-cli/v2/internal/v1/cmd/generate"
 	"github.com/spf13/cobra"
 )
 
@@ -12,9 +12,7 @@ var generateCmd = &cobra.Command{
 }
 
 func init() {
-	generateCmd.AddCommand(generate.ResourceCmd)
 	generateCmd.AddCommand(generate.ActionCmd)
-	generateCmd.AddCommand(generate.TaskCmd)
 	generateCmd.AddCommand(generate.MailCmd)
 	decorate("generate", generateCmd)
 

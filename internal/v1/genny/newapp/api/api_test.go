@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/newapp/core"
+	"github.com/gobuffalo/buffalo-cli/v2/internal/v1/genny/newapp/core"
 	"github.com/gobuffalo/genny/gentest"
 	"github.com/gobuffalo/meta"
 	"github.com/stretchr/testify/require"
@@ -60,8 +60,8 @@ func Test_New(t *testing.T) {
 		"models/models.go",
 		"go.mod",
 		".buffalo.dev.yml",
-		"assets/css/application.scss.css",
-		"public/assets/application.js",
+		"webpack/css/application.scss.css",
+		"public/webpack/application.js",
 	}
 
 	for _, u := range unexpected {

@@ -3,11 +3,11 @@ package web
 import (
 	"html/template"
 
-	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/assets/standard"
-	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/assets/webpack"
-	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/newapp/core"
-	"github.com/gobuffalo/genny"
-	"github.com/gobuffalo/genny/gogen"
+	"github.com/gobuffalo/buffalo-cli/v2/internal/v1/genny/assets/standard"
+	"github.com/gobuffalo/buffalo-cli/v2/internal/v1/genny/assets/webpack"
+	"github.com/gobuffalo/buffalo-cli/v2/internal/v1/genny/newapp/core"
+	"github.com/gobuffalo/genny/v2"
+	"github.com/gobuffalo/genny/v2/gogen"
 	"github.com/gobuffalo/packr/v2"
 )
 

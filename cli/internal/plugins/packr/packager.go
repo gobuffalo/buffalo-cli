@@ -1,0 +1,42 @@
+package packr
+
+import (
+	"context"
+	"fmt"
+
+	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/build"
+	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
+	"github.com/gobuffalo/packr/v2/jam"
+)
+
+var _ build.BeforeBuilder = &Packager{}
+var _ build.Packager = &Packager{}
+var _ plugins.Plugin = Packager{}
+var _ plugprint.NamedCommand
+
+type Packager struct{}
+
+func (b *Packager) BeforeBuild(ctx context.Context, root string, args []string) error {
+	return jam.Clean()
+}
+
+func (b *Packager) Package(ctx context.Context, root string, files []string) error {
+	if len(files) > 0 {
+		fmt.Printf("%s does not support additional files\n", b.PluginName())
+		for _, f := range files {
+			fmt.Printf("\t> %s\n", f)
+		}
+	}
+	return jam.Pack(jam.PackOptions{
+		Roots: []string{root},
+	})
+}
+
+func (b Packager) PluginName() string {
+	return "packr"
+}
+
+func (b Packager) CmdName() string {
+	return "packr"
+}

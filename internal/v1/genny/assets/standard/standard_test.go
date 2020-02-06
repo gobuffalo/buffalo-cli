@@ -3,8 +3,8 @@ package standard
 import (
 	"testing"
 
-	"github.com/gobuffalo/genny"
-	"github.com/gobuffalo/genny/gentest"
+	"github.com/gobuffalo/genny/v2"
+	"github.com/gobuffalo/genny/v2/gentest"
 	"github.com/stretchr/testify/require"
 )
 
@@ -28,11 +28,11 @@ func Test_New(t *testing.T) {
 	r.Len(res.Commands, 0)
 
 	files := []string{
-		"public/assets/application.css",
-		"public/assets/application.js",
-		"public/assets/buffalo.css",
-		"public/assets/images/favicon.ico",
-		"public/assets/images/logo.svg",
+		"public/webpack/application.css",
+		"public/webpack/application.js",
+		"public/webpack/buffalo.css",
+		"public/webpack/images/favicon.ico",
+		"public/webpack/images/logo.svg",
 		"templates/application.plush.html",
 	}
 

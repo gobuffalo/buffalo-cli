@@ -1,14 +1,16 @@
 package core
 
 import (
-	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/ci"
-	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/docker"
-	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/plugins/install"
-	"github.com/gobuffalo/buffalo-cli/internal/v1/genny/refresh"
-	"github.com/gobuffalo/buffalo-cli/internal/v1/plugins/plugdeps"
+	"os/exec"
+
+	"github.com/gobuffalo/buffalo-cli/v2/internal/v1/genny/ci"
+	"github.com/gobuffalo/buffalo-cli/v2/internal/v1/genny/docker"
+	"github.com/gobuffalo/buffalo-cli/v2/internal/v1/genny/plugins/install"
+	"github.com/gobuffalo/buffalo-cli/v2/internal/v1/genny/refresh"
+	"github.com/gobuffalo/buffalo-cli/v2/internal/v1/plugins/plugdeps"
 	pop "github.com/gobuffalo/buffalo-pop/genny/newapp"
-	"github.com/gobuffalo/genny"
-	"github.com/gobuffalo/genny/gogen/gomods"
+	"github.com/gobuffalo/genny/v2"
+	"github.com/gobuffalo/here"
 	"github.com/gobuffalo/meta"
 	"github.com/markbates/errx"
 )
@@ -26,11 +28,12 @@ func New(opts *Options) (*genny.Group, error) {
 
 	app := opts.App
 
-	g, err = gomods.Init(app.PackagePkg, app.Root)
+	info, err := here.Dir(app.Root)
 	if err != nil {
-		return gg, err
+		return nil, err
 	}
-	gg.Add(g)
+
+	g.Command(exec.Command("go", "mod", "init", info.Module.Path))
 
 	plugs, err := plugdeps.List(app)
 	if err != nil && (errx.Unwrap(err) != plugdeps.ErrMissingConfig) {
