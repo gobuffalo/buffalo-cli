@@ -10,12 +10,13 @@ import (
 	"strings"
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/fix"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 	"github.com/gobuffalo/here"
+	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugcmd"
 )
 
 var _ plugins.Plugin = &Fixer{}
-var _ plugins.NamedCommand = &Fixer{}
+var _ plugcmd.Namer = &Fixer{}
 var _ fix.Fixer = &Fixer{}
 
 type Fixer struct {
@@ -35,9 +36,10 @@ func (fixer *Fixer) Fix(ctx context.Context, root string, args []string) error {
 		return err
 	}
 
+	x := filepath.Join(root, "cmd", "buffalo")
 	mm := map[string]string{
-		filepath.Join(root, "cli", "buffalo.go"):         cliBuffalo,
-		filepath.Join(root, "cmd", "buffalo", "main.go"): cliMain,
+		filepath.Join(x, "cli", "buffalo.go"): cliBuffalo,
+		filepath.Join(x, "main.go"):           cliMain,
 	}
 
 	for fp, body := range mm {
@@ -64,7 +66,7 @@ func (fixer *Fixer) Fix(ctx context.Context, root string, args []string) error {
 			Name       string
 			ImportPath string
 		}{
-			ImportPath: info.ImportPath,
+			ImportPath: info.Module.Path,
 			Name:       path.Base(info.Module.Path),
 		})
 
@@ -88,7 +90,7 @@ import (
 	"fmt"
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/plugins"
 )
 
 func Buffalo(ctx context.Context, root string, args []string) error {
@@ -111,7 +113,7 @@ const cliMain = `
 package main
 
 import (
-	"{{.ImportPath}}/cli"
+	"{{.ImportPath}}/cmd/buffalo/cli"
 	"context"
 	"log"
 	"os"

@@ -1,30 +1,31 @@
 package generate
 
 import (
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
+	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugcmd"
+	"github.com/gobuffalo/plugins/plugprint"
 	"github.com/spf13/pflag"
 )
 
+var _ plugcmd.Aliaser = &Cmd{}
 var _ plugins.Plugin = &Cmd{}
-var _ plugins.PluginNeeder = &Cmd{}
-var _ plugins.PluginScoper = &Cmd{}
-var _ plugprint.Aliases = &Cmd{}
+var _ plugins.Needer = &Cmd{}
+var _ plugins.Scoper = &Cmd{}
 var _ plugprint.Describer = &Cmd{}
 var _ plugprint.FlagPrinter = &Cmd{}
 var _ plugprint.SubCommander = &Cmd{}
 
 type Cmd struct {
 	help      bool
-	pluginsFn plugins.PluginFeeder
+	pluginsFn plugins.Feeder
 	flags     *pflag.FlagSet
 }
 
-func (cmd *Cmd) WithPlugins(f plugins.PluginFeeder) {
+func (cmd *Cmd) WithPlugins(f plugins.Feeder) {
 	cmd.pluginsFn = f
 }
 
-func (*Cmd) Aliases() []string {
+func (*Cmd) CmdAliases() []string {
 	return []string{"g"}
 }
 
@@ -55,6 +56,8 @@ func (cmd *Cmd) ScopedPlugins() []plugins.Plugin {
 	for _, p := range cmd.pluginsFn() {
 		switch p.(type) {
 		case Generator:
+			plugs = append(plugs, p)
+		case Stdouter:
 			plugs = append(plugs, p)
 		}
 	}

@@ -11,20 +11,20 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 	"github.com/gobuffalo/flect/name"
+	"github.com/gobuffalo/plugins"
 )
 
-var _ plugins.PluginNeeder = &flasher{}
-var _ plugins.PluginScoper = &flasher{}
+var _ plugins.Needer = &flasher{}
+var _ plugins.Scoper = &flasher{}
 
 type flasher struct {
-	pluginsFn plugins.PluginFeeder
+	pluginsFn plugins.Feeder
 	model     name.Ident
 	fset      *token.FileSet
 }
 
-func (flash *flasher) WithPlugins(f plugins.PluginFeeder) {
+func (flash *flasher) WithPlugins(f plugins.Feeder) {
 	flash.pluginsFn = f
 }
 
@@ -38,7 +38,7 @@ func (flash *flasher) ScopedPlugins() []plugins.Plugin {
 func (flash *flasher) namedWriter(ctx context.Context, filename string) (io.Writer, error) {
 	for _, p := range flash.ScopedPlugins() {
 		if fw, ok := p.(NamedWriter); ok {
-			return fw.NamedWriter(ctx, filename)
+			return fw.NamedWriter(filename)
 		}
 	}
 	return os.Create(filename)

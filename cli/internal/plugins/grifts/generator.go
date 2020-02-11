@@ -5,14 +5,16 @@ import (
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/generate"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/grifts/internal/griftgen"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
 	"github.com/gobuffalo/genny/v2"
 	"github.com/gobuffalo/genny/v2/gogen"
+	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugcmd"
+	"github.com/gobuffalo/plugins/plugprint"
 )
 
+var _ plugcmd.Namer = Generator{}
+var _ plugcmd.Aliaser = Generator{}
 var _ generate.Generator = Generator{}
-var _ plugins.NamedCommand = Generator{}
 var _ plugins.Plugin = Generator{}
 var _ plugprint.Describer = Generator{}
 
@@ -26,7 +28,7 @@ func (Generator) CmdName() string {
 	return "grift"
 }
 
-func (Generator) Aliases() []string {
+func (Generator) CmdAliases() []string {
 	return []string{"task"}
 }
 

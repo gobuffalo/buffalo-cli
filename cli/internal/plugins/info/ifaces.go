@@ -3,7 +3,7 @@ package info
 import (
 	"context"
 
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/plugins"
 )
 
 // Informer can be implemented to add more checks

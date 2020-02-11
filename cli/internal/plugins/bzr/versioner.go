@@ -6,16 +6,16 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/plugins"
 )
 
 // Versioner ...
 type Versioner struct {
-	pluginsFn plugins.PluginFeeder
+	pluginsFn plugins.Feeder
 }
 
 // WithPlugins ...
-func (b *Versioner) WithPlugins(f plugins.PluginFeeder) {
+func (b *Versioner) WithPlugins(f plugins.Feeder) {
 	b.pluginsFn = f
 }
 

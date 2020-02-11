@@ -5,7 +5,8 @@ import (
 	"flag"
 	"os/exec"
 
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugio"
 	"github.com/spf13/pflag"
 )
 
@@ -70,3 +71,5 @@ type Tagger interface {
 	plugins.Plugin
 	BuildTags(ctx context.Context, root string) ([]string, error)
 }
+
+type Stdouter = plugio.Outer

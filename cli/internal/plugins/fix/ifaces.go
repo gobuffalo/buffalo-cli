@@ -4,7 +4,8 @@ import (
 	"context"
 	"flag"
 
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugio"
 	"github.com/spf13/pflag"
 )
 
@@ -25,3 +26,5 @@ type Pflagger interface {
 	plugins.Plugin
 	FixFlags() []*pflag.Flag
 }
+
+type Stdouter = plugio.Outer

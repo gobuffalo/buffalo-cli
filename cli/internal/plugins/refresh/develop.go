@@ -9,24 +9,26 @@ import (
 	"time"
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/develop"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
 	"github.com/gobuffalo/here"
+	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugcmd"
+	"github.com/gobuffalo/plugins/plugio"
+	"github.com/gobuffalo/plugins/plugprint"
 	"github.com/markbates/refresh/refresh"
 	"github.com/spf13/pflag"
 )
 
+var _ plugcmd.Namer = &Developer{}
 var _ develop.Developer = &Developer{}
-var _ plugins.NamedCommand = &Developer{}
 var _ plugins.Plugin = &Developer{}
-var _ plugins.PluginNeeder = &Developer{}
-var _ plugins.PluginScoper = &Developer{}
+var _ plugins.Needer = &Developer{}
+var _ plugins.Scoper = &Developer{}
 
 type Developer struct {
 	Debug     bool
 	Config    string
 	help      bool
-	pluginsFn plugins.PluginFeeder
+	pluginsFn plugins.Feeder
 	flags     *pflag.FlagSet
 }
 
@@ -38,7 +40,7 @@ func (dev *Developer) CmdName() string {
 	return "refresh"
 }
 
-func (dev *Developer) WithPlugins(f plugins.PluginFeeder) {
+func (dev *Developer) WithPlugins(f plugins.Feeder) {
 	dev.pluginsFn = f
 }
 
@@ -53,6 +55,8 @@ func (dev *Developer) ScopedPlugins() []plugins.Plugin {
 		switch p.(type) {
 		case Tagger:
 			plugs = append(plugs, p)
+		case Stdouter:
+			plugs = append(plugs, p)
 		}
 	}
 	return plugs
@@ -65,8 +69,7 @@ func (dev *Developer) Develop(ctx context.Context, root string, args []string) e
 	}
 
 	if dev.help {
-		ioe := plugins.CtxIO(ctx)
-		return plugprint.Print(ioe.Stdout(), dev)
+		return plugprint.Print(plugio.Stdout(dev.ScopedPlugins()...), dev)
 	}
 
 	args = flags.Args()

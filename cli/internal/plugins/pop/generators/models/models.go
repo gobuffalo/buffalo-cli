@@ -7,19 +7,20 @@ import (
 	"github.com/gobuffalo/attrs"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/generate"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/resource"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
 	"github.com/gobuffalo/genny/v2"
+	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugcmd"
+	"github.com/gobuffalo/plugins/plugprint"
 	gmodel "github.com/gobuffalo/pop/v5/genny/model"
 	"github.com/gobuffalo/pop/v5/soda/cmd"
 	"github.com/spf13/pflag"
 )
 
+var _ plugcmd.Namer = Generator{}
 var _ generate.Generator = &Generator{}
 var _ plugins.Plugin = Generator{}
 var _ plugprint.Describer = Generator{}
 var _ plugprint.FlagPrinter = &Generator{}
-var _ plugprint.NamedCommand = Generator{}
 var _ resource.Modeler = &Generator{}
 var _ resource.Pflagger = &Generator{}
 

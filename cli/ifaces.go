@@ -1,17 +1,14 @@
 package cli
 
 import (
-	"context"
-
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugcmd"
+	"github.com/gobuffalo/plugins/plugio"
 )
 
-type Aliases = plugins.Aliases
-
-// Command represents a plugin that can be
-// used as a full sub-command. Like Go program's the
-// `Main` method is called to run that command.
-type Command interface {
-	plugins.Plugin
-	Main(ctx context.Context, root string, args []string) error
-}
+type Aliaser = plugcmd.Aliaser
+type Commander = plugcmd.Commander
+type Needer = plugins.Needer
+type StderrNeeder = plugio.ErrNeeder
+type StdinNeeder = plugio.InNeeder
+type StdoutNeeder = plugio.OutNeeder

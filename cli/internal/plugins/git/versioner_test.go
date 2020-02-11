@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/plugins"
 	"github.com/stretchr/testify/require"
 )
 
@@ -16,9 +16,11 @@ func Test_Versioner_BuildVersion(t *testing.T) {
 	}
 
 	v := &Versioner{
-		pluginsFn: plugins.Plugins{
-			vr,
-		}.ScopedPlugins,
+		pluginsFn: func() []plugins.Plugin {
+			return []plugins.Plugin{
+				vr,
+			}
+		},
 	}
 
 	s, err := v.BuildVersion(context.Background(), "")

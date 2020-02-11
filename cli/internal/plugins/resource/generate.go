@@ -8,20 +8,22 @@ import (
 	"path/filepath"
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/generate"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
 	"github.com/gobuffalo/flect/name"
 	"github.com/gobuffalo/genny/v2"
 	"github.com/gobuffalo/genny/v2/gogen"
+	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugcmd"
+	"github.com/gobuffalo/plugins/plugio"
+	"github.com/gobuffalo/plugins/plugprint"
 	"github.com/markbates/safe"
 	"github.com/spf13/pflag"
 )
 
+var _ plugcmd.Aliaser = Generator{}
 var _ generate.Generator = &Generator{}
-var _ plugins.Aliases = Generator{}
 var _ plugins.Plugin = &Generator{}
-var _ plugins.PluginNeeder = &Generator{}
-var _ plugins.PluginScoper = &Generator{}
+var _ plugins.Needer = &Generator{}
+var _ plugins.Scoper = &Generator{}
 
 type Generator struct {
 	SkipActionTests    bool
@@ -35,10 +37,10 @@ type Generator struct {
 
 	flags     *pflag.FlagSet
 	help      bool
-	pluginsFn plugins.PluginFeeder
+	pluginsFn plugins.Feeder
 }
 
-func (g *Generator) WithPlugins(f plugins.PluginFeeder) {
+func (g *Generator) WithPlugins(f plugins.Feeder) {
 	g.pluginsFn = f
 }
 
@@ -46,7 +48,7 @@ func (g Generator) PluginName() string {
 	return "resource"
 }
 
-func (g Generator) Aliases() []string {
+func (g Generator) CmdAliases() []string {
 	return []string{"r"}
 }
 
@@ -61,11 +63,12 @@ func (g *Generator) ScopedPlugins() []plugins.Plugin {
 	var builders []plugins.Plugin
 
 	for _, p := range plugs {
-		_, ok := p.(BeforeGenerator)
-		if !ok {
-			continue
+		switch p.(type) {
+		case BeforeGenerator:
+			builders = append(builders, p)
+		case Stdouter:
+			builders = append(builders, p)
 		}
-		builders = append(builders, p)
 	}
 
 	for _, p := range plugs {
@@ -209,12 +212,11 @@ func (g *Generator) Generate(ctx context.Context, root string, args []string) er
 
 	args = flags.Args()
 
-	if g.help {
-		ioe := plugins.CtxIO(ctx)
-		return plugprint.Print(ioe.Stdout(), g)
-	}
-
 	plugs := g.ScopedPlugins()
+
+	if g.help {
+		return plugprint.Print(plugio.Stdout(plugs...), g)
+	}
 
 	if err := g.beforeGenerate(ctx, root, args); err != nil {
 		return g.afterGenerate(ctx, root, args, err)

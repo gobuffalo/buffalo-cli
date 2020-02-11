@@ -9,7 +9,7 @@ import (
 	"runtime"
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/webpack/internal/ifaces"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/plugins"
 )
 
 type packageJSON struct {
@@ -20,7 +20,7 @@ type packageJSON struct {
 // package.json file of the application.
 func ScriptFor(plug plugins.Plugin, ctx context.Context, root string, name string) (string, error) {
 
-	if pp, ok := plug.(plugins.PluginScoper); ok {
+	if pp, ok := plug.(plugins.Scoper); ok {
 		for _, p := range pp.ScopedPlugins() {
 			if tp, ok := p.(ifaces.Scripter); ok {
 				return tp.AssetScript(ctx, root, name)

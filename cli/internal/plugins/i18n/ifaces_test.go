@@ -1,7 +1,6 @@
 package i18n
 
 import (
-	"context"
 	"io"
 	"os"
 )
@@ -18,7 +17,7 @@ func (namedWriter) PluginName() string {
 
 var _ NamedWriter = &namedWriter{}
 
-func (f *namedWriter) NamedWriter(ctx context.Context, filename string) (io.Writer, error) {
+func (f *namedWriter) NamedWriter(filename string) (io.Writer, error) {
 	f.name = filename
 	if f.w == nil {
 		return os.Stdout, f.err

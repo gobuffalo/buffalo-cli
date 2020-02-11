@@ -6,8 +6,8 @@ import (
 	"os/exec"
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/webpack/internal/scripts"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
+	"github.com/gobuffalo/plugins/plugio"
+	"github.com/gobuffalo/plugins/plugprint"
 	"github.com/markbates/safe"
 )
 
@@ -31,8 +31,7 @@ func (bc *Builder) Build(ctx context.Context, root string, args []string) error 
 	flags.Parse(args)
 
 	if help {
-		ioe := plugins.CtxIO(ctx)
-		return plugprint.Print(ioe.Stdout(), bc)
+		return plugprint.Print(plugio.Stdout(bc.ScopedPlugins()...), bc)
 	}
 
 	if bc.Skip {
@@ -79,11 +78,16 @@ func (bc *Builder) cmd(ctx context.Context, root string, args []string) (*exec.C
 	}
 
 	// Fallback on legacy runner
-	cmd := plugins.Cmd(ctx, scripts.WebpackBin(root))
+	cmd := exec.CommandContext(ctx, scripts.WebpackBin(root))
 
 	if _, err := scripts.ScriptFor(bc, ctx, root, "build"); err == nil {
-		cmd = plugins.Cmd(ctx, tool, "run", "build")
+		cmd = exec.CommandContext(ctx, tool, "run", "build")
 	}
+
+	plugs := bc.ScopedPlugins()
+	cmd.Stdin = plugio.Stdin(plugs...)
+	cmd.Stdout = plugio.Stdout(plugs...)
+	cmd.Stderr = plugio.Stderr(plugs...)
 
 	return cmd, nil
 }

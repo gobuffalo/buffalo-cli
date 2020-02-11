@@ -7,7 +7,7 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/plugins"
 	"github.com/stretchr/testify/require"
 )
 
@@ -58,7 +58,9 @@ func Test_Cmd_Main_SubCommand_err(t *testing.T) {
 	plugs := plugins.Plugins{p, &bladeRunner{}}
 
 	bc := &Cmd{
-		pluginsFn: plugs.ScopedPlugins,
+		pluginsFn: func() []plugins.Plugin {
+			return plugs
+		},
 	}
 
 	args := []string{p.name, "a", "b", "c"}
@@ -74,7 +76,9 @@ func Test_Cmd_Main_ValidateTemplates(t *testing.T) {
 	plugs := plugins.Plugins{p, &bladeRunner{}}
 
 	bc := &Cmd{
-		pluginsFn: plugs.ScopedPlugins,
+		pluginsFn: func() []plugins.Plugin {
+			return plugs
+		},
 	}
 
 	args := []string{}
@@ -91,7 +95,9 @@ func Test_Cmd_Main_ValidateTemplates_err(t *testing.T) {
 	plugs := plugins.Plugins{p, &bladeRunner{}}
 
 	bc := &Cmd{
-		pluginsFn: plugs.ScopedPlugins,
+		pluginsFn: func() []plugins.Plugin {
+			return plugs
+		},
 	}
 
 	args := []string{}
@@ -107,7 +113,9 @@ func Test_Cmd_Main_BeforeBuilders(t *testing.T) {
 	plugs := plugins.Plugins{p, &bladeRunner{}}
 
 	bc := &Cmd{
-		pluginsFn: plugs.ScopedPlugins,
+		pluginsFn: func() []plugins.Plugin {
+			return plugs
+		},
 	}
 
 	var args []string
@@ -123,7 +131,9 @@ func Test_Cmd_Main_BeforeBuilders_err(t *testing.T) {
 	plugs := plugins.Plugins{p, &bladeRunner{}}
 
 	bc := &Cmd{
-		pluginsFn: plugs.ScopedPlugins,
+		pluginsFn: func() []plugins.Plugin {
+			return plugs
+		},
 	}
 
 	var args []string
@@ -139,7 +149,9 @@ func Test_Cmd_Main_AfterBuilders(t *testing.T) {
 	plugs := plugins.Plugins{p, &bladeRunner{}}
 
 	bc := &Cmd{
-		pluginsFn: plugs.ScopedPlugins,
+		pluginsFn: func() []plugins.Plugin {
+			return plugs
+		},
 	}
 
 	var args []string
@@ -156,7 +168,9 @@ func Test_Cmd_Main_AfterBuilders_err(t *testing.T) {
 	plugs := plugins.Plugins{a, b, &bladeRunner{}}
 
 	bc := &Cmd{
-		pluginsFn: plugs.ScopedPlugins,
+		pluginsFn: func() []plugins.Plugin {
+			return plugs
+		},
 	}
 
 	var args []string

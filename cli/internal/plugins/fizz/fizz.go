@@ -1,6 +1,6 @@
 package fizz
 
-import "github.com/gobuffalo/buffalo-cli/v2/plugins"
+import "github.com/gobuffalo/plugins"
 
 func Plugins() []plugins.Plugin {
 	return []plugins.Plugin{

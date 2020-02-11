@@ -6,10 +6,12 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"os"
 
 	bufcli "github.com/gobuffalo/buffalo-cli/v2"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
+	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugio"
+	"github.com/gobuffalo/plugins/plugprint"
 	"github.com/spf13/pflag"
 )
 
@@ -19,10 +21,18 @@ func Plugins() []plugins.Plugin {
 	}
 }
 
+var _ plugio.OutNeeder = &Cmd{}
+
 // Cmd is responsible for the `buffalo version` command.
 type Cmd struct {
-	help bool
-	json bool
+	help   bool
+	json   bool
+	stdout io.Writer
+}
+
+func (c *Cmd) SetStdout(w io.Writer) error {
+	c.stdout = w
+	return nil
 }
 
 var _ plugprint.FlagPrinter = &Cmd{}
@@ -64,8 +74,10 @@ func (vc *Cmd) Main(ctx context.Context, root string, args []string) error {
 		return err
 	}
 
-	ioe := plugins.CtxIO(ctx)
-	out := ioe.Stdout()
+	out := vc.stdout
+	if vc.stdout == nil {
+		out = os.Stdout
+	}
 	if vc.help {
 		return plugprint.Print(out, vc)
 	}

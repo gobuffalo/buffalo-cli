@@ -19,9 +19,9 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
 	"github.com/gobuffalo/here"
+	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugprint"
 	"golang.org/x/tools/go/ast/astutil"
 )
 
@@ -30,16 +30,16 @@ const mainBuildFile = "main.build.go"
 var _ AfterBuilder = &MainFile{}
 var _ BeforeBuilder = &MainFile{}
 var _ plugins.Plugin = &MainFile{}
-var _ plugins.PluginNeeder = &MainFile{}
-var _ plugins.PluginScoper = &MainFile{}
+var _ plugins.Needer = &MainFile{}
+var _ plugins.Scoper = &MainFile{}
 var _ plugprint.Hider = &MainFile{}
 
 type MainFile struct {
-	pluginsFn         plugins.PluginFeeder
+	pluginsFn         plugins.Feeder
 	withFallthroughFn func() bool
 }
 
-func (bc *MainFile) WithPlugins(f plugins.PluginFeeder) {
+func (bc *MainFile) WithPlugins(f plugins.Feeder) {
 	bc.pluginsFn = f
 }
 

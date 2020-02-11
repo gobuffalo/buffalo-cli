@@ -6,26 +6,34 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
+	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugcmd"
+	"github.com/gobuffalo/plugins/plugfind"
+	"github.com/gobuffalo/plugins/plugio"
+	"github.com/gobuffalo/plugins/plugprint"
 )
 
 func (tc *Cmd) Main(ctx context.Context, root string, args []string) error {
-	ioe := plugins.CtxIO(ctx)
-
 	plugs := tc.ScopedPlugins()
 
 	var ti Tester
 	if len(args) > 0 {
 		n := args[0]
-		cmds := plugins.Commands(plugs)
-		p, err := cmds.Find(n)
-		if err == nil {
-			var ok bool
-			ti, ok = p.(Tester)
-			if !ok {
-				return fmt.Errorf("unknown command %q", n)
-			}
+		name := args[0]
+		fn := plugfind.Background()
+		fn = byTester(fn)
+		fn = plugcmd.ByNamer(fn)
+		fn = plugcmd.ByAliaser(fn)
+
+		p := fn.Find(name, plugs)
+		if p == nil {
+			return fmt.Errorf("unknown builder %q", name)
+		}
+
+		var ok bool
+		ti, ok = p.(Tester)
+		if !ok {
+			return fmt.Errorf("unknown command %q", n)
 		}
 	}
 	if ti != nil {
@@ -34,7 +42,7 @@ func (tc *Cmd) Main(ctx context.Context, root string, args []string) error {
 
 	for _, a := range args {
 		if a == "-h" {
-			return plugprint.Print(ioe.Stdout(), tc)
+			return plugprint.Print(plugio.Stdout(plugs...), tc)
 		}
 	}
 
@@ -116,10 +124,10 @@ func (tc *Cmd) Cmd(ctx context.Context, root string, args []string) (*exec.Cmd, 
 	c := exec.CommandContext(ctx, "go", cargs...)
 	fmt.Println(c.Args)
 
-	ioe := plugins.CtxIO(ctx)
-	c.Stdin = ioe.Stdin()
-	c.Stdout = ioe.Stdout()
-	c.Stderr = ioe.Stderr()
+	plugs := tc.ScopedPlugins()
+	c.Stdin = plugio.Stdin(plugs...)
+	c.Stdout = plugio.Stdout(plugs...)
+	c.Stderr = plugio.Stderr(plugs...)
 	return c, nil
 }
 
@@ -185,4 +193,20 @@ func (tc *Cmd) pluginArgs(ctx context.Context, root string, args []string) ([]st
 		args = append(tgs, args...)
 	}
 	return args, nil
+}
+
+func byTester(f plugfind.Finder) plugfind.Finder {
+	fn := func(name string, plugs []plugins.Plugin) plugins.Plugin {
+		p := f.Find(name, plugs)
+		if p == nil {
+			return nil
+		}
+		if c, ok := p.(Tester); ok {
+			if c.PluginName() == name {
+				return p
+			}
+		}
+		return nil
+	}
+	return plugfind.FinderFn(fn)
 }

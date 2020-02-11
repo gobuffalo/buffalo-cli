@@ -3,7 +3,8 @@ package generate
 import (
 	"context"
 
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugio"
 )
 
 // Generator is a sub-command of buffalo generate.
@@ -12,3 +13,5 @@ type Generator interface {
 	plugins.Plugin
 	Generate(ctx context.Context, root string, args []string) error
 }
+
+type Stdouter = plugio.Outer

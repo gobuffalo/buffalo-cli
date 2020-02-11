@@ -7,20 +7,20 @@ import (
 	"path/filepath"
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/resource"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 	"github.com/gobuffalo/flect/name"
+	"github.com/gobuffalo/plugins"
 )
 
 var _ plugins.Plugin = &Generator{}
-var _ plugins.PluginNeeder = &Generator{}
-var _ plugins.PluginScoper = &Generator{}
+var _ plugins.Needer = &Generator{}
+var _ plugins.Scoper = &Generator{}
 var _ resource.AfterGenerator = &Generator{}
 
 type Generator struct {
-	pluginsFn plugins.PluginFeeder
+	pluginsFn plugins.Feeder
 }
 
-func (g *Generator) WithPlugins(f plugins.PluginFeeder) {
+func (g *Generator) WithPlugins(f plugins.Feeder) {
 	g.pluginsFn = f
 }
 

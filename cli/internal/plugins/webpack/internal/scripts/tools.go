@@ -7,12 +7,12 @@ import (
 	"path/filepath"
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/webpack/internal/ifaces"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/plugins"
 )
 
 // Tool tries to determine whether to use yarn or npm
 func Tool(plug plugins.Plugin, ctx context.Context, root string) (string, error) {
-	if pp, ok := plug.(plugins.PluginScoper); ok {
+	if pp, ok := plug.(plugins.Scoper); ok {
 		for _, p := range pp.ScopedPlugins() {
 			if tp, ok := p.(ifaces.Tooler); ok {
 				return tp.AssetTool(ctx, root)

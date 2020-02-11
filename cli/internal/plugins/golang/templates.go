@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/build"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/plugins"
 )
 
 var _ plugins.Plugin = Templater{}

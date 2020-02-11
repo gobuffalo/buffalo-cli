@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	bufcli "github.com/gobuffalo/buffalo-cli/v2"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 	"github.com/stretchr/testify/require"
 )
 
@@ -17,9 +16,9 @@ func Test_Cmd(t *testing.T) {
 	vc := &Cmd{}
 
 	bb := &bytes.Buffer{}
+	vc.SetStdout(bb)
 
 	ctx := context.Background()
-	ctx = plugins.WithStdout(ctx, bb)
 
 	args := []string{}
 
@@ -35,9 +34,9 @@ func Test_Cmd_JSON(t *testing.T) {
 	vc := &Cmd{}
 
 	bb := &bytes.Buffer{}
+	vc.SetStdout(bb)
 
 	ctx := context.Background()
-	ctx = plugins.WithStdout(ctx, bb)
 
 	args := []string{"--json"}
 
