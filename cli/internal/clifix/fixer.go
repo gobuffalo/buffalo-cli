@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/fix"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/fix"
 	"github.com/gobuffalo/here"
 	"github.com/gobuffalo/plugins"
 	"github.com/gobuffalo/plugins/plugcmd"

@@ -1,7 +1,7 @@
 package bzr
 
 import (
-	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/build"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/build"
 	"github.com/gobuffalo/plugins"
 	"github.com/gobuffalo/plugins/plugprint"
 )

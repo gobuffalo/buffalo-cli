@@ -4,7 +4,7 @@ import (
 	"context"
 	"os"
 
-	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/build"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/build"
 	"github.com/gobuffalo/here"
 	"github.com/gobuffalo/plugins"
 	"github.com/markbates/pkger/cmd/pkger/cmds"

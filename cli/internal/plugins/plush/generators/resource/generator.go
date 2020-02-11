@@ -10,10 +10,10 @@ import (
 	"text/template"
 
 	"github.com/gobuffalo/attrs"
-	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/resource"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/resource"
+	"github.com/gobuffalo/flect/name"
 	"github.com/gobuffalo/plugins"
 	"github.com/gobuffalo/plugins/plugprint"
-	"github.com/gobuffalo/flect/name"
 	"github.com/markbates/pkger"
 	"github.com/spf13/pflag"
 )

@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/resource"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/resource"
 	"github.com/gobuffalo/flect/name"
 	"github.com/gobuffalo/plugins"
 )

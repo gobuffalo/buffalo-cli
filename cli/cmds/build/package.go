@@ -3,8 +3,8 @@ package build
 import (
 	"context"
 
-	"github.com/gobuffalo/plugins"
 	"github.com/gobuffalo/here"
+	"github.com/gobuffalo/plugins"
 	"github.com/markbates/safe"
 )
 

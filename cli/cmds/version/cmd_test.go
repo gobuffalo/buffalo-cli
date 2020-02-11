@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"testing"
 
-	bufcli "github.com/gobuffalo/buffalo-cli/v2"
 	"github.com/stretchr/testify/require"
 )
 
@@ -25,7 +24,7 @@ func Test_Cmd(t *testing.T) {
 	err := vc.Main(ctx, ".", args)
 	r.NoError(err)
 
-	r.Contains(bb.String(), bufcli.Version)
+	r.Contains(bb.String(), Version)
 }
 
 func Test_Cmd_JSON(t *testing.T) {
@@ -43,5 +42,5 @@ func Test_Cmd_JSON(t *testing.T) {
 	err := vc.Main(ctx, ".", args)
 	r.NoError(err)
 
-	r.Contains(bb.String(), fmt.Sprintf("%q: %q", "version", bufcli.Version))
+	r.Contains(bb.String(), fmt.Sprintf("%q: %q", "version", Version))
 }
