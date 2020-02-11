@@ -6,11 +6,12 @@ import (
 	"os"
 
 	"github.com/gobuffalo/buffalo-cli/v2/internal/garlic"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugio"
 )
 
 type App struct {
-	Plugger      plugins.PluginScoper
+	Plugger      plugins.Scoper
 	BuildTime    string
 	BuildVersion string
 	Fallthrough  func(ctx context.Context, root string, args []string) error
@@ -60,11 +61,10 @@ func (b *App) Main(ctx context.Context, root string, args []string) error {
 		return nil
 	}
 
-	ioe := plugins.CtxIO(ctx)
 	c := args[0]
 	switch c {
 	case "version":
-		fmt.Fprintln(ioe.Stdout(), b.BuildVersion)
+		fmt.Fprintln(plugio.Stdout(plugs...), b.BuildVersion)
 		return nil
 	}
 	if b.Fallthrough != nil {

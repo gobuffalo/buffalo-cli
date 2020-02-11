@@ -1,13 +1,13 @@
 package test
 
 import (
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
+	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugprint"
 )
 
 var _ plugins.Plugin = &Cmd{}
-var _ plugins.PluginNeeder = &Cmd{}
-var _ plugins.PluginScoper = &Cmd{}
+var _ plugins.Needer = &Cmd{}
+var _ plugins.Scoper = &Cmd{}
 var _ plugprint.Describer = &Cmd{}
 var _ plugprint.SubCommander = &Cmd{}
 
@@ -18,7 +18,7 @@ func Plugins() []plugins.Plugin {
 }
 
 type Cmd struct {
-	pluginsFn plugins.PluginFeeder
+	pluginsFn plugins.Feeder
 }
 
 func (Cmd) PluginName() string {
@@ -29,7 +29,7 @@ func (Cmd) Description() string {
 	return "Run the tests for the Buffalo app."
 }
 
-func (b *Cmd) WithPlugins(f plugins.PluginFeeder) {
+func (b *Cmd) WithPlugins(f plugins.Feeder) {
 	b.pluginsFn = f
 }
 
@@ -51,6 +51,8 @@ func (bc *Cmd) ScopedPlugins() []plugins.Plugin {
 		case Runner:
 			builders = append(builders, p)
 		case Argumenter:
+			builders = append(builders, p)
+		case Stdouter:
 			builders = append(builders, p)
 		}
 	}

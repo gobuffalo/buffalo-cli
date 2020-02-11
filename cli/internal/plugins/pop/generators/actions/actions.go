@@ -2,8 +2,8 @@ package actions
 
 import (
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/resource"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
+	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugprint"
 	"github.com/spf13/pflag"
 )
 

@@ -5,15 +5,15 @@ import (
 	"fmt"
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/build"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
 	"github.com/gobuffalo/packr/v2/jam"
+	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugcmd"
 )
 
 var _ build.BeforeBuilder = &Packager{}
 var _ build.Packager = &Packager{}
-var _ plugins.Plugin = Packager{}
-var _ plugprint.NamedCommand
+var _ plugcmd.Namer = &Packager{}
+var _ plugins.Plugin = &Packager{}
 
 type Packager struct{}
 

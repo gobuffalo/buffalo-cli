@@ -4,25 +4,27 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
+	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugcmd"
+	"github.com/gobuffalo/plugins/plugio"
+	"github.com/gobuffalo/plugins/plugprint"
 	"github.com/markbates/safe"
 	"github.com/spf13/pflag"
 )
 
+var _ plugcmd.SubCommander = &Cmd{}
 var _ plugins.Plugin = &Cmd{}
-var _ plugins.PluginNeeder = &Cmd{}
-var _ plugins.PluginScoper = &Cmd{}
+var _ plugins.Needer = &Cmd{}
+var _ plugins.Scoper = &Cmd{}
 var _ plugprint.Describer = &Cmd{}
-var _ plugprint.SubCommander = &Cmd{}
 
 type Cmd struct {
 	flags     *pflag.FlagSet
 	help      bool
-	pluginsFn plugins.PluginFeeder
+	pluginsFn plugins.Feeder
 }
 
-func (fc *Cmd) WithPlugins(f plugins.PluginFeeder) {
+func (fc *Cmd) WithPlugins(f plugins.Feeder) {
 	fc.pluginsFn = f
 }
 
@@ -96,11 +98,8 @@ func (fc *Cmd) Main(ctx context.Context, root string, args []string) error {
 		return err
 	}
 
-	ioe := plugins.CtxIO(ctx)
-	out := ioe.Stdout()
-
 	if fc.help {
-		return plugprint.Print(out, fc)
+		return plugprint.Print(plugio.Stdout(fc.ScopedPlugins()...), fc)
 	}
 
 	if len(args) > 0 {
@@ -116,11 +115,20 @@ func (fc *Cmd) SubCommands() []plugins.Plugin {
 
 func (fc *Cmd) ScopedPlugins() []plugins.Plugin {
 	var plugs []plugins.Plugin
-	if fc.pluginsFn != nil {
-		for _, p := range fc.pluginsFn() {
-			if _, ok := p.(Fixer); ok {
-				plugs = append(plugs, p)
-			}
+	if fc.pluginsFn == nil {
+		return plugs
+	}
+
+	for _, p := range fc.pluginsFn() {
+		switch p.(type) {
+		case Fixer:
+			plugs = append(plugs, p)
+		case Flagger:
+			plugs = append(plugs, p)
+		case Pflagger:
+			plugs = append(plugs, p)
+		case Stdouter:
+			plugs = append(plugs, p)
 		}
 	}
 	return plugs

@@ -1,5 +1,12 @@
 package i18n
 
-import "github.com/gobuffalo/buffalo-cli/v2/plugins"
+import (
+	"io"
 
-type NamedWriter = plugins.NamedWriter
+	"github.com/gobuffalo/plugins"
+)
+
+type NamedWriter interface {
+	plugins.Plugin
+	NamedWriter(n string) (io.Writer, error)
+}

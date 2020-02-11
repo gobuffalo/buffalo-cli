@@ -1,6 +1,22 @@
 package cli
 
-import "context"
+import (
+	"context"
+
+	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugcmd"
+)
+
+type background string
+
+func (b background) PluginName() string {
+	return string(b)
+}
+
+var _ plugins.Plugin = &cp{}
+var _ plugcmd.Namer = &cp{}
+var _ plugcmd.Commander = &cp{}
+var _ plugcmd.Aliaser = &cp{}
 
 type cp struct {
 	aliases []string
@@ -30,6 +46,6 @@ func (c *cp) Main(ctx context.Context, root string, args []string) error {
 	return nil
 }
 
-func (c *cp) Aliases() []string {
+func (c *cp) CmdAliases() []string {
 	return c.aliases
 }

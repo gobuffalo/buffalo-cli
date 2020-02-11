@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/build"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/plugins"
 	"github.com/gobuffalo/here"
 	"github.com/gobuffalo/pop/v5/soda/cmd"
 )

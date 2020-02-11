@@ -5,26 +5,30 @@ import (
 	"context"
 	"testing"
 
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugio"
 	"github.com/stretchr/testify/require"
 )
 
 func Test_Buffalo_Help(t *testing.T) {
 	r := require.New(t)
 
-	b := &Buffalo{}
+	stdout := &bytes.Buffer{}
+
+	b := &Buffalo{
+		Plugins: plugins.Plugins{
+			plugio.NewOuter(stdout),
+		},
+	}
 
 	ctx := context.Background()
-
-	bb := &bytes.Buffer{}
-	ctx = plugins.WithStdout(ctx, bb)
 
 	args := []string{"-h"}
 
 	err := b.Main(ctx, "", args)
 	r.NoError(err)
 
-	r.Contains(bb.String(), b.Description())
+	r.Contains(stdout.String(), b.Description())
 }
 
 func Test_Buffalo_Main_SubCommand(t *testing.T) {

@@ -7,7 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugio"
 	"github.com/stretchr/testify/require"
 )
 
@@ -92,7 +93,7 @@ func Test_App_Init_Plugins(t *testing.T) {
 	}
 
 	plugs := plugins.Plugins{
-		WithIniter(plugins.Background(""), fn),
+		WithIniter(background(""), fn),
 	}
 
 	app := &App{
@@ -121,7 +122,7 @@ func Test_App_Init_Plugins_Error(t *testing.T) {
 	}
 
 	plugs := plugins.Plugins{
-		WithIniter(plugins.Background(""), fn),
+		WithIniter(background(""), fn),
 	}
 
 	app := &App{
@@ -143,12 +144,15 @@ func Test_App_Init_Plugins_Error(t *testing.T) {
 func Test_App_Version(t *testing.T) {
 	r := require.New(t)
 
+	stdout := &bytes.Buffer{}
+	plugs := plugins.Plugins{
+		plugio.NewOuter(stdout),
+	}
 	app := &App{
 		BuildVersion: "v1",
+		Plugger:      plugs,
 	}
 	ctx := context.Background()
-	stdout := &bytes.Buffer{}
-	ctx = plugins.WithStdout(ctx, stdout)
 
 	err := app.Main(ctx, "", []string{"version"})
 	r.NoError(err)

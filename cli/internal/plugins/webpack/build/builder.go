@@ -2,18 +2,19 @@ package build
 
 import (
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/build"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
+	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugcmd"
+	"github.com/gobuffalo/plugins/plugprint"
 	"github.com/spf13/pflag"
 )
 
 var _ build.BeforeBuilder = &Builder{}
 var _ build.Builder = &Builder{}
 var _ build.Pflagger = &Builder{}
-var _ plugins.NamedCommand = &Builder{}
+var _ plugcmd.Namer = &Builder{}
 var _ plugins.Plugin = &Builder{}
-var _ plugins.PluginNeeder = &Builder{}
-var _ plugins.PluginScoper = &Builder{}
+var _ plugins.Needer = &Builder{}
+var _ plugins.Scoper = &Builder{}
 var _ plugprint.Describer = &Builder{}
 var _ plugprint.FlagPrinter = &Builder{}
 
@@ -30,11 +31,11 @@ type Builder struct {
 	Skip       bool
 	Tool       string // default is npm
 
-	pluginsFn plugins.PluginFeeder
+	pluginsFn plugins.Feeder
 	flags     *pflag.FlagSet
 }
 
-func (bc *Builder) WithPlugins(f plugins.PluginFeeder) {
+func (bc *Builder) WithPlugins(f plugins.Feeder) {
 	bc.pluginsFn = f
 }
 
@@ -52,6 +53,8 @@ func (bc *Builder) ScopedPlugins() []plugins.Plugin {
 		case Tooler:
 			builders = append(builders, p)
 		case Scripter:
+			builders = append(builders, p)
+		case Stdouter:
 			builders = append(builders, p)
 		}
 	}

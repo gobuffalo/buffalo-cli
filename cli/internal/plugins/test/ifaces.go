@@ -4,7 +4,8 @@ import (
 	"context"
 	"os/exec"
 
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugio"
 )
 
 // Tester is a sub-command of buffalo test.
@@ -30,5 +31,8 @@ type Runner interface {
 }
 
 type Argumenter interface {
+	plugins.Plugin
 	TestArgs(ctx context.Context, root string) ([]string, error)
 }
+
+type Stdouter = plugio.Outer

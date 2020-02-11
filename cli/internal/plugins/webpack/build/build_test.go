@@ -10,8 +10,9 @@ import (
 	"testing"
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/webpack/internal/scripts"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 	"github.com/gobuffalo/here"
+	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugio"
 	"github.com/stretchr/testify/require"
 )
 
@@ -53,7 +54,11 @@ func Test_Builder_Build_Help(t *testing.T) {
 	ctx := context.Background()
 
 	stdout := &bytes.Buffer{}
-	ctx = plugins.WithStdout(ctx, stdout)
+	bc.WithPlugins(func() []plugins.Plugin {
+		return []plugins.Plugin{
+			plugio.NewOuter(stdout),
+		}
+	})
 	args := []string{"-h"}
 
 	err := bc.Build(ctx, "", args)
@@ -94,18 +99,19 @@ func Test_Builder_Build_Skip(t *testing.T) {
 	r := require.New(t)
 
 	bc := &Builder{}
+
+	stdout := &bytes.Buffer{}
 	br := &bladeRunner{}
+
 	bc.WithPlugins(func() []plugins.Plugin {
 		return []plugins.Plugin{
 			br,
+			plugio.NewOuter(stdout),
 			&tooler{tool: "npm"},
 		}
 	})
 
 	ctx := context.Background()
-
-	stdout := &bytes.Buffer{}
-	ctx = plugins.WithStdout(ctx, stdout)
 
 	args := []string{"--skip-webpack"}
 

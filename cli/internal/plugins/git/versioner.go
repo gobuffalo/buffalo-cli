@@ -7,21 +7,21 @@ import (
 	"strings"
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/build"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
+	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugprint"
 )
 
 var _ build.Versioner = &Versioner{}
 var _ plugins.Plugin = &Versioner{}
-var _ plugins.PluginNeeder = &Versioner{}
-var _ plugins.PluginScoper = &Versioner{}
+var _ plugins.Needer = &Versioner{}
+var _ plugins.Scoper = &Versioner{}
 var _ plugprint.Describer = &Versioner{}
 
 type Versioner struct {
-	pluginsFn plugins.PluginFeeder
+	pluginsFn plugins.Feeder
 }
 
-func (b *Versioner) WithPlugins(f plugins.PluginFeeder) {
+func (b *Versioner) WithPlugins(f plugins.Feeder) {
 	b.pluginsFn = f
 }
 

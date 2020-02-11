@@ -1,15 +1,16 @@
 package develop
 
 import (
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
+	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugcmd"
+	"github.com/gobuffalo/plugins/plugprint"
 )
 
-var _ plugins.Aliases = &Cmd{}
-var _ plugins.NamedCommand = &Cmd{}
+var _ plugcmd.Aliaser = &Cmd{}
+var _ plugcmd.Namer = &Cmd{}
 var _ plugins.Plugin = &Cmd{}
-var _ plugins.PluginNeeder = &Cmd{}
-var _ plugins.PluginScoper = &Cmd{}
+var _ plugins.Needer = &Cmd{}
+var _ plugins.Scoper = &Cmd{}
 var _ plugprint.Describer = &Cmd{}
 var _ plugprint.FlagPrinter = &Cmd{}
 var _ plugprint.SubCommander = &Cmd{}

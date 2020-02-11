@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 	"github.com/gobuffalo/flect/name"
+	"github.com/gobuffalo/plugins"
 	"github.com/stretchr/testify/require"
 )
 
@@ -16,11 +16,13 @@ func Test_Flash_Flash(t *testing.T) {
 	r := require.New(t)
 
 	bb := &bytes.Buffer{}
-
+	plugs := plugins.Plugins{
+		&namedWriter{w: bb},
+	}
 	flash := &flasher{
-		pluginsFn: plugins.Plugins{
-			&namedWriter{w: bb},
-		}.ScopedPlugins,
+		pluginsFn: func() []plugins.Plugin {
+			return plugs
+		},
 	}
 
 	model := name.New("widgets")

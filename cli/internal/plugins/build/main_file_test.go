@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/plugins"
 	"github.com/stretchr/testify/require"
 )
 
@@ -49,7 +49,9 @@ func Test_MainFile_generateNewMain(t *testing.T) {
 		},
 	}
 	bc := &MainFile{
-		pluginsFn:         plugs.ScopedPlugins,
+		pluginsFn: func() []plugins.Plugin {
+			return plugs
+		},
 		withFallthroughFn: func() bool { return true },
 	}
 
@@ -79,7 +81,9 @@ func Test_MainFile_generateNewMain_noCli(t *testing.T) {
 		},
 	}
 	bc := &MainFile{
-		pluginsFn:         plugs.ScopedPlugins,
+		pluginsFn: func() []plugins.Plugin {
+			return plugs
+		},
 		withFallthroughFn: func() bool { return false },
 	}
 

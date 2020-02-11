@@ -3,7 +3,7 @@ package build
 import (
 	"testing"
 
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/plugins"
 	"github.com/stretchr/testify/require"
 )
 
@@ -12,11 +12,11 @@ func Test_Cmd_Subcommands(t *testing.T) {
 
 	b := &builder{}
 	all := plugins.Plugins{
-		plugins.Background("foo"),
+		background("foo"),
 		&beforeBuilder{},
 		b,
 		&afterBuilder{},
-		plugins.Background("bar"),
+		background("bar"),
 		&buildVersioner{},
 		&templatesValidator{},
 		&packager{},
@@ -24,7 +24,9 @@ func Test_Cmd_Subcommands(t *testing.T) {
 	}
 
 	bc := &Cmd{
-		pluginsFn: all.ScopedPlugins,
+		pluginsFn: func() []plugins.Plugin {
+			return all
+		},
 	}
 
 	plugs := bc.SubCommands()
@@ -36,11 +38,11 @@ func Test_Cmd_ScopedPlugins(t *testing.T) {
 	r := require.New(t)
 
 	all := plugins.Plugins{
-		plugins.Background("foo"),
+		background("foo"),
 		&builder{},
 		&beforeBuilder{},
 		&afterBuilder{},
-		plugins.Background("bar"),
+		background("bar"),
 		&buildVersioner{},
 		&buildImporter{},
 		&templatesValidator{},
@@ -49,13 +51,15 @@ func Test_Cmd_ScopedPlugins(t *testing.T) {
 	}
 
 	bc := &Cmd{
-		pluginsFn: all.ScopedPlugins,
+		pluginsFn: func() []plugins.Plugin {
+			return all
+		},
 	}
 
 	plugs := bc.ScopedPlugins()
 	r.NotEqual(all, plugs)
 
-	ep := plugins.Plugins(plugs).ExposedPlugins()
+	ep := plugins.Plugins(plugs)
 
 	tot := len(all) - 2
 	r.Equal(tot, len(ep))

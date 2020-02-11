@@ -7,6 +7,12 @@ import (
 	"github.com/gobuffalo/here"
 )
 
+type background string
+
+func (b background) PluginName() string {
+	return string(b)
+}
+
 func newRef(t *testing.T, root string) here.Info {
 	t.Helper()
 

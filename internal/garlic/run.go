@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"path/filepath"
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 	"github.com/gobuffalo/here"
 	"github.com/markbates/jim"
 	"github.com/markbates/safe"
@@ -57,7 +57,10 @@ func Run(ctx context.Context, root string, args []string) error {
 	bargs := []string{"run", "./cmd/buffalo"}
 	bargs = append(bargs, args...)
 
-	cmd := plugins.Cmd(ctx, "go", bargs...)
+	cmd := exec.CommandContext(ctx, "go", bargs...)
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 	err = safe.RunE(func() error {
 		// fmt.Println(cmd.Args)
 		return cmd.Run()

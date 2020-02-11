@@ -3,7 +3,7 @@ package built
 import (
 	"context"
 
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/plugins"
 )
 
 // Initer is invoked in when an application binary

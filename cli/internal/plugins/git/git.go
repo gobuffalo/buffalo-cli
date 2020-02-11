@@ -1,7 +1,7 @@
 package git
 
 import (
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/plugins"
 )
 
 func Plugins() []plugins.Plugin {

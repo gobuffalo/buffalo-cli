@@ -29,14 +29,15 @@ import (
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/test"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/version"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/webpack"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
+	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugcmd"
+	"github.com/gobuffalo/plugins/plugprint"
 )
 
+var _ plugcmd.SubCommander = &Buffalo{}
 var _ plugins.Plugin = &Buffalo{}
-var _ plugins.PluginScoper = &Buffalo{}
+var _ plugins.Scoper = &Buffalo{}
 var _ plugprint.Describer = &Buffalo{}
-var _ plugprint.SubCommander = &Buffalo{}
 
 // Buffalo represents the `buffalo` cli.
 type Buffalo struct {
@@ -93,7 +94,7 @@ func NewFromRoot(root string) (*Buffalo, error) {
 	}
 
 	for _, b := range b.Plugins {
-		f, ok := b.(plugins.PluginNeeder)
+		f, ok := b.(plugins.Needer)
 		if !ok {
 			continue
 		}
@@ -118,7 +119,7 @@ func (b Buffalo) ScopedPlugins() []plugins.Plugin {
 func (b Buffalo) SubCommands() []plugins.Plugin {
 	var plugs []plugins.Plugin
 	for _, p := range b.ScopedPlugins() {
-		if _, ok := p.(Command); ok {
+		if _, ok := p.(Commander); ok {
 			plugs = append(plugs, p)
 		}
 	}

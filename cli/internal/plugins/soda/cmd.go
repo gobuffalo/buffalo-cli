@@ -3,14 +3,15 @@ package soda
 import (
 	"context"
 
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
+	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugcmd"
 	"github.com/gobuffalo/pop/v5/soda/cmd"
 )
 
+var _ plugcmd.Aliaser = Cmd{}
+var _ plugcmd.Commander = Cmd{}
+var _ plugcmd.Namer = Cmd{}
 var _ plugins.Plugin = Cmd{}
-var _ plugprint.Aliases = Cmd{}
-var _ plugprint.NamedCommand = Cmd{}
 
 type Cmd struct{}
 
@@ -22,7 +23,7 @@ func (Cmd) CmdName() string {
 	return "soda"
 }
 
-func (Cmd) Aliases() []string {
+func (Cmd) CmdAliases() []string {
 	return []string{"db", "pop"}
 }
 

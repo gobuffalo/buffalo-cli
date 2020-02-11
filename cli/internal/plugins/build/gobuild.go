@@ -8,8 +8,8 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 	"github.com/gobuffalo/here"
+	"github.com/gobuffalo/plugins/plugio"
 	"github.com/markbates/safe"
 )
 
@@ -67,10 +67,10 @@ func (bc *Cmd) GoCmd(ctx context.Context, root string) (*exec.Cmd, error) {
 
 	cmd := exec.CommandContext(ctx, "go", buildArgs...)
 
-	ioe := plugins.CtxIO(ctx)
-	cmd.Stdout = ioe.Stdout()
-	cmd.Stderr = ioe.Stderr()
-	cmd.Stdin = ioe.Stdin()
+	plugs := bc.ScopedPlugins()
+	cmd.Stdout = plugio.Stdout(plugs...)
+	cmd.Stderr = plugio.Stderr(plugs...)
+	cmd.Stdin = plugio.Stdin(plugs...)
 
 	return cmd, nil
 }

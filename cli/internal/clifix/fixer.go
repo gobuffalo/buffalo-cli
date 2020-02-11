@@ -10,12 +10,13 @@ import (
 	"strings"
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/fix"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 	"github.com/gobuffalo/here"
+	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugcmd"
 )
 
 var _ plugins.Plugin = &Fixer{}
-var _ plugins.NamedCommand = &Fixer{}
+var _ plugcmd.Namer = &Fixer{}
 var _ fix.Fixer = &Fixer{}
 
 type Fixer struct {
@@ -89,7 +90,7 @@ import (
 	"fmt"
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/plugins"
 )
 
 func Buffalo(ctx context.Context, root string, args []string) error {

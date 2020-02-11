@@ -5,16 +5,25 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
+	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugcmd"
+	"github.com/gobuffalo/plugins/plugfind"
+	"github.com/gobuffalo/plugins/plugio"
+	"github.com/gobuffalo/plugins/plugprint"
 	"golang.org/x/sync/errgroup"
 )
 
 func (cmd *Cmd) SubCommand(ctx context.Context, root string, name string, args []string) error {
-	cmds := plugins.Commands(cmd.SubCommands())
-	p, err := cmds.Find(name)
-	if err != nil {
-		return err
+	plugs := cmd.SubCommands()
+
+	fn := plugfind.Background()
+	fn = byDeveloper(fn)
+	fn = plugcmd.ByNamer(fn)
+	fn = plugcmd.ByAliaser(fn)
+
+	p := fn.Find(name, plugs)
+	if p == nil {
+		return fmt.Errorf("%s is not a developer", name)
 	}
 
 	d, ok := p.(Developer)
@@ -27,8 +36,7 @@ func (cmd *Cmd) SubCommand(ctx context.Context, root string, name string, args [
 
 func (cmd *Cmd) Main(ctx context.Context, root string, args []string) error {
 	if len(args) == 1 && args[0] == "-h" {
-		ioe := plugins.CtxIO(ctx)
-		return plugprint.Print(ioe.Stdout(), cmd)
+		return plugprint.Print(plugio.Stdout(cmd.ScopedPlugins()...), cmd)
 	}
 
 	if len(args) > 0 {
@@ -62,4 +70,20 @@ func (cmd *Cmd) Main(ctx context.Context, root string, args []string) error {
 	}
 
 	return wg.Wait()
+}
+
+func byDeveloper(f plugfind.Finder) plugfind.Finder {
+	fn := func(name string, plugs []plugins.Plugin) plugins.Plugin {
+		p := f.Find(name, plugs)
+		if p == nil {
+			return nil
+		}
+		if c, ok := p.(Developer); ok {
+			if c.PluginName() == name {
+				return p
+			}
+		}
+		return nil
+	}
+	return plugfind.FinderFn(fn)
 }

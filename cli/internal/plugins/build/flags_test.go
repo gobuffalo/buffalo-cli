@@ -4,7 +4,7 @@ import (
 	"flag"
 	"testing"
 
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/plugins"
 	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/require"
 )
@@ -56,7 +56,9 @@ func Test_Cmd_Flags(t *testing.T) {
 	})
 
 	bc = &Cmd{}
-	bc.WithPlugins(plugs.ScopedPlugins)
+	bc.WithPlugins(func() []plugins.Plugin {
+		return plugs
+	})
 	flags = bc.Flags()
 
 	values = []*pflag.Flag{}
@@ -78,7 +80,9 @@ func Test_Cmd_Flags(t *testing.T) {
 	})
 
 	bc = &Cmd{}
-	bc.WithPlugins(plugs.ScopedPlugins)
+	bc.WithPlugins(func() []plugins.Plugin {
+		return plugs
+	})
 	flags = bc.Flags()
 
 	values = []*pflag.Flag{}

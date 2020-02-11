@@ -5,8 +5,8 @@ import (
 	"os"
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/build"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
 	"github.com/gobuffalo/here"
+	"github.com/gobuffalo/plugins"
 	"github.com/markbates/pkger/cmd/pkger/cmds"
 	"github.com/markbates/pkger/parser"
 )
@@ -17,15 +17,15 @@ var _ build.AfterBuilder = &Builder{}
 var _ build.Builder = &Builder{}
 var _ build.Packager = &Builder{}
 var _ plugins.Plugin = &Builder{}
-var _ plugins.PluginNeeder = &Builder{}
-var _ plugins.PluginScoper = &Builder{}
+var _ plugins.Needer = &Builder{}
+var _ plugins.Scoper = &Builder{}
 
 type Builder struct {
 	OutPath   string
-	pluginsFn plugins.PluginFeeder
+	pluginsFn plugins.Feeder
 }
 
-func (b *Builder) WithPlugins(f plugins.PluginFeeder) {
+func (b *Builder) WithPlugins(f plugins.Feeder) {
 	b.pluginsFn = f
 }
 

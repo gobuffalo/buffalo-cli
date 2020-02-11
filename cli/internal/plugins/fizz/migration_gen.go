@@ -7,22 +7,23 @@ import (
 	"github.com/gobuffalo/attrs"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/generate"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/resource"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
-	"github.com/gobuffalo/buffalo-cli/v2/plugins/plugprint"
 	"github.com/gobuffalo/fizz"
 	"github.com/gobuffalo/flect/name"
 	"github.com/gobuffalo/genny/v2"
+	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugcmd"
+	"github.com/gobuffalo/plugins/plugprint"
 	"github.com/gobuffalo/pop/v5"
 	"github.com/gobuffalo/pop/v5/genny/fizz/ctable"
 	"github.com/gobuffalo/pop/v5/soda/cmd"
 	"github.com/spf13/pflag"
 )
 
+var _ plugcmd.Namer = MigrationGen{}
 var _ generate.Generator = &MigrationGen{}
 var _ plugins.Plugin = MigrationGen{}
 var _ plugprint.Describer = MigrationGen{}
 var _ plugprint.FlagPrinter = &MigrationGen{}
-var _ plugprint.NamedCommand = MigrationGen{}
 var _ resource.Migrationer = &MigrationGen{}
 var _ resource.Pflagger = &MigrationGen{}
 

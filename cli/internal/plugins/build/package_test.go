@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/plugins"
 	"github.com/stretchr/testify/require"
 )
 
@@ -25,7 +25,9 @@ func Test_Cmd_Package(t *testing.T) {
 	}
 
 	bc := &Cmd{}
-	bc.WithPlugins(plugs.ScopedPlugins)
+	bc.WithPlugins(func() []plugins.Plugin {
+		return plugs
+	})
 
 	err := bc.Main(context.Background(), ".", nil)
 	r.NoError(err)

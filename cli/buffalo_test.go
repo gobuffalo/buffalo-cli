@@ -3,7 +3,7 @@ package cli
 import (
 	"testing"
 
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/plugins"
 	"github.com/stretchr/testify/require"
 )
 
@@ -22,7 +22,7 @@ func Test_Buffalo_SubCommands(t *testing.T) {
 	c := &cp{}
 	b := &Buffalo{
 		Plugins: plugins.Plugins{
-			plugins.Background("foo"),
+			background("foo"),
 			c,
 		},
 	}

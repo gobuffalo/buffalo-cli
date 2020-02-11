@@ -1,17 +1,17 @@
 package develop
 
 import (
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/plugins"
 	"github.com/spf13/pflag"
 )
 
 type Cmd struct {
-	pluginsFn plugins.PluginFeeder
+	pluginsFn plugins.Feeder
 	flags     *pflag.FlagSet
 	help      bool
 }
 
-func (cmd *Cmd) WithPlugins(f plugins.PluginFeeder) {
+func (cmd *Cmd) WithPlugins(f plugins.Feeder) {
 	cmd.pluginsFn = f
 }
 
@@ -24,6 +24,8 @@ func (cmd *Cmd) ScopedPlugins() []plugins.Plugin {
 	for _, p := range cmd.pluginsFn() {
 		switch p.(type) {
 		case Developer:
+			plugs = append(plugs, p)
+		case Stdouter:
 			plugs = append(plugs, p)
 		}
 	}
@@ -49,7 +51,7 @@ func (cmd *Cmd) CmdName() string {
 	return "develop"
 }
 
-func (cmd *Cmd) Aliases() []string {
+func (cmd *Cmd) CmdAliases() []string {
 	return []string{"dev"}
 }
 

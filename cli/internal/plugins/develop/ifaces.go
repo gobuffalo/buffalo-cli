@@ -4,11 +4,13 @@ import (
 	"context"
 	"flag"
 
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugio"
 	"github.com/spf13/pflag"
 )
 
 type Developer interface {
+	plugins.Plugin
 	// Develop will be called asyncronously with other implementations.
 	// The context.Context should be listened to for cancellation.
 	Develop(ctx context.Context, root string, args []string) error
@@ -23,3 +25,5 @@ type Pflagger interface {
 	plugins.Plugin
 	DevelopFlags() []*pflag.Flag
 }
+
+type Stdouter = plugio.Outer

@@ -3,12 +3,13 @@ package grifts
 import (
 	"context"
 
-	"github.com/gobuffalo/buffalo-cli/v2/plugins"
+	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugcmd"
 	grifts "github.com/markbates/grift/cmd"
 )
 
+var _ plugcmd.Aliaser = &Cmd{}
 var _ plugins.Plugin = &Cmd{}
-var _ plugins.Aliases = &Cmd{}
 
 type Cmd struct{}
 
@@ -16,7 +17,7 @@ func (Cmd) PluginName() string {
 	return "grifts"
 }
 
-func (Cmd) Aliases() []string {
+func (Cmd) CmdAliases() []string {
 	return []string{"task", "tasks", "t"}
 }
 
