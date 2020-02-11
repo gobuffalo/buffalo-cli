@@ -3,7 +3,7 @@ package grifts
 import (
 	"context"
 
-	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/generate"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/generate"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/grifts/internal/griftgen"
 	"github.com/gobuffalo/genny/v2"
 	"github.com/gobuffalo/genny/v2/gogen"

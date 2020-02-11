@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/develop"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/develop"
 	"github.com/gobuffalo/here"
 	"github.com/gobuffalo/plugins"
 	"github.com/gobuffalo/plugins/plugcmd"

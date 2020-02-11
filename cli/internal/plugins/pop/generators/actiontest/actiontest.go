@@ -1,7 +1,7 @@
 package actiontest
 
 import (
-	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/resource"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/resource"
 	"github.com/gobuffalo/plugins"
 	"github.com/gobuffalo/plugins/plugprint"
 	"github.com/spf13/pflag"

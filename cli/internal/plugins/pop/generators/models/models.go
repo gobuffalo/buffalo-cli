@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 
 	"github.com/gobuffalo/attrs"
-	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/generate"
-	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/resource"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/generate"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/resource"
 	"github.com/gobuffalo/genny/v2"
 	"github.com/gobuffalo/plugins"
 	"github.com/gobuffalo/plugins/plugcmd"

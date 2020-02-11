@@ -5,29 +5,22 @@ import (
 	"path/filepath"
 	"sort"
 
+	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/clifix"
-	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/build"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/bzr"
-	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/develop"
-	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/fix"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/fizz"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/flect"
-	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/generate"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/git"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/golang"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/grifts"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/i18n"
-	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/info"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/mail"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/packr"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/pkger"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/plush"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/pop"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/refresh"
-	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/resource"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/soda"
-	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/test"
-	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/version"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/webpack"
 	"github.com/gobuffalo/plugins"
 	"github.com/gobuffalo/plugins/plugcmd"
@@ -51,27 +44,20 @@ func NewFromRoot(root string) (*Buffalo, error) {
 		return b.Plugins
 	}
 
-	b.Plugins = append(b.Plugins, build.Plugins()...)
 	b.Plugins = append(b.Plugins, clifix.Plugins()...)
-	b.Plugins = append(b.Plugins, develop.Plugins()...)
-	b.Plugins = append(b.Plugins, fix.Plugins()...)
+	b.Plugins = append(b.Plugins, cmds.Plugins()...)
 	b.Plugins = append(b.Plugins, fizz.Plugins()...)
 	b.Plugins = append(b.Plugins, flect.Plugins()...)
-	b.Plugins = append(b.Plugins, generate.Plugins()...)
 	b.Plugins = append(b.Plugins, golang.Plugins()...)
 	b.Plugins = append(b.Plugins, grifts.Plugins()...)
 	b.Plugins = append(b.Plugins, i18n.Plugins()...)
-	b.Plugins = append(b.Plugins, info.Plugins()...)
 	b.Plugins = append(b.Plugins, mail.Plugins()...)
 	b.Plugins = append(b.Plugins, packr.Plugins()...)
 	b.Plugins = append(b.Plugins, pkger.Plugins()...)
 	b.Plugins = append(b.Plugins, plush.Plugins()...)
 	b.Plugins = append(b.Plugins, pop.Plugins()...)
 	b.Plugins = append(b.Plugins, refresh.Plugins()...)
-	b.Plugins = append(b.Plugins, resource.Plugins()...)
 	b.Plugins = append(b.Plugins, soda.Plugins()...)
-	b.Plugins = append(b.Plugins, test.Plugins()...)
-	b.Plugins = append(b.Plugins, version.Plugins()...)
 
 	if _, err := os.Stat(filepath.Join(root, "package.json")); err == nil {
 		b.Plugins = append(b.Plugins, webpack.Plugins()...)

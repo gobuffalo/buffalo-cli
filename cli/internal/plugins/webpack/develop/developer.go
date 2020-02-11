@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/develop"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/develop"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/webpack/internal/scripts"
 	"github.com/gobuffalo/plugins"
 	"github.com/gobuffalo/plugins/plugcmd"
