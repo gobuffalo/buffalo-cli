@@ -7,6 +7,7 @@ import (
 	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/generate"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/info"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/resource"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/setup"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/test"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/version"
 	"github.com/gobuffalo/plugins"
@@ -20,6 +21,7 @@ func Plugins() []plugins.Plugin {
 	plugs = append(plugs, generate.Plugins()...)
 	plugs = append(plugs, info.Plugins()...)
 	plugs = append(plugs, resource.Plugins()...)
+	plugs = append(plugs, setup.Plugins()...)
 	plugs = append(plugs, test.Plugins()...)
 	plugs = append(plugs, version.Plugins()...)
 	return plugs

@@ -23,9 +23,10 @@ func (g *Generator) ResourceFlags() []*pflag.Flag {
 }
 
 func (g *Generator) Flags() *pflag.FlagSet {
-	if g.flags != nil && g.flags.Parsed() {
+	if g.flags != nil {
 		return g.flags
 	}
+
 	flags := pflag.NewFlagSet(g.PluginName(), pflag.ContinueOnError)
 
 	flags.StringVarP(&g.TestPkg, "test-pkg", "t", "", "name of the test package to use [default 'actions']")

@@ -9,8 +9,8 @@ import (
 
 var _ plugcmd.Aliaser = &Cmd{}
 var _ plugcmd.SubCommander = &Cmd{}
-var _ plugins.Plugin = &Cmd{}
 var _ plugins.Needer = &Cmd{}
+var _ plugins.Plugin = &Cmd{}
 var _ plugins.Scoper = &Cmd{}
 var _ plugprint.Describer = &Cmd{}
 var _ plugprint.FlagPrinter = &Cmd{}
@@ -48,10 +48,6 @@ func (*Cmd) CmdAliases() []string {
 
 func (b Cmd) PluginName() string {
 	return "build"
-}
-
-func (b Cmd) String() string {
-	return b.PluginName()
 }
 
 func (Cmd) Description() string {

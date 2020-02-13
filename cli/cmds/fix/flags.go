@@ -7,7 +7,7 @@ import (
 )
 
 func (cmd *Cmd) Flags() *pflag.FlagSet {
-	if cmd.flags != nil && cmd.flags.Parsed() {
+	if cmd.flags != nil {
 		return cmd.flags
 	}
 

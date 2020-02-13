@@ -7,7 +7,7 @@ import (
 )
 
 func (dev *Developer) Flags() *pflag.FlagSet {
-	if dev.flags != nil && dev.flags.Parsed() {
+	if dev.flags != nil {
 		return dev.flags
 	}
 

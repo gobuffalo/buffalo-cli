@@ -8,8 +8,8 @@ import (
 	"github.com/spf13/pflag"
 )
 
-func (bc *Cmd) PrintFlags(w io.Writer) error {
-	flags := bc.Flags()
+func (cmd *Cmd) PrintFlags(w io.Writer) error {
+	flags := cmd.Flags()
 	flags.SetOutput(w)
 	flags.PrintDefaults()
 	return nil
@@ -21,25 +21,25 @@ func (bc *Cmd) PrintFlags(w io.Writer) error {
 // by plugins will have their shorthand ("-x") flag stripped
 // and the name ("--some-flag") of the flag will be
 // prefixed with the plugin's name ("--xyz-some-flag")
-func (bc *Cmd) Flags() *pflag.FlagSet {
-	if bc.flags != nil && bc.flags.Parsed() {
-		return bc.flags
+func (cmd *Cmd) Flags() *pflag.FlagSet {
+	if cmd.flags != nil {
+		return cmd.flags
 	}
 
-	flags := pflag.NewFlagSet(bc.String(), pflag.ContinueOnError)
+	flags := pflag.NewFlagSet(cmd.PluginName(), pflag.ContinueOnError)
 
-	flags.BoolVar(&bc.SkipTemplateValidation, "skip-template-validation", false, "skip validating templates")
-	flags.BoolVarP(&bc.help, "help", "h", false, "print this help")
-	flags.BoolVarP(&bc.Verbose, "verbose", "v", false, "print debugging information")
-	flags.BoolVarP(&bc.Static, "static", "s", false, "build a static binary using  --ldflags '-linkmode external -extldflags \"-static\"'")
+	flags.BoolVar(&cmd.SkipTemplateValidation, "skip-template-validation", false, "skip validating templates")
+	flags.BoolVarP(&cmd.help, "help", "h", false, "print this help")
+	flags.BoolVarP(&cmd.Verbose, "verbose", "v", false, "print debugging information")
+	flags.BoolVarP(&cmd.Static, "static", "s", false, "build a static binary using  --ldflags '-linkmode external -extldflags \"-static\"'")
 
-	flags.StringVar(&bc.LDFlags, "ldflags", "", "set any ldflags to be passed to the go build")
-	flags.StringVar(&bc.Mod, "mod", "", "-mod flag for go build")
-	flags.StringVarP(&bc.Bin, "output", "o", bc.Bin, "set the name of the binary [default: bin/<module name>]")
-	flags.StringVarP(&bc.Environment, "environment", "", "development", "set the environment for the binary")
-	flags.StringVarP(&bc.Tags, "tags", "t", "", "compile with specific build tags")
+	flags.StringVar(&cmd.LDFlags, "ldflags", "", "set any ldflags to be passed to the go build")
+	flags.StringVar(&cmd.Mod, "mod", "", "-mod flag for go build")
+	flags.StringVarP(&cmd.Bin, "output", "o", cmd.Bin, "set the name of the binary [default: bin/<module name>]")
+	flags.StringVarP(&cmd.Environment, "environment", "", "development", "set the environment for the binary")
+	flags.StringVarP(&cmd.Tags, "tags", "t", "", "compile with specific build tags")
 
-	plugs := bc.ScopedPlugins()
+	plugs := cmd.ScopedPlugins()
 
 	for _, p := range plugs {
 		switch t := p.(type) {
@@ -54,6 +54,6 @@ func (bc *Cmd) Flags() *pflag.FlagSet {
 		}
 	}
 
-	bc.flags = flags
-	return bc.flags
+	cmd.flags = flags
+	return cmd.flags
 }

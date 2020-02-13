@@ -13,10 +13,10 @@ import (
 	"github.com/gobuffalo/plugins/plugio"
 )
 
-var _ plugcmd.Namer = &Developer{}
 var _ develop.Developer = &Developer{}
-var _ plugins.Plugin = &Developer{}
+var _ plugcmd.Namer = &Developer{}
 var _ plugins.Needer = &Developer{}
+var _ plugins.Plugin = &Developer{}
 var _ plugins.Scoper = &Developer{}
 
 type Developer struct {
@@ -38,6 +38,12 @@ func (d *Developer) ScopedPlugins() []plugins.Plugin {
 		case Tooler:
 			plugs = append(plugs, p)
 		case Scripter:
+			plugs = append(plugs, p)
+		case Stdiner:
+			plugs = append(plugs, p)
+		case Stdouter:
+			plugs = append(plugs, p)
+		case Stderrer:
 			plugs = append(plugs, p)
 		}
 	}

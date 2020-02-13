@@ -26,9 +26,6 @@ func (tc *Cmd) Main(ctx context.Context, root string, args []string) error {
 		fn = plugcmd.ByAliaser(fn)
 
 		p := fn.Find(name, plugs)
-		if p == nil {
-			return fmt.Errorf("unknown builder %q", name)
-		}
 
 		var ok bool
 		ti, ok = p.(Tester)

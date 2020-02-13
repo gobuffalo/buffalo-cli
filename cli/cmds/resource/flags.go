@@ -16,7 +16,7 @@ func (g *Generator) PrintFlags(w io.Writer) error {
 }
 
 func (g *Generator) Flags() *pflag.FlagSet {
-	if g.flags != nil && g.flags.Parsed() {
+	if g.flags != nil {
 		return g.flags
 	}
 

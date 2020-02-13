@@ -54,14 +54,6 @@ Tests:
 	},
 }
 
-func testCheck(meta.App) error {
-	err := run(exec.Command("buffalo", "test"))
-	if err != nil {
-		return fmt.Errorf("We encountered the following error when trying to run your applications tests:\n%s", err)
-	}
-	return nil
-}
-
 func databaseCheck(app meta.App) error {
 	if !app.WithPop {
 		return nil
@@ -71,20 +63,6 @@ func databaseCheck(app meta.App) error {
 		if err != nil {
 			return err
 		}
-	}
-	return nil
-}
-
-func dbCreateCheck(meta.App) error {
-	if setupOptions.dropDatabases {
-		err := run(exec.Command("buffalo", "pop", "drop", "-a"))
-		if err != nil {
-			return fmt.Errorf("We encountered an error when trying to drop your application's databases. Please check to make sure that your database server is running and that the username and passwords found in the database.yml are properly configured and set up on your database server.\n %s", err)
-		}
-	}
-	err := run(exec.Command("buffalo", "pop", "create", "-a"))
-	if err != nil {
-		return fmt.Errorf("We encountered an error when trying to create your application's databases. Please check to make sure that your database server is running and that the username and passwords found in the database.yml are properly configured and set up on your database server.\n %s", err)
 	}
 	return nil
 }

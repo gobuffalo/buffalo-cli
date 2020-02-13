@@ -102,9 +102,10 @@ func (bc *Cmd) Main(ctx context.Context, root string, args []string) error {
 	return bc.afterBuild(ctx, root, args, err)
 
 }
-func (bc *Cmd) beforeBuild(ctx context.Context, root string, args []string) error {
-	builders := bc.ScopedPlugins()
-	for _, p := range builders {
+
+func (cmd *Cmd) beforeBuild(ctx context.Context, root string, args []string) error {
+	plugs := cmd.ScopedPlugins()
+	for _, p := range plugs {
 		if bb, ok := p.(BeforeBuilder); ok {
 			err := safe.RunE(func() error {
 				return bb.BeforeBuild(ctx, root, args)
@@ -117,9 +118,9 @@ func (bc *Cmd) beforeBuild(ctx context.Context, root string, args []string) erro
 	return nil
 }
 
-func (bc *Cmd) afterBuild(ctx context.Context, root string, args []string, err error) error {
-	builders := bc.ScopedPlugins()
-	for _, p := range builders {
+func (cmd *Cmd) afterBuild(ctx context.Context, root string, args []string, err error) error {
+	plugs := cmd.ScopedPlugins()
+	for _, p := range plugs {
 		if bb, ok := p.(AfterBuilder); ok {
 			err := safe.RunE(func() error {
 				return bb.AfterBuild(ctx, root, args, err)

@@ -19,3 +19,13 @@ func CleanPflags(p plugins.Plugin, pflags []*pflag.Flag) []*flag.Flag {
 	}
 	return plugflag.Clean(p, flags)
 }
+
+// SetToSlice takes a flag set and returns a slice
+// of the flags
+func SetToSlice(set *pflag.FlagSet) []*pflag.Flag {
+	var flags []*pflag.Flag
+	set.VisitAll(func(f *pflag.Flag) {
+		flags = append(flags, f)
+	})
+	return flags
+}

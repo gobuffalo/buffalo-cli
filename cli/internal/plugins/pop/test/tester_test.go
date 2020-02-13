@@ -1,6 +1,6 @@
 // +build sqlite
 
-package tester
+package test
 
 import (
 	"os"

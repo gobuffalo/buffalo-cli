@@ -5,20 +5,16 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
+	"github.com/gobuffalo/buffalo-cli/v2/internal/flagger"
 	"github.com/spf13/pflag"
 )
 
 func (a *Builder) BuildFlags() []*pflag.Flag {
-	var values []*pflag.Flag
-	flags := a.Flags()
-	flags.VisitAll(func(f *pflag.Flag) {
-		values = append(values, f)
-	})
-	return values
+	return flagger.SetToSlice(a.Flags())
 }
 
 func (a *Builder) Flags() *pflag.FlagSet {
-	if a.flags != nil && a.flags.Parsed() {
+	if a.flags != nil {
 		return a.flags
 	}
 
