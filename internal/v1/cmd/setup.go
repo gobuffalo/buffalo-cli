@@ -67,13 +67,7 @@ func databaseCheck(app meta.App) error {
 	return nil
 }
 
-func dbMigrateCheck(meta.App) error {
-	err := run(exec.Command("buffalo", "pop", "migrate"))
-	if err != nil {
-		return fmt.Errorf("We encountered the following error when trying to migrate your database:\n%s", err)
-	}
-	return nil
-}
+
 
 func dbSeedCheck(meta.App) error {
 	cmd := exec.Command("buffalo", "t", "list")

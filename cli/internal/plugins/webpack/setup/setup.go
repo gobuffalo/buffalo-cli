@@ -17,7 +17,7 @@ var _ plugcmd.Namer = &Setup{}
 var _ plugins.Needer = &Setup{}
 var _ plugins.Plugin = &Setup{}
 var _ plugins.Scoper = &Setup{}
-var _ setup.BeforeSetuper = &Setup{}
+var _ setup.Setuper = &Setup{}
 
 type Setup struct {
 	pluginsFn plugins.Feeder
@@ -55,10 +55,21 @@ func (s *Setup) ScopedPlugins() []plugins.Plugin {
 	return plugs
 }
 
-func (s *Setup) BeforeSetup(ctx context.Context, root string, args []string) error {
+func (s *Setup) Setup(ctx context.Context, root string, args []string) error {
 	tool, err := scripts.Tool(s, ctx, root)
 	if err != nil {
 		return err
+	}
+
+	if _, err := exec.LookPath(tool); err != nil {
+		t := tool
+		if t == "yarnpkg" {
+			t = "yarn"
+		}
+		cmd := s.cmd(ctx, "npm", "install", "-g", t)
+		if err := cmd.Run(); err != nil {
+			return err
+		}
 	}
 
 	// make sure that the node_modules folder is properly "installed"
