@@ -1,10 +1,9 @@
-package grifts
+package generator
 
 import (
 	"context"
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/generate"
-	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/grifts/internal/griftgen"
 	"github.com/gobuffalo/genny/v2"
 	"github.com/gobuffalo/genny/v2/gogen"
 	"github.com/gobuffalo/plugins"
@@ -39,9 +38,9 @@ func (Generator) Description() string {
 func (Generator) Generate(ctx context.Context, root string, args []string) error {
 	run := genny.WetRunner(context.Background())
 
-	opts := &griftgen.Options{}
+	opts := &Options{}
 	opts.Args = args
-	g, err := griftgen.New(opts)
+	g, err := New(opts)
 	if err != nil {
 		return err
 	}

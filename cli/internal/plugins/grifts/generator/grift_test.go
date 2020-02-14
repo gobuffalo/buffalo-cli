@@ -1,4 +1,4 @@
-package griftgen
+package generator
 
 import (
 	"testing"

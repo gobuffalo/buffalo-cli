@@ -2,6 +2,7 @@ package setup
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -56,6 +57,10 @@ func (s *Setup) ScopedPlugins() []plugins.Plugin {
 }
 
 func (s *Setup) Setup(ctx context.Context, root string, args []string) error {
+	if _, err := exec.LookPath("node"); err != nil {
+		return fmt.Errorf("this application requires node, and we could not find it installed on your system please install node and try again")
+	}
+
 	tool, err := scripts.Tool(s, ctx, root)
 	if err != nil {
 		return err

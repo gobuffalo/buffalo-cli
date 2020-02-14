@@ -1,4 +1,4 @@
-package grifts
+package importer
 
 import (
 	"context"

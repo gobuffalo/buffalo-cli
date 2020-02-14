@@ -48,6 +48,8 @@ func (s *Setup) ScopedPlugins() []plugins.Plugin {
 		switch p.(type) {
 		case Migrater:
 			plugs = append(plugs, p)
+		case DBSeeder:
+			plugs = append(plugs, p)
 		}
 	}
 
@@ -80,12 +82,20 @@ func (s *Setup) Setup(ctx context.Context, root string, args []string) error {
 	}
 
 	for _, p := range plugs {
-		switch t := p.(type) {
-		case Migrater:
+		if t, ok := p.(Migrater); ok {
 			if err := t.MigrateDB(ctx, root, args); err != nil {
 				return err
 			}
 		}
 	}
+
+	for _, p := range plugs {
+		if t, ok := p.(DBSeeder); ok {
+			if err := t.SeedDB(ctx, root, args); err != nil {
+				return err
+			}
+		}
+	}
+
 	return nil
 }
