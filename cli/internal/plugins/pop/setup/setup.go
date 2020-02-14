@@ -6,20 +6,23 @@ import (
 	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/setup"
 	"github.com/gobuffalo/plugins"
 	"github.com/gobuffalo/plugins/plugcmd"
+	"github.com/gobuffalo/plugins/plugio"
+	"github.com/gobuffalo/plugins/plugprint"
 	"github.com/gobuffalo/pop/v5"
 	"github.com/spf13/pflag"
 )
 
 var _ plugcmd.Namer = &Setup{}
-var _ plugins.Plugin = &Setup{}
-var _ setup.BeforeSetuper = &Setup{}
-var _ setup.Pflagger = &Setup{}
 var _ plugins.Needer = &Setup{}
+var _ plugins.Plugin = &Setup{}
 var _ plugins.Scoper = &Setup{}
+var _ setup.Pflagger = &Setup{}
+var _ setup.Setuper = &Setup{}
 
 type Setup struct {
 	flags     *pflag.FlagSet
 	dropDB    bool
+	help      bool
 	pluginsFn plugins.Feeder
 }
 
@@ -51,7 +54,7 @@ func (s *Setup) ScopedPlugins() []plugins.Plugin {
 	return plugs
 }
 
-func (s *Setup) BeforeSetup(ctx context.Context, root string, args []string) error {
+func (s *Setup) Setup(ctx context.Context, root string, args []string) error {
 	if err := pop.LoadConfigFile(); err != nil {
 		return err
 	}
@@ -59,6 +62,12 @@ func (s *Setup) BeforeSetup(ctx context.Context, root string, args []string) err
 	flags := s.Flags()
 	if err := flags.Parse(args); err != nil {
 		return err
+	}
+
+	plugs := s.ScopedPlugins()
+
+	if s.help {
+		return plugprint.Print(plugio.Stdout(plugs...), s)
 	}
 
 	for _, conn := range pop.Connections {
@@ -70,7 +79,7 @@ func (s *Setup) BeforeSetup(ctx context.Context, root string, args []string) err
 		}
 	}
 
-	for _, p := range s.ScopedPlugins() {
+	for _, p := range plugs {
 		switch t := p.(type) {
 		case Migrater:
 			if err := t.MigrateDB(ctx, root, args); err != nil {

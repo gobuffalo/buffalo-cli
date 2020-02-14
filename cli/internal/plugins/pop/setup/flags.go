@@ -21,6 +21,7 @@ func (setup *Setup) Flags() *pflag.FlagSet {
 
 	flags := pflag.NewFlagSet(setup.PluginName(), pflag.ContinueOnError)
 	flags.BoolVarP(&setup.dropDB, "drop-db", "d", false, "drop database before creating them")
+	flags.BoolVarP(&setup.help, "help", "h", false, "print this help")
 
 	setup.flags = flags
 	return setup.flags

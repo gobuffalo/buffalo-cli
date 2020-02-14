@@ -94,7 +94,7 @@ import (
 )
 
 func Buffalo(ctx context.Context, root string, args []string) error {
-	fmt.Println("~~~~ Using {{.Name}}/cli.Buffalo ~~~")
+	fmt.Println("~~~~ Using {{.Name}}/cmd/buffalo/cli.Buffalo ~~~\n")
 
 	buffalo, err := cli.New()
 	if err != nil {

@@ -11,7 +11,7 @@ import (
 var _ plugcmd.Namer = &Setup{}
 var _ plugins.Needer = &Setup{}
 var _ plugins.Plugin = &Setup{}
-var _ setup.Setuper = &Setup{}
+var _ setup.AfterSetuper = &Setup{}
 
 type Setup struct {
 	pluginsFn plugins.Feeder
@@ -29,7 +29,10 @@ func (s *Setup) WithPlugins(f plugins.Feeder) {
 	s.pluginsFn = f
 }
 
-func (s Setup) Setup(ctx context.Context, root string, args []string) error {
+func (s Setup) AfterSetup(ctx context.Context, root string, args []string, err error) error {
+	if err != nil {
+		return nil
+	}
 	tc := &Cmd{}
 	if s.pluginsFn != nil {
 		for _, p := range s.pluginsFn() {

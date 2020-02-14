@@ -18,10 +18,10 @@ func (cmd *Cmd) Main(ctx context.Context, root string, args []string) error {
 		return err
 	}
 
-	args = flags.Args()
-	if len(args) > 0 {
+	if len(flags.Args()) > 0 {
 		return cmd.SubCommand(ctx, root, args[0], args)
 	}
+	args = flags.Args()
 
 	if cmd.help {
 		return plugprint.Print(plugio.Stdout(cmd.ScopedPlugins()...), cmd)
