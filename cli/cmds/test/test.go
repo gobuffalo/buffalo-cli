@@ -14,6 +14,7 @@ var _ plugprint.SubCommander = &Cmd{}
 func Plugins() []plugins.Plugin {
 	return []plugins.Plugin{
 		&Cmd{},
+		&Setup{},
 	}
 }
 

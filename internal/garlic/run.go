@@ -11,16 +11,10 @@ import (
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli"
 	"github.com/gobuffalo/here"
-	"github.com/markbates/jim"
 	"github.com/markbates/safe"
 )
 
-type tasker interface {
-	Task() *jim.Task
-}
-
 func isBuffalo(mod string) bool {
-
 	if _, err := os.Stat(mod); err != nil {
 		return false
 	}

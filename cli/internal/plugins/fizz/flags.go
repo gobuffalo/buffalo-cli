@@ -23,7 +23,7 @@ func (g *MigrationGen) ResourceFlags() []*pflag.Flag {
 }
 
 func (g *MigrationGen) Flags() *pflag.FlagSet {
-	if g.flags != nil && g.flags.Parsed() {
+	if g.flags != nil {
 		return g.flags
 	}
 

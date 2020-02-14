@@ -1,4 +1,4 @@
-package grifts
+package cmd
 
 import (
 	"context"
@@ -9,12 +9,17 @@ import (
 )
 
 var _ plugcmd.Aliaser = &Cmd{}
+var _ plugcmd.Namer = &Cmd{}
 var _ plugins.Plugin = &Cmd{}
 
 type Cmd struct{}
 
 func (Cmd) PluginName() string {
-	return "grifts"
+	return "grifts/cmd"
+}
+
+func (Cmd) CmdName() string {
+	return "grift"
 }
 
 func (Cmd) CmdAliases() []string {

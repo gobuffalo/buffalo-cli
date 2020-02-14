@@ -7,7 +7,7 @@ import (
 )
 
 func (g *Generator) Flags() *pflag.FlagSet {
-	if g.flags != nil && g.flags.Parsed() {
+	if g.flags != nil {
 		return g.flags
 	}
 	flags := pflag.NewFlagSet(g.PluginName(), pflag.ContinueOnError)
