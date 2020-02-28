@@ -3,7 +3,6 @@ package cli
 import (
 	"os"
 	"path/filepath"
-	"sort"
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/clifix"
@@ -22,6 +21,7 @@ import (
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/refresh"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/soda"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/webpack"
+	"github.com/gobuffalo/buffalo-cli/v2/meta"
 	"github.com/gobuffalo/plugins"
 	"github.com/gobuffalo/plugins/plugcmd"
 	"github.com/gobuffalo/plugins/plugprint"
@@ -35,8 +35,10 @@ var _ plugprint.Describer = &Buffalo{}
 // Buffalo represents the `buffalo` cli.
 type Buffalo struct {
 	plugins.Plugins
+	root string
 }
 
+<<<<<<< HEAD
 func NewFromRoot(root string) (*Buffalo, error) {
 	b := &Buffalo{}
 
@@ -70,14 +72,58 @@ func NewFromRoot(root string) (*Buffalo, error) {
 	if _, err := os.Stat(filepath.Join(root, ".bzr")); err == nil {
 		b.Plugins = append(b.Plugins, bzr.Plugins()...)
 	}
+=======
+// TODO move to the generated application code
+// once packages are no longer internal
+func insidePlugins(root string) []plugins.Plugin {
+	var plugs []plugins.Plugin
 
-	sort.Slice(b.Plugins, func(i, j int) bool {
-		return b.Plugins[i].PluginName() < b.Plugins[j].PluginName()
-	})
+	plugs = append(plugs, clifix.Plugins()...)
+	plugs = append(plugs, fizz.Plugins()...)
+	plugs = append(plugs, flect.Plugins()...)
+	plugs = append(plugs, golang.Plugins()...)
+	plugs = append(plugs, grifts.Plugins()...)
+	plugs = append(plugs, i18n.Plugins()...)
+	plugs = append(plugs, mail.Plugins()...)
+	plugs = append(plugs, packr.Plugins()...)
+	plugs = append(plugs, pkger.Plugins()...)
+	plugs = append(plugs, plush.Plugins()...)
+	plugs = append(plugs, pop.Plugins()...)
+	plugs = append(plugs, refresh.Plugins()...)
+	plugs = append(plugs, soda.Plugins()...)
 
-	pfn = func() []plugins.Plugin {
-		return b.Plugins
+	if _, err := os.Stat(filepath.Join(root, "package.json")); err == nil {
+		plugs = append(plugs, webpack.Plugins()...)
 	}
+
+	if _, err := os.Stat(filepath.Join(root, ".git")); err == nil {
+		plugs = append(plugs, git.Plugins()...)
+	}
+
+	if _, err := os.Stat(filepath.Join(root, ".bzr")); err == nil {
+		plugs = append(plugs, bzr.Plugins()...)
+	}
+	return plugs
+}
+
+func NewFromRoot(root string) (*Buffalo, error) {
+	b := &Buffalo{
+		root: root,
+	}
+
+	b.Plugins = append(b.Plugins, cmds.AvailablePlugins(root)...)
+
+	if meta.IsBuffalo(root) {
+		b.Plugins = append(b.Plugins, insidePlugins(root)...)
+	}
+
+	// pre scope the plugins to thin the initial set
+	plugs := b.ScopedPlugins()
+	plugins.Sort(plugs)
+	b.Plugins = plugs
+>>>>>>> moving stuff around
+
+	pfn := b.ScopedPlugins
 
 	for _, b := range b.Plugins {
 		f, ok := b.(plugins.Needer)
@@ -99,7 +145,18 @@ func New() (*Buffalo, error) {
 }
 
 func (b Buffalo) ScopedPlugins() []plugins.Plugin {
-	return b.Plugins
+	root := b.root
+	plugs := make([]plugins.Plugin, 0, len(b.Plugins))
+	for _, p := range b.Plugins {
+		switch t := p.(type) {
+		case AvailabilityChecker:
+			if !t.PluginAvailable(root) {
+				continue
+			}
+		}
+		plugs = append(plugs, p)
+	}
+	return plugs
 }
 
 func (b Buffalo) SubCommands() []plugins.Plugin {
