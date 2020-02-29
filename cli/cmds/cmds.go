@@ -6,6 +6,7 @@ import (
 	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/fix"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/generate"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/info"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/newapp"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/resource"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/setup"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/test"

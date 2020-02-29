@@ -7,5 +7,6 @@ import (
 func Plugins() []plugins.Plugin {
 	return []plugins.Plugin{
 		&Generator{},
+		&Newapp{},
 	}
 }
