@@ -27,3 +27,5 @@ type Pflagger interface {
 }
 
 type Stdouter = plugio.Outer
+type Stderrer = plugio.Errer
+type Stdiner = plugio.Inner

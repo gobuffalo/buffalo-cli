@@ -27,6 +27,10 @@ func (cmd *Cmd) ScopedPlugins() []plugins.Plugin {
 			plugs = append(plugs, p)
 		case Stdouter:
 			plugs = append(plugs, p)
+		case Stderrer:
+			plugs = append(plugs, p)
+		case Stdiner:
+			plugs = append(plugs, p)
 		}
 	}
 	return plugs

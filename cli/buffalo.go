@@ -19,7 +19,7 @@ import (
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/pkger"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/plush"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/pop"
-	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/refresh"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/portal"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/soda"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/webpack"
 	"github.com/gobuffalo/plugins"
@@ -56,7 +56,8 @@ func NewFromRoot(root string) (*Buffalo, error) {
 	b.Plugins = append(b.Plugins, pkger.Plugins()...)
 	b.Plugins = append(b.Plugins, plush.Plugins()...)
 	b.Plugins = append(b.Plugins, pop.Plugins()...)
-	b.Plugins = append(b.Plugins, refresh.Plugins()...)
+	// b.Plugins = append(b.Plugins, refresh.Plugins()...)
+	b.Plugins = append(b.Plugins, portal.Plugins()...)
 	b.Plugins = append(b.Plugins, soda.Plugins()...)
 
 	if _, err := os.Stat(filepath.Join(root, "package.json")); err == nil {
