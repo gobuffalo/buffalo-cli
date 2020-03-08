@@ -7,6 +7,7 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/build/buildtest"
 	"github.com/gobuffalo/plugins"
 	"github.com/stretchr/testify/require"
 )
@@ -22,53 +23,123 @@ func Test_Cmd_Main(t *testing.T) {
 	}
 	exp := []string{"go", "build", "-o", bn}
 
-	br := &bladeRunner{}
+	var act []string
+	fn := func(ctx context.Context, root string, args []string) error {
+		act = args
+		return nil
+	}
 	bc.WithPlugins(func() []plugins.Plugin {
-		return []plugins.Plugin{br}
+		return []plugins.Plugin{
+			buildtest.GoBuilder(fn),
+		}
 	})
 
 	var args []string
 	err := bc.Main(context.Background(), ".", args)
 	r.NoError(err)
-	r.NotNil(br.cmd)
-	r.Equal(exp, br.cmd.Args)
+	r.Equal(exp, act)
 }
 
 func Test_Cmd_Main_SubCommand(t *testing.T) {
 	r := require.New(t)
 
-	p := &builder{name: "foo"}
-	plugs := plugins.Plugins{p, &bladeRunner{}}
+	bc := &Cmd{}
 
-	bc := &Cmd{
-		pluginsFn: plugs.ScopedPlugins,
+	var act []string
+	fn := func(ctx context.Context, root string, args []string) error {
+		act = args
+		return nil
 	}
 
-	args := []string{p.name, "a", "b", "c"}
+	p := buildtest.Builder(fn)
+	bc.WithPlugins(func() []plugins.Plugin {
+		return []plugins.Plugin{
+			p,
+		}
+	})
 
-	err := bc.Main(context.Background(), ".", args)
+	args := []string{p.PluginName(), "a", "b", "c"}
+
+	err := bc.Main(context.Background(), "", args)
 	r.NoError(err)
-	r.Equal([]string{"a", "b", "c"}, p.args)
+	r.Equal(args[1:], act)
 }
 
 func Test_Cmd_Main_SubCommand_err(t *testing.T) {
 	r := require.New(t)
 
-	p := &builder{name: "foo", err: fmt.Errorf("error")}
-	plugs := plugins.Plugins{p, &bladeRunner{}}
+	bc := &Cmd{}
 
-	bc := &Cmd{
-		pluginsFn: func() []plugins.Plugin {
-			return plugs
-		},
+	exp := fmt.Errorf("boom")
+	var act []string
+	fn := func(ctx context.Context, root string, args []string) error {
+		act = args
+		return exp
 	}
 
-	args := []string{p.name, "a", "b", "c"}
+	p := buildtest.Builder(fn)
+	bc.WithPlugins(func() []plugins.Plugin {
+		return []plugins.Plugin{
+			p,
+		}
+	})
 
-	err := bc.Main(context.Background(), ".", args)
+	args := []string{p.PluginName(), "a", "b", "c"}
+
+	err := bc.Main(context.Background(), "", args)
 	r.Error(err)
+	r.Equal(exp, err)
 }
 
+<<<<<<< HEAD
+=======
+func Test_Cmd_Main_ValidateTemplates(t *testing.T) {
+	r := require.New(t)
+
+	bc := &Cmd{}
+
+	var act string
+	fn := func(root string) error {
+		act = root
+		return nil
+	}
+
+	p := buildtest.TemplatesValidator(fn)
+	bc.WithPlugins(func() []plugins.Plugin {
+		return []plugins.Plugin{
+			p,
+		}
+	})
+
+	err := bc.Main(context.Background(), "", nil)
+	r.NoError(err)
+}
+
+func Test_Cmd_Main_ValidateTemplates_err(t *testing.T) {
+	r := require.New(t)
+
+	bc := &Cmd{}
+
+	exp := fmt.Errorf("boom")
+	var act string
+	fn := func(root string) error {
+		act = root
+		return exp
+	}
+
+	p := buildtest.TemplatesValidator(fn)
+	bc.WithPlugins(func() []plugins.Plugin {
+		return []plugins.Plugin{
+			p,
+		}
+	})
+
+	err := bc.Main(context.Background(), "", nil)
+	r.Error(err)
+	r.Equal(exp, err)
+}
+
+>>>>>>> breaking the wall
 func Test_Cmd_Main_BeforeBuilders(t *testing.T) {
 	r := require.New(t)
 

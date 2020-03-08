@@ -13,21 +13,12 @@ import (
 	"github.com/gobuffalo/plugins"
 )
 
-<<<<<<< HEAD:cli/internal/plugins/golang/templates.go
-var _ plugins.Plugin = Templater{}
-var _ build.BeforeBuilder = &Templater{}
-=======
 var _ plugins.Plugin = Validator{}
-var _ build.TemplatesValidator = &Validator{}
->>>>>>> tweedy:cli/internal/plugins/golang/templates/validator.go
+var _ build.BeforeBuilder = &Validator{}
 
 type Validator struct{}
 
-<<<<<<< HEAD:cli/internal/plugins/golang/templates.go
-func (t *Templater) BeforeBuild(ctx context.Context, root string, args []string) error {
-=======
-func (t *Validator) ValidateTemplates(root string) error {
->>>>>>> tweedy:cli/internal/plugins/golang/templates/validator.go
+func (t *Validator) BeforeBuild(ctx context.Context, root string, args []string) error {
 	root = filepath.Join(root, "templates")
 	return filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -56,11 +47,6 @@ func (t *Validator) ValidateTemplates(root string) error {
 	})
 }
 
-<<<<<<< HEAD:cli/internal/plugins/golang/templates.go
-func (t Templater) PluginName() string {
-	return "golang/templates"
-=======
 func (t Validator) PluginName() string {
-	return "go/templates/validator"
->>>>>>> tweedy:cli/internal/plugins/golang/templates/validator.go
+	return "golang/templates"
 }
