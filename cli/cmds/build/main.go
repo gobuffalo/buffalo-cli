@@ -44,7 +44,7 @@ func (cmd *Cmd) run(ctx context.Context, root string, args []string) error {
 		return plugins.Wrap(cmd, err)
 	}
 
-	return cmd.build(ctx, root, args)
+	return cmd.build(ctx, root)
 }
 
 func (cmd *Cmd) beforeBuild(ctx context.Context, root string, args []string) error {

@@ -3,7 +3,7 @@ package newapp
 import (
 	"bytes"
 	"context"
-	"io/ioutil"
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -37,8 +37,14 @@ func Test_Cmd_Help(t *testing.T) {
 func Test_Cmd_Main(t *testing.T) {
 	r := require.New(t)
 
-	dir, err := ioutil.TempDir("", "")
+	info, err := here.Current()
 	r.NoError(err)
+	fmt.Println(">>>TODO cli/cmds/newapp/cmd_test.go:43: info ", info)
+
+	dir := filepath.Join(info.Root, "tmp")
+	os.RemoveAll(dir)
+	defer os.RemoveAll(dir)
+	fmt.Println(">>>TODO cli/cmds/newapp/cmd_test.go:48: dir ", dir)
 
 	cmd := &Cmd{}
 
@@ -52,7 +58,7 @@ func Test_Cmd_Main(t *testing.T) {
 	_, err = os.Stat(mp)
 	r.NoError(err)
 
-	info, err := here.Dir(dir)
+	info, err = here.Dir(dir)
 	r.NoError(err)
 	r.Equal(pkg, info.Module.Path)
 

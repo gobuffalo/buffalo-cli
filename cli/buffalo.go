@@ -18,8 +18,8 @@ var _ plugprint.Describer = &Buffalo{}
 
 // Buffalo represents the `buffalo` cli.
 type Buffalo struct {
-	plugins.Plugins
-	root string
+	Plugins []plugins.Plugin
+	root    string
 }
 
 <<<<<<< HEAD

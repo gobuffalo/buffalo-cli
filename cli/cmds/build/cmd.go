@@ -71,7 +71,7 @@ func (bc *Cmd) ScopedPlugins() []plugins.Plugin {
 	var plugs []plugins.Plugin
 	for _, p := range bc.pluginsFn() {
 		switch p.(type) {
-		case Tagger:
+		case BuildArger:
 			plugs = append(plugs, p)
 		case Builder:
 			plugs = append(plugs, p)
@@ -91,9 +91,13 @@ func (bc *Cmd) ScopedPlugins() []plugins.Plugin {
 			plugs = append(plugs, p)
 		case Importer:
 			plugs = append(plugs, p)
-		case Runner:
+		case GoBuilder:
 			plugs = append(plugs, p)
 		case Stdouter:
+			plugs = append(plugs, p)
+		case Stdiner:
+			plugs = append(plugs, p)
+		case Stderrer:
 			plugs = append(plugs, p)
 		}
 	}

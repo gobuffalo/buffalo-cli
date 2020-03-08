@@ -49,7 +49,7 @@ func Run(ctx context.Context, root string, args []string) error {
 		return buff.Main(ctx, root, args)
 	}
 
-	bargs := []string{"run", "./cmd/buffalo"}
+	bargs := []string{"run", "-v", "./cmd/buffalo"}
 	bargs = append(bargs, args...)
 
 	cmd := exec.CommandContext(ctx, "go", bargs...)

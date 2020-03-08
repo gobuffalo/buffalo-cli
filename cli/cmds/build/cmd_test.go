@@ -3,6 +3,7 @@ package build
 import (
 	"testing"
 
+	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/build/buildtest"
 	"github.com/gobuffalo/plugins"
 	"github.com/stretchr/testify/require"
 )
@@ -10,16 +11,17 @@ import (
 func Test_Cmd_Subcommands(t *testing.T) {
 	r := require.New(t)
 
-	b := &builder{}
+	b := buildtest.Builder(nil)
 	all := plugins.Plugins{
 		background("foo"),
-		&beforeBuilder{},
-		b,
-		&afterBuilder{},
+		buildtest.BeforeBuilder(nil),
+		buildtest.Builder(nil),
+		buildtest.AfterBuilder(nil),
 		background("bar"),
-		&buildVersioner{},
-		&packager{},
-		&bladeRunner{},
+		buildtest.Versioner(nil),
+		buildtest.TemplatesValidator(nil),
+		buildtest.Packager(nil),
+		buildtest.GoBuilder(nil),
 	}
 
 	bc := &Cmd{
@@ -38,14 +40,15 @@ func Test_Cmd_ScopedPlugins(t *testing.T) {
 
 	all := plugins.Plugins{
 		background("foo"),
-		&builder{},
-		&beforeBuilder{},
-		&afterBuilder{},
+		buildtest.Builder(nil),
+		buildtest.BeforeBuilder(nil),
+		buildtest.AfterBuilder(nil),
 		background("bar"),
-		&buildVersioner{},
-		&buildImporter{},
-		&bladeRunner{},
-		&packager{},
+		buildtest.Versioner(nil),
+		buildtest.Importer(nil),
+		buildtest.TemplatesValidator(nil),
+		buildtest.GoBuilder(nil),
+		buildtest.Packager(nil),
 	}
 
 	bc := &Cmd{

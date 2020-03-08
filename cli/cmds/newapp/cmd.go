@@ -113,7 +113,8 @@ func (cmd *Cmd) Main(ctx context.Context, root string, args []string) error {
 	if err != nil {
 		return err
 	}
-	mod = append(mod, []byte("\n\nreplace github.com/gobuffalo/buffalo-cli/v2 => ../../buffalo-cli")...)
+	mod = append(mod, []byte("\n\nreplace github.com/gobuffalo/buffalo-cli/v2 => ../../../buffalo-cli")...)
+	fmt.Println(string(mod))
 
 	f, err := os.Create(filepath.Join(root, "go.mod"))
 	if err != nil {

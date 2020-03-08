@@ -6,16 +6,29 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/build/buildtest"
+	"github.com/gobuffalo/plugins"
 	"github.com/stretchr/testify/require"
 )
 
 func Test_Cmd_GoCmd(t *testing.T) {
 	r := require.New(t)
 
+	var act []string
+	fn := func(ctx context.Context, root string, args []string) error {
+		act = args
+		return nil
+	}
+
 	bc := &Cmd{}
+	bc.WithPlugins(func() []plugins.Plugin {
+		return []plugins.Plugin{
+			buildtest.GoBuilder(fn),
+		}
+	})
 
 	ctx := context.Background()
-	cmd, err := bc.GoCmd(ctx, ".")
+	err := bc.Main(ctx, ".", nil)
 	r.NoError(err)
 
 	cli := filepath.Join("bin", "build")
@@ -23,7 +36,7 @@ func Test_Cmd_GoCmd(t *testing.T) {
 		cli += ".exe"
 	}
 	exp := []string{"go", "build", "-o", cli}
-	r.Equal(exp, cmd.Args)
+	r.Equal(exp, args)
 }
 
 func Test_Cmd_GoCmd_Bin(t *testing.T) {
