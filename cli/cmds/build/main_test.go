@@ -2,6 +2,7 @@ package build
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"path/filepath"
 	"runtime"
@@ -21,7 +22,7 @@ func Test_Cmd_Main(t *testing.T) {
 	if runtime.GOOS == "windows" {
 		bn += ".exe"
 	}
-	exp := []string{"go", "build", "-o", bn}
+	exp := []string{"build", "-o", bn}
 
 	var act []string
 	fn := func(ctx context.Context, root string, args []string) error {
@@ -71,9 +72,7 @@ func Test_Cmd_Main_SubCommand_err(t *testing.T) {
 	bc := &Cmd{}
 
 	exp := fmt.Errorf("boom")
-	var act []string
 	fn := func(ctx context.Context, root string, args []string) error {
-		act = args
 		return exp
 	}
 
@@ -84,11 +83,8 @@ func Test_Cmd_Main_SubCommand_err(t *testing.T) {
 		}
 	})
 
-	args := []string{p.PluginName(), "a", "b", "c"}
-
-	err := bc.Main(context.Background(), "", args)
-	r.Error(err)
-	r.Equal(exp, err)
+	act := bc.Main(context.Background(), ".", []string{p.PluginName()})
+	r.Equal(exp, act)
 }
 
 <<<<<<< HEAD
@@ -97,10 +93,7 @@ func Test_Cmd_Main_ValidateTemplates(t *testing.T) {
 	r := require.New(t)
 
 	bc := &Cmd{}
-
-	var act string
 	fn := func(root string) error {
-		act = root
 		return nil
 	}
 
@@ -111,7 +104,7 @@ func Test_Cmd_Main_ValidateTemplates(t *testing.T) {
 		}
 	})
 
-	err := bc.Main(context.Background(), "", nil)
+	err := bc.Main(context.Background(), ".", nil)
 	r.NoError(err)
 }
 
@@ -121,9 +114,7 @@ func Test_Cmd_Main_ValidateTemplates_err(t *testing.T) {
 	bc := &Cmd{}
 
 	exp := fmt.Errorf("boom")
-	var act string
 	fn := func(root string) error {
-		act = root
 		return exp
 	}
 
@@ -134,82 +125,97 @@ func Test_Cmd_Main_ValidateTemplates_err(t *testing.T) {
 		}
 	})
 
-	err := bc.Main(context.Background(), "", nil)
-	r.Error(err)
+	err := bc.Main(context.Background(), ".", nil)
 	r.Equal(exp, err)
 }
 
 >>>>>>> breaking the wall
 func Test_Cmd_Main_BeforeBuilders(t *testing.T) {
-	r := require.New(t)
 
-	p := &beforeBuilder{}
-	plugs := plugins.Plugins{p, &bladeRunner{}}
-
-	bc := &Cmd{
-		pluginsFn: func() []plugins.Plugin {
-			return plugs
-		},
+	table := []struct {
+		name string
+		root string
+		exp  []string
+		err  error
+	}{
+		{name: "happy", root: ".", exp: []string{"-v"}},
+		{name: "sad", root: ".", exp: []string{"-v"}, err: fmt.Errorf("boom")},
 	}
 
-	var args []string
+	for _, tt := range table {
+		t.Run(tt.name, func(st *testing.T) {
+			r := require.New(st)
 
-	err := bc.Main(context.Background(), ".", args)
-	r.NoError(err)
-}
+			var act []string
+			fn := func(ctx context.Context, root string, args []string) error {
+				act = args
+				return tt.err
+			}
 
-func Test_Cmd_Main_BeforeBuilders_err(t *testing.T) {
-	r := require.New(t)
+			plugs := plugins.Plugins{buildtest.BeforeBuilder(fn)}
 
-	p := &beforeBuilder{err: fmt.Errorf("error")}
-	plugs := plugins.Plugins{p, &bladeRunner{}}
+			bc := &Cmd{
+				pluginsFn: func() []plugins.Plugin {
+					return plugs
+				},
+			}
 
-	bc := &Cmd{
-		pluginsFn: func() []plugins.Plugin {
-			return plugs
-		},
+			err := bc.Main(context.Background(), tt.root, tt.exp)
+			r.True(errors.Is(err, tt.err))
+			r.Equal(tt.exp, act)
+		})
 	}
 
-	var args []string
-
-	err := bc.Main(context.Background(), ".", args)
-	r.Error(err)
 }
 
 func Test_Cmd_Main_AfterBuilders(t *testing.T) {
-	r := require.New(t)
 
-	p := &afterBuilder{}
-	plugs := plugins.Plugins{p, &bladeRunner{}}
-
-	bc := &Cmd{
-		pluginsFn: func() []plugins.Plugin {
-			return plugs
-		},
+	table := []struct {
+		name string
+		root string
+		exp  []string
+		err  error
+	}{
+		{name: "happy", root: ".", exp: []string{"-v"}},
+		{name: "sad", root: ".", exp: []string{"-v"}, err: fmt.Errorf("boom")},
 	}
 
-	var args []string
+	for _, tt := range table {
+		t.Run(tt.name, func(st *testing.T) {
+			r := require.New(st)
 
-	err := bc.Main(context.Background(), ".", args)
-	r.NoError(err)
-}
+			var act []string
+			fn := func(ctx context.Context, root string, args []string, err error) error {
+				act = args
+				return tt.err
+			}
 
-func Test_Cmd_Main_AfterBuilders_err(t *testing.T) {
-	r := require.New(t)
+			plugs := plugins.Plugins{buildtest.AfterBuilder(fn)}
 
+<<<<<<< HEAD
 	b := &beforeBuilder{err: fmt.Errorf("science fiction twin")}
 	a := &afterBuilder{}
 	plugs := plugins.Plugins{a, b, &bladeRunner{}}
+=======
+			bc := &Cmd{
+				pluginsFn: func() []plugins.Plugin {
+					return plugs
+				},
+			}
+>>>>>>> build stuff
 
-	bc := &Cmd{
-		pluginsFn: func() []plugins.Plugin {
-			return plugs
-		},
+			err := bc.Main(context.Background(), tt.root, tt.exp)
+			r.Equal(tt.err, err)
+			r.Equal(tt.exp, act)
+		})
 	}
 
+<<<<<<< HEAD
 	var args []string
 
 	err := bc.Main(context.Background(), ".", args)
 	r.Error(err)
 	r.Contains(err.Error(), b.err.Error())
+=======
+>>>>>>> build stuff
 }

@@ -6,8 +6,10 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/build"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/refresh"
 	"github.com/gobuffalo/here"
 	"github.com/gobuffalo/plugins"
 	"github.com/gobuffalo/pop/v5/soda/cmd"
@@ -15,7 +17,8 @@ import (
 
 var _ build.Importer = Builder{}
 var _ build.PackFiler = &Builder{}
-var _ build.Tagger = &Builder{}
+var _ refresh.Tagger = &Builder{}
+var _ build.BuildArger = &Builder{}
 var _ build.Versioner = &Builder{}
 var _ plugins.Plugin = Builder{}
 
@@ -27,7 +30,19 @@ func (Builder) PluginName() string {
 	return "pop/builder"
 }
 
-func (bd *Builder) BuildTags(ctx context.Context, root string) ([]string, error) {
+func (bd *Builder) GoBuildArgs(ctx context.Context, root string, args []string) ([]string, error) {
+	tags, err := bd.RefreshTags(ctx, root)
+	if err != nil || len(tags) == 0 {
+		return args, err
+	}
+	if len(tags) == 0 {
+		return nil, nil
+	}
+	x := []string{"-tags", strings.Join(tags, " ")}
+	return x, nil
+}
+
+func (bd *Builder) RefreshTags(ctx context.Context, root string) ([]string, error) {
 	var args []string
 	dy := filepath.Join(root, "database.yml")
 	if _, err := os.Stat(dy); err != nil {

@@ -1,6 +1,7 @@
 package build
 
 import (
+	"context"
 	"testing"
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/build/buildtest"
@@ -11,7 +12,10 @@ import (
 func Test_Cmd_Subcommands(t *testing.T) {
 	r := require.New(t)
 
-	b := buildtest.Builder(nil)
+	fn := func(ctx context.Context, root string, args []string) error {
+		return nil
+	}
+	b := buildtest.Builder(fn)
 	all := plugins.Plugins{
 		background("foo"),
 		buildtest.BeforeBuilder(nil),
@@ -32,7 +36,7 @@ func Test_Cmd_Subcommands(t *testing.T) {
 
 	plugs := bc.SubCommands()
 	r.Len(plugs, 1)
-	r.Equal(b, plugs[0])
+	r.Equal(b.PluginName(), plugs[0].PluginName())
 }
 
 func Test_Cmd_ScopedPlugins(t *testing.T) {

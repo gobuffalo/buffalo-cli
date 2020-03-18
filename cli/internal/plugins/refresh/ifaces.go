@@ -1,10 +1,13 @@
 package refresh
 
 import (
-	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/build"
+	"context"
+
 	"github.com/gobuffalo/plugins/plugio"
 )
 
-type Tagger = build.Tagger
+type Tagger interface {
+	RefreshTags(ctx context.Context, root string) ([]string, error)
+}
 
 type Stdouter = plugio.Outer

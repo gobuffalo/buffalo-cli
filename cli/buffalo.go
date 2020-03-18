@@ -85,12 +85,11 @@ func NewFromRoot(root string) (*Buffalo, error) {
 
 	pfn := b.ScopedPlugins
 
-	for _, b := range b.Plugins {
-		f, ok := b.(plugins.Needer)
-		if !ok {
-			continue
+	for _, p := range b.Plugins {
+		switch t := p.(type) {
+		case plugins.Needer:
+			t.WithPlugins(pfn)
 		}
-		f.WithPlugins(pfn)
 	}
 
 	return b, nil

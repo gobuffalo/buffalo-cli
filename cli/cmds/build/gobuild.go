@@ -12,7 +12,7 @@ import (
 	"github.com/gobuffalo/plugins/plugio"
 )
 
-func (bc *Cmd) buildArgs(root string) ([]string, error) {
+func (bc *Cmd) buildArgs(ctx context.Context, root string) ([]string, error) {
 	args := []string{"build"}
 
 	info, err := here.Dir(root)
@@ -33,16 +33,15 @@ func (bc *Cmd) buildArgs(root string) ([]string, error) {
 	} else {
 		bin = strings.TrimSuffix(bin, ".exe")
 	}
-	args = append(args, "-o", bin)
+	args = AppendArg(args, "-o", bin)
 
 	if len(bc.mod) != 0 {
-		args = append(args, "-mod", bc.mod)
+		args = AppendArg(args, "-mod", bc.mod)
 	}
 
 	args = append(args, bc.buildFlags...)
 
 	flags := []string{}
-
 	if bc.static {
 		flags = append(flags, "-linkmode external", "-extldflags \"-static\"")
 	}
@@ -51,14 +50,30 @@ func (bc *Cmd) buildArgs(root string) ([]string, error) {
 	if len(bc.ldFlags) > 0 {
 		flags = append(flags, bc.ldFlags)
 	}
-
 	if len(flags) > 0 {
-		args = append(args, "-ldflags", strings.Join(flags, " "))
+		args = AppendArg(args, "-ldflags", flags...)
+	}
+
+	if len(bc.tags) > 0 {
+		args = AppendArg(args, "-tags", bc.tags)
 	}
 
 	for _, p := range bc.ScopedPlugins() {
 		if bt, ok := p.(BuildArger); ok {
-			args = bt.GoBuildArgs(args)
+			ags, err := bt.GoBuildArgs(ctx, root, args)
+			if err != nil {
+				return nil, err
+			}
+
+			switch len(ags) {
+			case 0:
+				continue
+			case 1:
+				args = AppendArg(args, ags[0])
+			default:
+				args = AppendArg(args, ags[0], ags[1:]...)
+			}
+
 		}
 	}
 
@@ -66,7 +81,7 @@ func (bc *Cmd) buildArgs(root string) ([]string, error) {
 }
 
 func (bc *Cmd) build(ctx context.Context, root string) error {
-	buildArgs, err := bc.buildArgs(root)
+	buildArgs, err := bc.buildArgs(ctx, root)
 	if err != nil {
 		return plugins.Wrap(bc, err)
 	}

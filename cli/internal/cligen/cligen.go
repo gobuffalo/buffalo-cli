@@ -5,14 +5,11 @@ import (
 	"fmt"
 	"html/template"
 	"os"
-	"os/exec"
 	"path"
 	"path/filepath"
 	"strings"
 
 	"github.com/gobuffalo/here"
-	"github.com/gobuffalo/plugins/plugio"
-	"github.com/markbates/safe"
 )
 
 type Generator struct {
@@ -73,30 +70,6 @@ func (g *Generator) Generate(ctx context.Context, root string, args []string) er
 			return err
 		}
 	}
-
-	return g.Run(ctx, root, args)
-}
-
-func (g *Generator) Run(ctx context.Context, root string, args []string) error {
-	main := filepath.Join(root, "cmd", "newapp")
-	if _, err := os.Stat(filepath.Dir(main)); err != nil {
-		return err
-	}
-
-	bargs := []string{"run", "./cmd/newapp"}
-	bargs = append(bargs, args...)
-
-	cmd := exec.CommandContext(ctx, "go", bargs...)
-	cmd.Stdin = plugio.Stdin()
-	cmd.Stdout = plugio.Stdout()
-	cmd.Stderr = plugio.Stderr()
-	err := safe.RunE(func() error {
-		return cmd.Run()
-	})
-	if err != nil {
-		return err
-	}
-
 	return nil
 }
 

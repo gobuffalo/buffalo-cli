@@ -3,6 +3,7 @@ package build
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"os"
 	"path"
 	"path/filepath"
@@ -28,16 +29,15 @@ func Test_MainFile_Version(t *testing.T) {
 		return "v1", nil
 	}
 
+	p := buildtest.Versioner(fn)
 	bc.pluginsFn = func() []plugins.Plugin {
-		return plugins.Plugins{
-			buildtest.Versioner(fn),
-		}
+		return plugins.Plugins{p}
 	}
 
 	s, err = bc.Version(ctx, "")
 	r.NoError(err)
 	r.Contains(s, `"time":`)
-	r.Contains(s, `"buildVersioner":"v1"`)
+	r.Contains(s, fmt.Sprintf(`"%s":"v1"`, p.PluginName()))
 }
 
 func Test_MainFile_generateNewMain(t *testing.T) {

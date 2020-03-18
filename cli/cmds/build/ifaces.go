@@ -73,7 +73,7 @@ type BuildArger interface {
 	// Implementations are responsible for ensuring
 	// that the arguments returned are "valid"
 	// arguments for the `go build` command.
-	GoBuildArgs(args []string) []string
+	GoBuildArgs(ctx context.Context, root string, args []string) ([]string, error)
 }
 
 type Namer interface {
