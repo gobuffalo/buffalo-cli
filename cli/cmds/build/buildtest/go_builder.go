@@ -1,12 +1,16 @@
 package buildtest
 
-import "context"
+import (
+	"context"
+	"os/exec"
+)
 
-type GoBuilder func(ctx context.Context, root string, args []string) error
+type GoBuilder func(ctx context.Context, root string, cmd *exec.Cmd) error
 
 func (GoBuilder) PluginName() string {
 	return "buildtest/go-builder"
 }
-func (g GoBuilder) GoBuild(ctx context.Context, root string, args []string) error {
-	return g(ctx, root, args)
+
+func (g GoBuilder) GoBuild(ctx context.Context, root string, cmd *exec.Cmd) error {
+	return g(ctx, root, cmd)
 }

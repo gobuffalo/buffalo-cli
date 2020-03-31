@@ -8,6 +8,7 @@ import (
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/build"
 	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugio"
 	"github.com/gobuffalo/plugins/plugprint"
 )
 
@@ -35,7 +36,7 @@ func (b *Versioner) ScopedPlugins() []plugins.Plugin {
 	var scoped []plugins.Plugin
 	for _, p := range b.pluginsFn() {
 		switch p.(type) {
-		case CommandRunner:
+		case Runner:
 			scoped = append(scoped, p)
 		}
 	}
@@ -46,18 +47,21 @@ func (b *Versioner) ScopedPlugins() []plugins.Plugin {
 // BuildVersion is used by other commands to get the build
 // version of the current source and use it for the build.
 func (b *Versioner) BuildVersion(ctx context.Context, root string) (string, error) {
+	plugs := b.ScopedPlugins()
 
 	cmd := exec.CommandContext(ctx, "bzr", "revno")
+
 	bb := &bytes.Buffer{}
 	cmd.Stdout = bb
+	cmd.Stderr = plugio.Stderr(plugs...)
 
-	var fn cmdRunnerFn = func(ctx context.Context, root string, cmd *exec.Cmd) error {
+	fn := func(ctx context.Context, root string, cmd *exec.Cmd) error {
 		return cmd.Run()
 	}
 
-	for _, p := range b.ScopedPlugins() {
-		if vr, ok := p.(CommandRunner); ok {
-			fn = vr.RunBzrCommand
+	for _, p := range plugs {
+		if vr, ok := p.(Runner); ok {
+			fn = vr.RunBzr
 			break
 		}
 	}

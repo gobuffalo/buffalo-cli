@@ -3,6 +3,7 @@ package build
 import (
 	"context"
 	"flag"
+	"os/exec"
 
 	"github.com/gobuffalo/plugins"
 	"github.com/gobuffalo/plugins/plugio"
@@ -62,7 +63,7 @@ type GoBuilder interface {
 	// presented context and args.
 	// The first plugin to receive this call will be the
 	// only to answer it.
-	GoBuild(ctx context.Context, root string, args []string) error
+	GoBuild(ctx context.Context, root string, cmd *exec.Cmd) error
 }
 
 type BuildArger interface {

@@ -5,22 +5,12 @@ import (
 	"os/exec"
 )
 
-var _ CommandRunner = &commandRunner{}
+type runner func(ctx context.Context, root string, cmd *exec.Cmd) error
 
-type commandRunner struct {
-	cmd    *exec.Cmd
-	stdout string
-	err    error
+func (runner) PluginName() string {
+	return "bzr-runner"
 }
 
-func (v *commandRunner) PluginName() string {
-	return "commandRunner"
-}
-
-func (v *commandRunner) RunBzrCommand(ctx context.Context, root string, cmd *exec.Cmd) error {
-	v.cmd = cmd
-	if len(v.stdout) > 0 {
-		v.cmd.Stdout.Write([]byte(v.stdout))
-	}
-	return v.err
+func (r runner) RunBzr(ctx context.Context, root string, cmd *exec.Cmd) error {
+	return r(ctx, root, cmd)
 }

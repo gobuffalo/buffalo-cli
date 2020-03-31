@@ -87,17 +87,18 @@ func (bc *Cmd) build(ctx context.Context, root string) error {
 	}
 
 	plugs := bc.ScopedPlugins()
+	cmd := exec.CommandContext(ctx, "go", buildArgs...)
+	cmd.Stdin = plugio.Stdin(plugs...)
+	cmd.Stdout = plugio.Stdout(plugs...)
+	cmd.Stderr = plugio.Stderr(plugs...)
+
 	for _, p := range plugs {
 		if br, ok := p.(GoBuilder); ok {
-			if err := br.GoBuild(ctx, root, buildArgs); err != nil {
+			if err := br.GoBuild(ctx, root, cmd); err != nil {
 				return plugins.Wrap(br, err)
 			}
 		}
 	}
 
-	cmd := exec.CommandContext(ctx, "go", buildArgs...)
-	cmd.Stdin = plugio.Stdin(plugs...)
-	cmd.Stdout = plugio.Stdout(plugs...)
-	cmd.Stderr = plugio.Stderr(plugs...)
 	return cmd.Run()
 }

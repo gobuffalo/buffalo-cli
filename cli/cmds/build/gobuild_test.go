@@ -2,6 +2,7 @@ package build
 
 import (
 	"context"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -129,26 +130,26 @@ func Test_Cmd_GoCmd_LDFlags(t *testing.T) {
 		args []string
 		exp  []string
 	}{
-		{exp: []string{"build", "-o", cli("bin", "build")}},
+		{exp: []string{"go", "build", "-o", cli("bin", "build")}},
 		{
 			args: []string{"-o", filepath.Join("bin", "foo")},
-			exp:  []string{"build", "-o", cli("bin", "foo")},
+			exp:  []string{"go", "build", "-o", cli("bin", "foo")},
 		},
 		{
 			args: []string{"--mod", "vendor"},
-			exp:  []string{"build", "-o", cli("bin", "build"), "-mod", "vendor"},
+			exp:  []string{"go", "build", "-o", cli("bin", "build"), "-mod", "vendor"},
 		},
 		{
 			args: []string{"--tags", "a b c"},
-			exp:  []string{"build", "-o", cli("bin", "build"), "-tags", "a b c"},
+			exp:  []string{"go", "build", "-o", cli("bin", "build"), "-tags", "a b c"},
 		},
 		{
 			args: []string{"--static"},
-			exp:  []string{"build", "-o", cli("bin", "build"), "-ldflags", "-linkmode external -extldflags \"-static\""},
+			exp:  []string{"go", "build", "-o", cli("bin", "build"), "-ldflags", "-linkmode external -extldflags \"-static\""},
 		},
 		{
 			args: []string{"--ldflags", "linky"},
-			exp:  []string{"build", "-o", cli("bin", "build"), "-ldflags", "linky"},
+			exp:  []string{"go", "build", "-o", cli("bin", "build"), "-ldflags", "linky"},
 		},
 	}
 
@@ -159,8 +160,8 @@ func Test_Cmd_GoCmd_LDFlags(t *testing.T) {
 			bc := &Cmd{}
 
 			var act []string
-			fn := func(ctx context.Context, root string, args []string) error {
-				act = args
+			fn := func(ctx context.Context, root string, cmd *exec.Cmd) error {
+				act = cmd.Args
 				return nil
 			}
 			bc.WithPlugins(func() []plugins.Plugin {

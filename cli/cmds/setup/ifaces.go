@@ -14,14 +14,14 @@ type BeforeSetuper interface {
 	BeforeSetup(ctx context.Context, root string, args []string) error
 }
 
-type AfterSetuper interface {
-	plugins.Plugin
-	AfterSetup(ctx context.Context, root string, args []string, err error) error
-}
-
 type Setuper interface {
 	plugins.Plugin
 	Setup(ctx context.Context, root string, args []string) error
+}
+
+type AfterSetuper interface {
+	plugins.Plugin
+	AfterSetup(ctx context.Context, root string, args []string, err error) error
 }
 
 type Flagger interface {

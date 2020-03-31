@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -22,11 +23,11 @@ func Test_Cmd_Main(t *testing.T) {
 	if runtime.GOOS == "windows" {
 		bn += ".exe"
 	}
-	exp := []string{"build", "-o", bn}
+	exp := []string{"go", "build", "-o", bn}
 
 	var act []string
-	fn := func(ctx context.Context, root string, args []string) error {
-		act = args
+	fn := func(ctx context.Context, root string, cmd *exec.Cmd) error {
+		act = cmd.Args
 		return nil
 	}
 	bc.WithPlugins(func() []plugins.Plugin {
