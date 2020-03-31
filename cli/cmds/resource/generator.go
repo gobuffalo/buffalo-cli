@@ -64,6 +64,8 @@ func (g *Generator) ScopedPlugins() []plugins.Plugin {
 		switch p.(type) {
 		case BeforeGenerator:
 			builders = append(builders, p)
+		case AfterGenerator:
+			builders = append(builders, p)
 		case Stdouter:
 			builders = append(builders, p)
 		case Actioner:
@@ -77,8 +79,6 @@ func (g *Generator) ScopedPlugins() []plugins.Plugin {
 		case Templater:
 			builders = append(builders, p)
 		case TemplateTester:
-			builders = append(builders, p)
-		case AfterGenerator:
 			builders = append(builders, p)
 		case Migrationer:
 			builders = append(builders, p)
