@@ -1,8 +1,13 @@
 package mod
 
 import (
+	"bytes"
 	"context"
+	"fmt"
+	"io/ioutil"
+	"os"
 	"os/exec"
+	"path/filepath"
 
 	"github.com/gobuffalo/plugins"
 	"github.com/gobuffalo/plugins/plugio"
@@ -59,5 +64,42 @@ func (i *Initer) ModInit(ctx context.Context, root string, name string) error {
 	if err := c.Run(); err != nil {
 		return err
 	}
+
+	c = exec.CommandContext(ctx, "go", "mod", "tidy", "-v")
+	c.Stdout = plugio.Stdout(plugs...)
+	c.Stderr = plugio.Stderr(plugs...)
+	c.Stdin = plugio.Stdin(plugs...)
+
+	if len(plugs) == 0 {
+		return nil
+	}
+
+	mr := filepath.Join(root, "go.mod")
+	b, err := ioutil.ReadFile(mr)
+	if err != nil {
+		return err
+	}
+
+	bb := bytes.NewBuffer(b)
+
+	for _, p := range plugs {
+		switch t := p.(type) {
+		case Replacer:
+			m := t.ModReplace(root)
+			fmt.Println(">>>TODO cli/internal/plugins/golang/mod/init.go:84: m ", m)
+			for k, v := range m {
+				s := fmt.Sprintf("\nreplace %s => %s", k, v)
+				bb.WriteString(s)
+			}
+		}
+	}
+	fmt.Println(bb.String())
+
+	f, err := os.Open(mr)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	f.Write(bb.Bytes())
 	return nil
 }

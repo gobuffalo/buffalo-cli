@@ -3,7 +3,6 @@ package newapp
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path"
@@ -12,6 +11,7 @@ import (
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/newapp/presets"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/cligen"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/golang/mod"
 	"github.com/gobuffalo/plugins"
 	"github.com/gobuffalo/plugins/plugcmd"
 	"github.com/gobuffalo/plugins/plugio"
@@ -100,38 +100,6 @@ func (cmd *Cmd) Main(ctx context.Context, root string, args []string) error {
 
 	os.Chdir(root)
 
-	c := exec.CommandContext(ctx, "go", "mod", "init", modName)
-	c.Stdout = plugio.Stdout(plugs...)
-	c.Stderr = plugio.Stderr(plugs...)
-	c.Stdin = plugio.Stdin(plugs...)
-	if err := c.Run(); err != nil {
-		return err
-	}
-
-	// TODO: local dev hack
-	mod, err := ioutil.ReadFile(filepath.Join(root, "go.mod"))
-	if err != nil {
-		return err
-	}
-	mod = append(mod, []byte("\n\nreplace github.com/gobuffalo/buffalo-cli/v2 => ../../../buffalo-cli")...)
-	fmt.Println(string(mod))
-
-	f, err := os.Create(filepath.Join(root, "go.mod"))
-	if err != nil {
-		return err
-	}
-	f.Write(mod)
-	f.Close()
-	// TODO: local dev hack
-
-	err = ioutil.WriteFile(
-		filepath.Join(root, fmt.Sprintf("%s.go", dirName)),
-		[]byte(fmt.Sprintf("package %s", dirName)),
-		0644)
-	if err != nil {
-		return err
-	}
-
 	if cmd.usePlugs == nil {
 		cmd.usePlugs = map[string]string{}
 	}
@@ -177,6 +145,44 @@ func (cmd *Cmd) Main(ctx context.Context, root string, args []string) error {
 		return err
 	}
 
+	mi := &mod.Initer{}
+	var miplugs []plugins.Plugin
+
+	if cmd.pluginsFn != nil {
+		miplugs = cmd.pluginsFn()
+	}
+	fp := filepath.Join(os.Getenv("HOME"), "Dropbox", "dev", "buffalo-cli")
+	if _, err := os.Stat(fp); err == nil {
+		rel, err := filepath.Rel(fp, root)
+		if err != nil {
+			return err
+		}
+		rel = filepath.Dir(rel)
+
+		fn := func(root string) map[string]string {
+			return map[string]string{
+				"github.com/gobuffalo/buffalo-cli/v2": filepath.Join(rel, "/buffalo-cli"),
+			}
+		}
+		miplugs = append(miplugs, devReplacer(fn))
+
+	}
+	mi.WithPlugins(func() []plugins.Plugin {
+		return miplugs
+	})
+
+	os.Chdir(root)
+	if err := mi.ModInit(ctx, root, modName); err != nil {
+		return err
+	}
+	c := exec.CommandContext(ctx, "go", "run", "./cmd/newapp")
+	c.Stdout = plugio.Stdout(plugs...)
+	c.Stderr = plugio.Stderr(plugs...)
+	c.Stdin = plugio.Stdin(plugs...)
+
+	if err := c.Run(); err != nil {
+		return err
+	}
 	return nil
 }
 

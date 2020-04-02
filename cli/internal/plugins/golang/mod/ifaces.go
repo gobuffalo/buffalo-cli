@@ -11,5 +11,5 @@ type Requirer interface {
 }
 
 type Replacer interface {
-	ModReplacer(root string) map[string]string
+	ModReplace(root string) map[string]string
 }
