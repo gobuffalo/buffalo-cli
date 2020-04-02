@@ -23,7 +23,7 @@ func (cmd *Cmd) Flags() *pflag.FlagSet {
 			}
 		case Pflagger:
 			for _, f := range flagger.CleanPflags(p, t.SetupFlags()) {
-				flags.AddGoFlag(f)
+				flags.AddFlag(f)
 			}
 		}
 	}

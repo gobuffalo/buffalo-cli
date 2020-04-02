@@ -3,6 +3,7 @@ package setup
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/gobuffalo/plugins"
 	"github.com/gobuffalo/plugins/plugcmd"
@@ -13,14 +14,17 @@ import (
 )
 
 func (cmd *Cmd) Main(ctx context.Context, root string, args []string) error {
-	flags := cmd.Flags()
-	if err := flags.Parse(args); err != nil {
-		return err
+	if len(args) > 0 {
+		if !strings.HasPrefix(args[0], "-") {
+			return cmd.SubCommand(ctx, root, args[0], args)
+		}
 	}
 
-	if len(flags.Args()) > 0 {
-		return cmd.SubCommand(ctx, root, args[0], args)
+	flags := cmd.Flags()
+	if err := flags.Parse(args); err != nil {
+		return plugins.Wrap(cmd, err)
 	}
+
 	args = flags.Args()
 
 	if cmd.help {
@@ -50,7 +54,7 @@ func (cmd *Cmd) beforeSetup(ctx context.Context, root string, args []string) err
 				return bb.BeforeSetup(ctx, root, args)
 			})
 			if err != nil {
-				return err
+				return plugins.Wrap(cmd, err)
 			}
 		}
 	}
@@ -65,7 +69,7 @@ func (cmd *Cmd) afterSetup(ctx context.Context, root string, args []string, err 
 				return bb.AfterSetup(ctx, root, args, err)
 			})
 			if err != nil {
-				return err
+				return plugins.Wrap(cmd, err)
 			}
 		}
 	}

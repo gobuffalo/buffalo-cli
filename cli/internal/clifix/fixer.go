@@ -38,8 +38,7 @@ func (fixer *Fixer) Fix(ctx context.Context, root string, args []string) error {
 
 	x := filepath.Join(root, "cmd", "buffalo")
 	mm := map[string]string{
-		filepath.Join(x, "cli", "buffalo.go"): cliBuffalo,
-		filepath.Join(x, "main.go"):           cliMain,
+		filepath.Join(x, "main.go"): tmplMain,
 	}
 
 	for fp, body := range mm {
@@ -82,50 +81,37 @@ func (fixer *Fixer) Fix(ctx context.Context, root string, args []string) error {
 	return nil
 }
 
-const cliBuffalo = `
-package cli
+const tmplMain = `
+package main
 
 import (
 	"context"
 	"fmt"
-
-	"github.com/gobuffalo/buffalo-cli/v2/cli"
-	"github.com/gobuffalo/plugins"
-)
-
-func Buffalo(ctx context.Context, root string, args []string) error {
-	fmt.Print("~~~~ Using {{.Name}}/cmd/buffalo/cli.Buffalo ~~~\n\n")
-
-	buffalo, err := cli.New()
-	if err != nil {
-		return err
-	}
-
-	buffalo.Plugins = append([]plugins.Plugin{
-		// prepend your plugins here
-	}, buffalo.Plugins...)
-
-	return buffalo.Main(ctx, root, args)
-}
-`
-
-const cliMain = `
-package main
-
-import (
-	"{{.ImportPath}}/cmd/buffalo/cli"
-	"context"
 	"log"
 	"os"
+
+	"github.com/gobuffalo/buffalo-cli/v2/cli"
 )
 
 func main() {
+	fmt.Print("~~~~ Using coke/cmd/buffalo ~~~\n\n")
+
 	ctx := context.Background()
 	pwd, err := os.Getwd()
 	if err != nil {
 		log.Fatal(err)
 	}
-	if err := cli.Buffalo(ctx, pwd, os.Args[1:]); err != nil {
+
+	buffalo, err := cli.New()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// append your plugins here
+	// buffalo.Plugins = append(buffalo.Plugins, ...)
+
+	err = buffalo.Main(ctx, pwd, os.Args[1:])
+	if err != nil {
 		log.Fatal(err)
 	}
 }

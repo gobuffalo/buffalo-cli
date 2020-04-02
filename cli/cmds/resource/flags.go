@@ -41,7 +41,7 @@ func (g *Generator) Flags() *pflag.FlagSet {
 			}
 		case Pflagger:
 			for _, f := range flagger.CleanPflags(p, t.ResourceFlags()) {
-				flags.AddGoFlag(f)
+				flags.AddFlag(f)
 			}
 		}
 	}

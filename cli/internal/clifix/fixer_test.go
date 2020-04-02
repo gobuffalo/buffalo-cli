@@ -36,8 +36,6 @@ func Test_Fixer_Fix(t *testing.T) {
 	fp := filepath.Join(root, "main.go")
 	b, err := ioutil.ReadFile(fp)
 	r.NoError(err)
-	r.Contains(string(b), `"coke/cmd/buffalo/cli"`)
+	r.Contains(string(b), `coke/cmd/buffalo`)
 
-	_, err = os.Stat(filepath.Join(root, "cli", "buffalo.go"))
-	r.NoError(err)
 }
