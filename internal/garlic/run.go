@@ -12,7 +12,6 @@ import (
 	"github.com/gobuffalo/buffalo-cli/v2/cli"
 	"github.com/gobuffalo/here"
 	"github.com/gobuffalo/plugins/plugio"
-	"github.com/markbates/safe"
 )
 
 func isBuffalo(mod string) bool {
@@ -56,13 +55,5 @@ func Run(ctx context.Context, root string, args []string) error {
 	cmd.Stdin = plugio.Stdin()
 	cmd.Stdout = plugio.Stdout()
 	cmd.Stderr = plugio.Stderr()
-	err := safe.RunE(func() error {
-		return cmd.Run()
-	})
-	if err != nil {
-		return err
-	}
-
-	return nil
-
+	return cmd.Run()
 }

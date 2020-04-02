@@ -23,41 +23,6 @@ type Buffalo struct {
 	root    string
 }
 
-<<<<<<< HEAD
-func NewFromRoot(root string) (*Buffalo, error) {
-	b := &Buffalo{}
-
-	pfn := func() []plugins.Plugin {
-		return b.Plugins
-	}
-
-	b.Plugins = append(b.Plugins, clifix.Plugins()...)
-	b.Plugins = append(b.Plugins, cmds.Plugins()...)
-	b.Plugins = append(b.Plugins, fizz.Plugins()...)
-	b.Plugins = append(b.Plugins, flect.Plugins()...)
-	b.Plugins = append(b.Plugins, golang.Plugins()...)
-	b.Plugins = append(b.Plugins, grifts.Plugins()...)
-	b.Plugins = append(b.Plugins, i18n.Plugins()...)
-	b.Plugins = append(b.Plugins, mail.Plugins()...)
-	b.Plugins = append(b.Plugins, packr.Plugins()...)
-	b.Plugins = append(b.Plugins, pkger.Plugins()...)
-	b.Plugins = append(b.Plugins, plush.Plugins()...)
-	b.Plugins = append(b.Plugins, pop.Plugins()...)
-	b.Plugins = append(b.Plugins, refresh.Plugins()...)
-	b.Plugins = append(b.Plugins, soda.Plugins()...)
-
-	if _, err := os.Stat(filepath.Join(root, "package.json")); err == nil {
-		b.Plugins = append(b.Plugins, webpack.Plugins()...)
-	}
-
-	if _, err := os.Stat(filepath.Join(root, ".git")); err == nil {
-		b.Plugins = append(b.Plugins, git.Plugins()...)
-	}
-
-	if _, err := os.Stat(filepath.Join(root, ".bzr")); err == nil {
-		b.Plugins = append(b.Plugins, bzr.Plugins()...)
-	}
-=======
 // TODO move to the generated application code
 // once packages are no longer internal
 func insidePlugins(root string) []plugins.Plugin {
@@ -83,7 +48,6 @@ func NewFromRoot(root string) (*Buffalo, error) {
 	plugs := b.ScopedPlugins()
 	plugins.Sort(plugs)
 	b.Plugins = plugs
->>>>>>> moving stuff around
 
 	pfn := b.ScopedPlugins
 

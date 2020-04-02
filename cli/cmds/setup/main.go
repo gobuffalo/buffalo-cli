@@ -66,7 +66,6 @@ func (cmd *Cmd) afterSetup(ctx context.Context, root string, args []string, err 
 		if bb, ok := p.(AfterSetuper); ok {
 			if err := bb.AfterSetup(ctx, root, args, err); err != nil {
 				return plugins.Wrap(bb, err)
-				return err
 			}
 		}
 	}

@@ -84,7 +84,11 @@ func (s *Setup) Setup(ctx context.Context, root string, args []string) error {
 	for _, p := range plugs {
 		if t, ok := p.(Migrater); ok {
 			if err := t.MigrateDB(ctx, root, args); err != nil {
+<<<<<<< HEAD
 				return plugins.Wrap(p, err)
+=======
+				return plugins.Wrap(s, err)
+>>>>>>> i was only asking
 			}
 		}
 	}
@@ -92,7 +96,11 @@ func (s *Setup) Setup(ctx context.Context, root string, args []string) error {
 	for _, p := range plugs {
 		if t, ok := p.(DBSeeder); ok {
 			if err := t.SeedDB(ctx, root, args); err != nil {
+<<<<<<< HEAD
 				return plugins.Wrap(p, err)
+=======
+				return plugins.Wrap(s, err)
+>>>>>>> i was only asking
 			}
 		}
 	}

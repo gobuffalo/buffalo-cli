@@ -16,7 +16,6 @@ func (b *Buffalo) Main(ctx context.Context, root string, args []string) error {
 	flags := pflag.NewFlagSet(b.String(), pflag.ContinueOnError)
 	flags.BoolVarP(&help, "help", "h", false, "print this help")
 	flags.Parse(args)
-
 	pfn := func() []plugins.Plugin {
 		return b.Plugins
 	}
