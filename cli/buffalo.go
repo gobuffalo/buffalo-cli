@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/clifix"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/golang"
 	"github.com/gobuffalo/buffalo-cli/v2/meta"
 	"github.com/gobuffalo/plugins"
@@ -63,6 +64,7 @@ func insidePlugins(root string) []plugins.Plugin {
 	var plugs []plugins.Plugin
 
 	plugs = append(plugs, golang.Plugins()...)
+	plugs = append(plugs, clifix.Plugins()...)
 	return plugs
 }
 
