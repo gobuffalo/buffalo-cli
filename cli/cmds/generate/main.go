@@ -16,9 +16,9 @@ func (cmd *Cmd) Main(ctx context.Context, root string, args []string) error {
 	stdout := plugio.Stdout(cmd.ScopedPlugins()...)
 	if len(args) == 0 {
 		if err := plugprint.Print(stdout, cmd); err != nil {
-			return err
+			return plugins.Wrap(cmd, err)
 		}
-		return fmt.Errorf("no command provided")
+		return plugins.Wrap(cmd, fmt.Errorf("no command provided"))
 	}
 
 	if len(args) == 1 && args[0] == "-h" {
@@ -28,7 +28,6 @@ func (cmd *Cmd) Main(ctx context.Context, root string, args []string) error {
 	plugs := cmd.ScopedPlugins()
 
 	n := args[0]
-
 	fn := plugfind.Background()
 	fn = byGenerator(fn)
 	fn = plugcmd.ByNamer(fn)
@@ -36,12 +35,12 @@ func (cmd *Cmd) Main(ctx context.Context, root string, args []string) error {
 
 	p := fn.Find(n, plugs)
 	if p == nil {
-		return fmt.Errorf("unknown command %q", n)
+		return plugins.Wrap(cmd, fmt.Errorf("unknown command %q", n))
 	}
 
 	b, ok := p.(Generator)
 	if !ok {
-		return fmt.Errorf("unknown command %q", n)
+		return plugins.Wrap(cmd, fmt.Errorf("unknown command %q", n))
 	}
 
 	return b.Generate(ctx, root, args[1:])

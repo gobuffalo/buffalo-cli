@@ -58,8 +58,6 @@ func (g *Generator) ScopedPlugins() []plugins.Plugin {
 		plugs = g.pluginsFn()
 	}
 
-	pm := map[string]bool{}
-
 	var builders []plugins.Plugin
 
 	for _, p := range plugs {
@@ -68,60 +66,23 @@ func (g *Generator) ScopedPlugins() []plugins.Plugin {
 			builders = append(builders, p)
 		case Stdouter:
 			builders = append(builders, p)
-		}
-	}
-
-	for _, p := range plugs {
-		switch p.(type) {
 		case ResourceGenerator:
-			if pm["ResourceGenerator"] {
-				continue
-			}
-			pm["ResourceGenerator"] = true
-			break
+			builders = append(builders, p)
 		case Actioner:
-			if pm["Actioner"] {
-				continue
-			}
-			pm["Actioner"] = true
+			builders = append(builders, p)
 		case ActionTester:
-			if pm["ActionTester"] {
-				continue
-			}
-			pm["ActionTester"] = true
+			builders = append(builders, p)
 		case Modeler:
-			if pm["Modeler"] {
-				continue
-			}
-			pm["Modeler"] = true
+			builders = append(builders, p)
 		case ModelTester:
-			if pm["ModelTester"] {
-				continue
-			}
-			pm["ModelTester"] = true
+			builders = append(builders, p)
 		case Templater:
-			if pm["Templater"] {
-				continue
-			}
-			pm["Templater"] = true
+			builders = append(builders, p)
 		case TemplateTester:
-			if pm["TemplateTester"] {
-				continue
-			}
-			pm["TemplateTester"] = true
-		default:
-			continue
+			builders = append(builders, p)
+		case AfterGenerator:
+			builders = append(builders, p)
 		}
-
-		builders = append(builders, p)
-	}
-
-	for _, p := range plugs {
-		_, ok := p.(AfterGenerator)
-		if !ok {
-			continue
-		}
-		builders = append(builders, p)
 	}
 
 	return builders
