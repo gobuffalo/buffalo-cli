@@ -8,8 +8,8 @@ import (
 )
 
 var _ plugcmd.Aliaser = &Cmd{}
-var _ plugins.Plugin = &Cmd{}
 var _ plugins.Needer = &Cmd{}
+var _ plugins.Plugin = &Cmd{}
 var _ plugins.Scoper = &Cmd{}
 var _ plugprint.Describer = &Cmd{}
 var _ plugprint.FlagPrinter = &Cmd{}
