@@ -26,14 +26,14 @@ var _ plugins.Needer = &Generator{}
 var _ plugins.Scoper = &Generator{}
 
 type Generator struct {
-	SkipActionTests    bool
-	SkipActions        bool
-	SkipMigrationTests bool
-	SkipMigrations     bool
-	SkipModelTests     bool
-	SkipModels         bool
-	SkipTemplateTests  bool
-	SkipTemplates      bool
+	skipActionTests    bool
+	skipActions        bool
+	skipMigrationTests bool
+	skipMigrations     bool
+	skipModelTests     bool
+	skipModels         bool
+	skipTemplateTests  bool
+	skipTemplates      bool
 
 	flags     *pflag.FlagSet
 	help      bool
@@ -66,8 +66,6 @@ func (g *Generator) ScopedPlugins() []plugins.Plugin {
 			builders = append(builders, p)
 		case Stdouter:
 			builders = append(builders, p)
-		case ResourceGenerator:
-			builders = append(builders, p)
 		case Actioner:
 			builders = append(builders, p)
 		case ActionTester:
@@ -82,6 +80,14 @@ func (g *Generator) ScopedPlugins() []plugins.Plugin {
 			builders = append(builders, p)
 		case AfterGenerator:
 			builders = append(builders, p)
+		case Migrationer:
+			builders = append(builders, p)
+		case MigrationTester:
+			builders = append(builders, p)
+		case Flagger:
+			builders = append(builders, p)
+		case Pflagger:
+			builders = append(builders, p)
 		}
 	}
 
@@ -92,18 +98,13 @@ func (g *Generator) beforeGenerate(ctx context.Context, root string, args []stri
 	plugs := g.ScopedPlugins()
 
 	for _, p := range plugs {
-		b, ok := p.(BeforeGenerator)
-		if !ok {
-			continue
-		}
-		err := safe.RunE(func() error {
-			fmt.Printf("[Resource] BeforeGenerator %s\n", p.PluginName())
-			return b.BeforeGenerateResource(ctx, root, args)
-		})
-		if err != nil {
-			return err
+		if b, ok := p.(BeforeGenerator); ok {
+			if err := b.BeforeGenerateResource(ctx, root, args); err != nil {
+				return err
+			}
 		}
 	}
+
 	return nil
 }
 
@@ -112,7 +113,7 @@ func (g *Generator) addResource(root string, n string) error {
 
 	b, err := ioutil.ReadFile(fp)
 	if err != nil {
-		return err
+		return plugins.Wrap(g, err)
 	}
 
 	pres := name.New(n)
@@ -120,21 +121,23 @@ func (g *Generator) addResource(root string, n string) error {
 
 	gf, err := gogen.AddInsideBlock(genny.NewFileB(fp, b), "if app == nil {", stmt)
 	if err != nil {
-		return err
+		return plugins.Wrap(g, err)
 	}
 
 	f, err := os.Create(fp)
 	if err != nil {
-		return err
+		return plugins.Wrap(g, err)
 	}
 	defer f.Close()
+
 	_, err = f.WriteString(gf.String())
 	if err != nil {
-		return err
+		return plugins.Wrap(g, err)
 	}
 
 	return nil
 }
+
 func (g *Generator) afterGenerate(ctx context.Context, root string, args []string, err error) error {
 	plugs := g.ScopedPlugins()
 
@@ -145,18 +148,13 @@ func (g *Generator) afterGenerate(ctx context.Context, root string, args []strin
 	}
 
 	for _, p := range plugs {
-		b, ok := p.(AfterGenerator)
-		if !ok {
-			continue
-		}
-		err := safe.RunE(func() error {
-			fmt.Printf("[Resource] AfterGenerator %s\n", p.PluginName())
-			return b.AfterGenerateResource(ctx, root, args, err)
-		})
-		if err != nil {
-			return err
+		if b, ok := p.(AfterGenerator); ok {
+			if err := b.AfterGenerateResource(ctx, root, args, err); err != nil {
+				return plugins.Wrap(b, err)
+			}
 		}
 	}
+
 	return nil
 }
 
@@ -179,20 +177,13 @@ func (g *Generator) Generate(ctx context.Context, root string, args []string) er
 		return plugprint.Print(plugio.Stdout(plugs...), g)
 	}
 
-	if err := g.beforeGenerate(ctx, root, args); err != nil {
-		return g.afterGenerate(ctx, root, args, err)
-	}
+	err := g.run(ctx, root, args)
+	return g.afterGenerate(ctx, root, args, err)
+}
 
-	for _, p := range plugs {
-		gr, ok := p.(ResourceGenerator)
-		if !ok {
-			continue
-		}
-		err := safe.RunE(func() error {
-			fmt.Printf("[Resource] ResourceGenerator %s\n", p.PluginName())
-			return gr.GenerateResource(ctx, root, args)
-		})
-		return g.afterGenerate(ctx, root, args, err)
+func (g *Generator) run(ctx context.Context, root string, args []string) error {
+	if err := g.beforeGenerate(ctx, root, args); err != nil {
+		return err
 	}
 
 	type step func(context.Context, string, []string) error
@@ -208,86 +199,81 @@ func (g *Generator) Generate(ctx context.Context, root string, args []string) er
 		g.generateTemplates,
 	}
 
-	for _, step := range steps {
+	for i, step := range steps {
 		if err := step(ctx, root, args); err != nil {
-			return err
+			return fmt.Errorf("(%d) %w", i, plugins.Wrap(g, err))
 		}
 	}
 
-	return g.afterGenerate(ctx, root, args, nil)
-
+	return nil
 }
 
 func (g *Generator) generateActions(ctx context.Context, root string, args []string) error {
-	if g.SkipActions {
+	if g.skipActions {
 		return nil
 	}
+
 	for _, p := range g.ScopedPlugins() {
-		ag, ok := p.(Actioner)
-		if !ok {
-			continue
+		if ag, ok := p.(Actioner); ok {
+			if err := ag.GenerateResourceActions(ctx, root, args); err != nil {
+				return plugins.Wrap(ag, err)
+			}
 		}
-		return safe.RunE(func() error {
-			fmt.Printf("[Resource] Actioner %s\n", p.PluginName())
-			return ag.GenerateResourceActions(ctx, root, args)
-		})
 	}
+
 	return nil
 }
 
 func (g *Generator) generateActionTests(ctx context.Context, root string, args []string) error {
-	if g.SkipActionTests {
+	if g.skipActionTests {
 		return nil
 	}
+
 	for _, p := range g.ScopedPlugins() {
-		ag, ok := p.(ActionTester)
-		if !ok {
-			continue
+		if ag, ok := p.(ActionTester); ok {
+			if err := ag.GenerateResourceActionTests(ctx, root, args); err != nil {
+				return plugins.Wrap(ag, err)
+			}
 		}
-		return safe.RunE(func() error {
-			fmt.Printf("[Resource] ActionTester %s\n", p.PluginName())
-			return ag.GenerateResourceActionTests(ctx, root, args)
-		})
 	}
+
 	return nil
 }
 
 func (g *Generator) generateTemplates(ctx context.Context, root string, args []string) error {
-	if g.SkipTemplates {
+	if g.skipTemplates {
 		return nil
 	}
+
 	for _, p := range g.ScopedPlugins() {
-		ag, ok := p.(Templater)
-		if !ok {
-			continue
+		if ag, ok := p.(Templater); ok {
+			if err := ag.GenerateResourceTemplates(ctx, root, args); err != nil {
+				return plugins.Wrap(ag, err)
+			}
 		}
-		return safe.RunE(func() error {
-			fmt.Printf("[Resource] Templater %s\n", p.PluginName())
-			return ag.GenerateResourceTemplates(ctx, root, args)
-		})
 	}
+
 	return nil
 }
 
 func (g *Generator) generateTemplateTests(ctx context.Context, root string, args []string) error {
-	if g.SkipTemplateTests {
+	if g.skipTemplateTests {
 		return nil
 	}
+
 	for _, p := range g.ScopedPlugins() {
-		ag, ok := p.(TemplateTester)
-		if !ok {
-			continue
+		if ag, ok := p.(TemplateTester); ok {
+			if err := ag.GenerateResourceTemplateTests(ctx, root, args); err != nil {
+				return plugins.Wrap(ag, err)
+			}
 		}
-		return safe.RunE(func() error {
-			fmt.Printf("[Resource] TemplateTester %s\n", p.PluginName())
-			return ag.GenerateResourceTemplateTests(ctx, root, args)
-		})
 	}
+
 	return nil
 }
 
 func (g *Generator) generateModels(ctx context.Context, root string, args []string) error {
-	if g.SkipModels {
+	if g.skipModels {
 		return nil
 	}
 	for _, p := range g.ScopedPlugins() {
@@ -304,52 +290,49 @@ func (g *Generator) generateModels(ctx context.Context, root string, args []stri
 }
 
 func (g *Generator) generateModelTests(ctx context.Context, root string, args []string) error {
-	if g.SkipModelTests {
+	if g.skipModelTests {
 		return nil
 	}
+
 	for _, p := range g.ScopedPlugins() {
-		ag, ok := p.(ModelTester)
-		if !ok {
-			continue
+		if ag, ok := p.(ModelTester); ok {
+			if err := ag.GenerateResourceModelTests(ctx, root, args); err != nil {
+				return plugins.Wrap(ag, err)
+			}
 		}
-		return safe.RunE(func() error {
-			fmt.Printf("[Resource] ModelTester %s\n", p.PluginName())
-			return ag.GenerateResourceModelTests(ctx, root, args)
-		})
 	}
+
 	return nil
 }
 
 func (g *Generator) generateMigrations(ctx context.Context, root string, args []string) error {
-	if g.SkipMigrations {
+	if g.skipMigrations {
 		return nil
 	}
+
 	for _, p := range g.ScopedPlugins() {
-		ag, ok := p.(Migrationer)
-		if !ok {
-			continue
+		if ag, ok := p.(Migrationer); ok {
+			if err := ag.GenerateResourceMigrations(ctx, root, args); err != nil {
+				return plugins.Wrap(ag, err)
+			}
 		}
-		return safe.RunE(func() error {
-			fmt.Printf("[Resource] Migrationer %s\n", p.PluginName())
-			return ag.GenerateResourceMigrations(ctx, root, args)
-		})
 	}
+
 	return nil
 }
 
 func (g *Generator) generateMigrationTests(ctx context.Context, root string, args []string) error {
-	if g.SkipMigrationTests {
+	if g.skipMigrationTests {
 		return nil
 	}
+
 	for _, p := range g.ScopedPlugins() {
-		ag, ok := p.(MigrationTester)
-		if !ok {
-			continue
+		if ag, ok := p.(MigrationTester); ok {
+			if err := ag.GenerateResourceMigrationTests(ctx, root, args); err != nil {
+				return plugins.Wrap(ag, err)
+			}
 		}
-		return safe.RunE(func() error {
-			fmt.Printf("[Resource] MigrationTester %s\n", p.PluginName())
-			return ag.GenerateResourceMigrationTests(ctx, root, args)
-		})
 	}
+
 	return nil
 }

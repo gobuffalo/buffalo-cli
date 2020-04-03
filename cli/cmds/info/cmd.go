@@ -1,8 +1,6 @@
 package info
 
 import (
-	"context"
-
 	"github.com/gobuffalo/plugins"
 	"github.com/gobuffalo/plugins/plugprint"
 	"github.com/spf13/pflag"
@@ -32,39 +30,18 @@ func (cmd *Cmd) Description() string {
 	return "Print diagnostic information (useful for debugging)"
 }
 
-// Info runs all of the plugins that implement the
-// `Informer` interface in order.
-func (cmd *Cmd) plugins(ctx context.Context, root string, args []string) error {
-	for _, p := range cmd.ScopedPlugins() {
-		i, ok := p.(Informer)
-		if !ok {
-			continue
-		}
-		if err := i.Info(ctx, root, args); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
 func (cmd *Cmd) ScopedPlugins() []plugins.Plugin {
+	if cmd.pluginsFn == nil {
+		return nil
+	}
+
 	var plugs []plugins.Plugin
 
-	if cmd.pluginsFn == nil {
-		return plugs
-	}
 	for _, p := range cmd.pluginsFn() {
-		if i, ok := p.(Informer); ok {
-			plugs = append(plugs, i)
+		switch p.(type) {
+		case Informer:
+			plugs = append(plugs, p)
 		}
 	}
-
 	return plugs
-}
-
-// Main implements the `buffalo info` command. Buffalo's checks
-// are run first, then any plugins that implement plugins.Informer
-// will be run in order at the end.
-func (cmd *Cmd) Main(ctx context.Context, root string, args []string) error {
-	return nil
 }
