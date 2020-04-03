@@ -37,11 +37,6 @@ type Pflagger interface {
 	BuildFlags() []*pflag.Flag
 }
 
-type TemplatesValidator interface {
-	plugins.Plugin
-	ValidateTemplates(root string) error
-}
-
 type Packager interface {
 	plugins.Plugin
 	Package(ctx context.Context, root string, files []string) error
@@ -70,6 +65,16 @@ type Runner interface {
 type Tagger interface {
 	plugins.Plugin
 	BuildTags(ctx context.Context, root string) ([]string, error)
+}
+
+type Namer interface {
+	Builder
+	CmdName() string
+}
+
+type Aliaser interface {
+	Builder
+	CmdAliases() []string
 }
 
 type Stdouter = plugio.Outer

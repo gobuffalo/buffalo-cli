@@ -18,7 +18,6 @@ func Test_Cmd_Subcommands(t *testing.T) {
 		&afterBuilder{},
 		background("bar"),
 		&buildVersioner{},
-		&templatesValidator{},
 		&packager{},
 		&bladeRunner{},
 	}
@@ -45,7 +44,6 @@ func Test_Cmd_ScopedPlugins(t *testing.T) {
 		background("bar"),
 		&buildVersioner{},
 		&buildImporter{},
-		&templatesValidator{},
 		&bladeRunner{},
 		&packager{},
 	}

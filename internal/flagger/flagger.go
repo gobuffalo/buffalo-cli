@@ -13,7 +13,7 @@ func CleanPflags(p plugins.Plugin, pflags []*pflag.Flag) []*pflag.Flag {
 	for i, f := range pflags {
 		flags[i] = &pflag.Flag{
 			Name:        fmt.Sprintf("%s-%s", path.Base(name(p)), f.Name),
-			Usage:       f.Usage,
+			Usage:       fmt.Sprintf("[%s] %s", p.PluginName(), f.Usage),
 			Value:       f.Value,
 			DefValue:    f.DefValue,
 			NoOptDefVal: f.NoOptDefVal,

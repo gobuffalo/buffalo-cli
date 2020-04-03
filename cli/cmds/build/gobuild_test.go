@@ -30,7 +30,7 @@ func Test_Cmd_GoCmd_Bin(t *testing.T) {
 	r := require.New(t)
 
 	bc := &Cmd{
-		Bin: "cli",
+		bin: "cli",
 	}
 
 	ctx := context.Background()
@@ -50,8 +50,8 @@ func Test_Cmd_GoCmd_Mod(t *testing.T) {
 	r := require.New(t)
 
 	bc := &Cmd{
-		Bin: "cli",
-		Mod: "vendor",
+		bin: "cli",
+		mod: "vendor",
 	}
 
 	ctx := context.Background()
@@ -71,8 +71,8 @@ func Test_Cmd_GoCmd_Tags(t *testing.T) {
 	r := require.New(t)
 
 	bc := &Cmd{
-		Bin:  "cli",
-		Tags: "a b c",
+		bin:  "cli",
+		tags: "a b c",
 	}
 
 	ctx := context.Background()
@@ -92,8 +92,8 @@ func Test_Cmd_GoCmd_Static(t *testing.T) {
 	r := require.New(t)
 
 	bc := &Cmd{
-		Bin:    "cli",
-		Static: true,
+		bin:    "cli",
+		static: true,
 	}
 
 	ctx := context.Background()
@@ -113,8 +113,8 @@ func Test_Cmd_GoCmd_LDFlags(t *testing.T) {
 	r := require.New(t)
 
 	bc := &Cmd{
-		Bin:     "cli",
-		LDFlags: "linky",
+		bin:     "cli",
+		ldFlags: "linky",
 	}
 
 	ctx := context.Background()

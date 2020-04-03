@@ -17,21 +17,20 @@ var _ plugprint.FlagPrinter = &Cmd{}
 
 type Cmd struct {
 	// Mod is the -mod flag
-	Mod string
+	mod string
 	// Static sets the following flags for the final `go build` command:
 	// -linkmode external
 	// -extldflags "-static"
-	Static bool
+	static bool
 	// Environment the binary is meant for. defaults to "development"
-	Environment string
+	environment string
 	// LDFlags to be passed to the final `go build` command
-	LDFlags string
+	ldFlags string
 	// BuildFlags to be passed to the final `go build` command
-	BuildFlags             []string
-	Tags                   string
-	Bin                    string
-	Verbose                bool
-	SkipTemplateValidation bool
+	buildFlags []string
+	tags       string
+	bin        string
+	verbose    bool
 
 	help      bool
 	pluginsFn plugins.Feeder
@@ -65,41 +64,42 @@ func (bc *Cmd) SubCommands() []plugins.Plugin {
 }
 
 func (bc *Cmd) ScopedPlugins() []plugins.Plugin {
-	var plugs []plugins.Plugin
-	if bc.pluginsFn != nil {
-		plugs = bc.pluginsFn()
+	if bc.pluginsFn == nil {
+		return nil
 	}
 
-	var builders []plugins.Plugin
-	for _, p := range plugs {
+	var plugs []plugins.Plugin
+	for _, p := range bc.pluginsFn() {
 		switch p.(type) {
 		case Tagger:
-			builders = append(builders, p)
+			plugs = append(plugs, p)
 		case Builder:
-			builders = append(builders, p)
+			plugs = append(plugs, p)
 		case BeforeBuilder:
-			builders = append(builders, p)
+			plugs = append(plugs, p)
 		case AfterBuilder:
-			builders = append(builders, p)
+			plugs = append(plugs, p)
 		case Versioner:
-			builders = append(builders, p)
-		case TemplatesValidator:
-			builders = append(builders, p)
+			plugs = append(plugs, p)
 		case Packager:
-			builders = append(builders, p)
+			plugs = append(plugs, p)
 		case PackFiler:
-			builders = append(builders, p)
+			plugs = append(plugs, p)
 		case Flagger:
-			builders = append(builders, p)
+			plugs = append(plugs, p)
 		case Pflagger:
-			builders = append(builders, p)
+			plugs = append(plugs, p)
 		case Importer:
-			builders = append(builders, p)
+			plugs = append(plugs, p)
 		case Runner:
-			builders = append(builders, p)
+			plugs = append(plugs, p)
 		case Stdouter:
+			plugs = append(plugs, p)
+		case Namer:
+			plugs = append(plugs, p)
+		case Aliaser:
 			plugs = append(plugs, p)
 		}
 	}
-	return builders
+	return plugs
 }

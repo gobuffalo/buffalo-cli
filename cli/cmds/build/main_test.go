@@ -69,43 +69,6 @@ func Test_Cmd_Main_SubCommand_err(t *testing.T) {
 	r.Error(err)
 }
 
-func Test_Cmd_Main_ValidateTemplates(t *testing.T) {
-	r := require.New(t)
-
-	p := &templatesValidator{}
-	plugs := plugins.Plugins{p, &bladeRunner{}}
-
-	bc := &Cmd{
-		pluginsFn: func() []plugins.Plugin {
-			return plugs
-		},
-	}
-
-	args := []string{}
-
-	err := bc.Main(context.Background(), ".", args)
-	r.NoError(err)
-
-}
-
-func Test_Cmd_Main_ValidateTemplates_err(t *testing.T) {
-	r := require.New(t)
-
-	p := &templatesValidator{err: fmt.Errorf("error")}
-	plugs := plugins.Plugins{p, &bladeRunner{}}
-
-	bc := &Cmd{
-		pluginsFn: func() []plugins.Plugin {
-			return plugs
-		},
-	}
-
-	args := []string{}
-
-	err := bc.Main(context.Background(), ".", args)
-	r.Error(err)
-}
-
 func Test_Cmd_Main_BeforeBuilders(t *testing.T) {
 	r := require.New(t)
 
