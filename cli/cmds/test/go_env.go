@@ -1,16 +1,15 @@
-package env
+package test
 
 import (
 	"context"
 	"os"
 
-	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/test"
 	"github.com/gobuffalo/plugins"
 )
 
 var _ plugins.Plugin = &GoEnv{}
-var _ test.BeforeTester = &GoEnv{}
-var _ test.AfterTester = &GoEnv{}
+var _ BeforeTester = &GoEnv{}
+var _ AfterTester = &GoEnv{}
 
 //GoEnv Sets GO_ENV before tests run
 type GoEnv struct{}

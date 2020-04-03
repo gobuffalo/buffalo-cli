@@ -15,6 +15,7 @@ func Plugins() []plugins.Plugin {
 	return []plugins.Plugin{
 		&Cmd{},
 		&Setup{},
+		&GoEnv{},
 	}
 }
 
