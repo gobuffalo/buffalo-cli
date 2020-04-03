@@ -8,6 +8,7 @@ import (
 	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/clifix"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/bzr"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/env"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/fizz"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/flect"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/git"
@@ -58,6 +59,7 @@ func NewFromRoot(root string) (*Buffalo, error) {
 	b.Plugins = append(b.Plugins, pop.Plugins()...)
 	b.Plugins = append(b.Plugins, refresh.Plugins()...)
 	b.Plugins = append(b.Plugins, soda.Plugins()...)
+	b.Plugins = append(b.Plugins, env.Plugins()...)
 
 	if _, err := os.Stat(filepath.Join(root, "package.json")); err == nil {
 		b.Plugins = append(b.Plugins, webpack.Plugins()...)
