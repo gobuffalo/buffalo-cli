@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func Test_GoEnv_BeforeTest(t *testing.T) {
+func Test_GoEnv(t *testing.T) {
 	goEnv := &GoEnv{}
 
 	os.Setenv("GO_ENV", "Antonio's Home")
