@@ -35,4 +35,13 @@ type Argumenter interface {
 	TestArgs(ctx context.Context, root string) ([]string, error)
 }
 
+type Namer interface {
+	Tester
+	CmdName() string
+}
+
+type Aliaser interface {
+	Tester
+	CmdAliases() []string
+}
 type Stdouter = plugio.Outer
