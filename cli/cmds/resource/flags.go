@@ -21,14 +21,14 @@ func (g *Generator) Flags() *pflag.FlagSet {
 	}
 
 	flags := pflag.NewFlagSet(g.PluginName(), pflag.ContinueOnError)
-	flags.BoolVar(&g.SkipActionTests, "skip-action-tests", false, "skip generating action tests")
-	flags.BoolVar(&g.SkipActions, "skip-actions", false, "skip generating actions")
-	flags.BoolVar(&g.SkipMigrationTests, "skip-migration-tests", false, "skip generating migration tests")
-	flags.BoolVar(&g.SkipMigrations, "skip-migrations", false, "skip generating migrations")
-	flags.BoolVar(&g.SkipModelTests, "skip-model-tests", false, "skip generating model tests")
-	flags.BoolVar(&g.SkipModels, "skip-models", false, "skip generating models")
-	flags.BoolVar(&g.SkipTemplateTests, "skip-template-tests", false, "skip generating template tests")
-	flags.BoolVar(&g.SkipTemplates, "skip-templates", false, "skip generating templates")
+	flags.BoolVar(&g.skipActionTests, "skip-action-tests", false, "skip generating action tests")
+	flags.BoolVar(&g.skipActions, "skip-actions", false, "skip generating actions")
+	flags.BoolVar(&g.skipMigrationTests, "skip-migration-tests", false, "skip generating migration tests")
+	flags.BoolVar(&g.skipMigrations, "skip-migrations", false, "skip generating migrations")
+	flags.BoolVar(&g.skipModelTests, "skip-model-tests", false, "skip generating model tests")
+	flags.BoolVar(&g.skipModels, "skip-models", false, "skip generating models")
+	flags.BoolVar(&g.skipTemplateTests, "skip-template-tests", false, "skip generating template tests")
+	flags.BoolVar(&g.skipTemplates, "skip-templates", false, "skip generating templates")
 	flags.BoolVarP(&g.help, "help", "h", false, "print this help")
 
 	plugs := g.ScopedPlugins()
