@@ -14,6 +14,7 @@ import (
 // to the current version of the plugin.
 // The expectation is fixing of only one major revision.
 type Fixer interface {
+	plugins.Plugin
 	Fix(ctx context.Context, root string, args []string) error
 }
 
@@ -25,6 +26,16 @@ type Flagger interface {
 type Pflagger interface {
 	plugins.Plugin
 	FixFlags() []*pflag.Flag
+}
+
+type Namer interface {
+	Fixer
+	CmdName() string
+}
+
+type Aliaser interface {
+	Fixer
+	CmdAliases() []string
 }
 
 type Stdouter = plugio.Outer
