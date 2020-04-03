@@ -14,4 +14,14 @@ type Generator interface {
 	Generate(ctx context.Context, root string, args []string) error
 }
 
+type Namer interface {
+	Generator
+	CmdName() string
+}
+
+type Aliaser interface {
+	Generator
+	CmdAliases() []string
+}
+
 type Stdouter = plugio.Outer
