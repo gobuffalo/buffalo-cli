@@ -9,6 +9,8 @@ import (
 func Test_GoEnv_BeforeTest(t *testing.T) {
 	goEnv := &GoEnv{}
 
+	os.Setenv("GO_ENV", "Antonio's Home")
+
 	err := goEnv.BeforeTest(context.Background(), "", []string{})
 	if err != nil {
 		t.Error("error setting GO_ENV")
@@ -17,19 +19,13 @@ func Test_GoEnv_BeforeTest(t *testing.T) {
 	if os.Getenv("GO_ENV") != "test" {
 		t.Error("GO_ENV should be set to be test")
 	}
-}
 
-func Test_GoEnv_AfterTest(t *testing.T) {
-	goEnv := &GoEnv{}
-
-	os.Setenv("GO_ENV", "")
-
-	err := goEnv.AfterTest(context.Background(), "", []string{}, nil)
+	err = goEnv.AfterTest(context.Background(), "", []string{}, nil)
 	if err != nil {
 		t.Error("error setting GO_ENV")
 	}
 
-	if os.Getenv("GO_ENV") != "" {
+	if os.Getenv("GO_ENV") != "Antonio's Home" {
 		t.Error("GO_ENV should be set to be blank")
 	}
 }
