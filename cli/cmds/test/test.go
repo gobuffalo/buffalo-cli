@@ -55,6 +55,10 @@ func (bc *Cmd) ScopedPlugins() []plugins.Plugin {
 			builders = append(builders, p)
 		case Stdouter:
 			builders = append(builders, p)
+		case Namer:
+			builders = append(builders, p)
+		case Aliaser:
+			builders = append(builders, p)
 		}
 	}
 	return builders

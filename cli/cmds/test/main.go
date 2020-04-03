@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/gobuffalo/plugins"
-	"github.com/gobuffalo/plugins/plugcmd"
 	"github.com/gobuffalo/plugins/plugfind"
 	"github.com/gobuffalo/plugins/plugio"
 	"github.com/gobuffalo/plugins/plugprint"
@@ -15,26 +14,8 @@ import (
 
 func (tc *Cmd) Main(ctx context.Context, root string, args []string) error {
 	plugs := tc.ScopedPlugins()
-
-	var ti Tester
-	if len(args) > 0 {
-		n := args[0]
-		name := args[0]
-		fn := plugfind.Background()
-		fn = byTester(fn)
-		fn = plugcmd.ByNamer(fn)
-		fn = plugcmd.ByAliaser(fn)
-
-		p := fn.Find(name, plugs)
-
-		var ok bool
-		ti, ok = p.(Tester)
-		if !ok {
-			return fmt.Errorf("unknown command %q", n)
-		}
-	}
-	if ti != nil {
-		return ti.Test(ctx, root, args[1:])
+	if t := FindTesterFromArgs(args, plugs); t != nil {
+		return t.Test(ctx, root, args[1:])
 	}
 
 	for _, a := range args {
@@ -43,28 +24,15 @@ func (tc *Cmd) Main(ctx context.Context, root string, args []string) error {
 		}
 	}
 
-	var err error
-	defer func() {
-		if e := recover(); e != nil {
-			var ok bool
-			err, ok = e.(error)
-			if !ok {
-				err = fmt.Errorf("%s", e)
-			}
-			tc.afterTest(ctx, root, args, err)
-		}
-	}()
-
-	if err = tc.beforeTest(ctx, root, args); err != nil {
-		return tc.afterTest(ctx, root, args, err)
-	}
-
-	err = tc.test(ctx, root, args) // go build ...
+	err := tc.run(ctx, root, args) // go test ...
 	return tc.afterTest(ctx, root, args, err)
-
 }
 
-func (tc *Cmd) test(ctx context.Context, root string, args []string) error {
+func (tc *Cmd) run(ctx context.Context, root string, args []string) error {
+	if err := tc.beforeTest(ctx, root, args); err != nil {
+		return plugins.Wrap(tc, err)
+	}
+
 	cmd, err := tc.Cmd(ctx, root, args)
 	if err != nil {
 		return err
