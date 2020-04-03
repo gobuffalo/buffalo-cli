@@ -26,4 +26,14 @@ type Pflagger interface {
 	DevelopFlags() []*pflag.Flag
 }
 
+type Namer interface {
+	Developer
+	CmdName() string
+}
+
+type Aliaser interface {
+	Developer
+	CmdAliases() []string
+}
+
 type Stdouter = plugio.Outer

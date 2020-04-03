@@ -25,7 +25,15 @@ func (cmd *Cmd) ScopedPlugins() []plugins.Plugin {
 		switch p.(type) {
 		case Developer:
 			plugs = append(plugs, p)
+		case Flagger:
+			plugs = append(plugs, p)
+		case Pflagger:
+			plugs = append(plugs, p)
 		case Stdouter:
+			plugs = append(plugs, p)
+		case Namer:
+			plugs = append(plugs, p)
+		case Aliaser:
 			plugs = append(plugs, p)
 		}
 	}
