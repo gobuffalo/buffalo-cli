@@ -2,14 +2,11 @@ package cli
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/gobuffalo/plugins"
 	"github.com/gobuffalo/plugins/plugcmd"
-	"github.com/gobuffalo/plugins/plugfind"
 	"github.com/gobuffalo/plugins/plugio"
 	"github.com/gobuffalo/plugins/plugprint"
-	"github.com/markbates/safe"
 	"github.com/spf13/pflag"
 )
 
@@ -44,25 +41,11 @@ func (b *Buffalo) Main(ctx context.Context, root string, args []string) error {
 		}
 	}
 
-	if len(args) == 0 || (len(flags.Args()) == 0 && help) {
-		return plugprint.Print(plugio.Stdout(plugs...), b)
-	}
-
-	name := args[0]
-
-	fn := plugfind.Background()
-	fn = plugcmd.ByCommander(fn)
-	fn = plugcmd.ByNamer(fn)
-	fn = plugcmd.ByAliaser(fn)
-
-	p := fn.Find(name, plugs)
-
-	c, ok := p.(Commander)
-	if !ok {
-		return fmt.Errorf("unknown command %s", name)
-	}
-
-	return safe.RunE(func() error {
+	c := plugcmd.FindFromArgs(args, plugs)
+	if c != nil {
 		return c.Main(ctx, root, args[1:])
-	})
+	}
+
+	return plugprint.Print(plugio.Stdout(plugs...), b)
+
 }

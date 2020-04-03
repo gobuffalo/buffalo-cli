@@ -1,6 +1,7 @@
 package golang
 
 import (
+	"context"
 	"fmt"
 	"html/template"
 	"io/ioutil"
@@ -13,11 +14,11 @@ import (
 )
 
 var _ plugins.Plugin = Templater{}
-var _ build.TemplatesValidator = &Templater{}
+var _ build.BeforeBuilder = &Templater{}
 
 type Templater struct{}
 
-func (t *Templater) ValidateTemplates(root string) error {
+func (t *Templater) BeforeBuild(ctx context.Context, root string, args []string) error {
 	root = filepath.Join(root, "templates")
 	return filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {

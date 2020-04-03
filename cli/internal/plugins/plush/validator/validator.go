@@ -1,6 +1,7 @@
 package validator
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -12,7 +13,7 @@ import (
 	"github.com/gobuffalo/plush"
 )
 
-var _ build.TemplatesValidator = &Validator{}
+var _ build.BeforeBuilder = &Validator{}
 var _ plugins.Plugin = Validator{}
 
 type Validator struct{}
@@ -21,7 +22,7 @@ func (b Validator) PluginName() string {
 	return "plush/validator"
 }
 
-func (b *Validator) ValidateTemplates(root string) error {
+func (b *Validator) BeforeBuild(ctx context.Context, root string, args []string) error {
 	root = filepath.Join(root, "templates")
 	return filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {

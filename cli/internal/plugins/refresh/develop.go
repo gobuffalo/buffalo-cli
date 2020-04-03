@@ -18,10 +18,10 @@ import (
 	"github.com/spf13/pflag"
 )
 
-var _ plugcmd.Namer = &Developer{}
 var _ develop.Developer = &Developer{}
-var _ plugins.Plugin = &Developer{}
+var _ plugcmd.Namer = &Developer{}
 var _ plugins.Needer = &Developer{}
+var _ plugins.Plugin = &Developer{}
 var _ plugins.Scoper = &Developer{}
 
 type Developer struct {

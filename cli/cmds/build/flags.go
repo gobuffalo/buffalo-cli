@@ -28,16 +28,15 @@ func (cmd *Cmd) Flags() *pflag.FlagSet {
 
 	flags := pflag.NewFlagSet(cmd.PluginName(), pflag.ContinueOnError)
 
-	flags.BoolVar(&cmd.SkipTemplateValidation, "skip-template-validation", false, "skip validating templates")
 	flags.BoolVarP(&cmd.help, "help", "h", false, "print this help")
-	flags.BoolVarP(&cmd.Verbose, "verbose", "v", false, "print debugging information")
-	flags.BoolVarP(&cmd.Static, "static", "s", false, "build a static binary using  --ldflags '-linkmode external -extldflags \"-static\"'")
+	flags.BoolVarP(&cmd.verbose, "verbose", "v", false, "print debugging information")
+	flags.BoolVarP(&cmd.static, "static", "s", false, "build a static binary using  --ldflags '-linkmode external -extldflags \"-static\"'")
 
-	flags.StringVar(&cmd.LDFlags, "ldflags", "", "set any ldflags to be passed to the go build")
-	flags.StringVar(&cmd.Mod, "mod", "", "-mod flag for go build")
-	flags.StringVarP(&cmd.Bin, "output", "o", cmd.Bin, "set the name of the binary [default: bin/<module name>]")
-	flags.StringVarP(&cmd.Environment, "environment", "", "development", "set the environment for the binary")
-	flags.StringVarP(&cmd.Tags, "tags", "t", "", "compile with specific build tags")
+	flags.StringVar(&cmd.ldFlags, "ldflags", "", "set any ldflags to be passed to the go build")
+	flags.StringVar(&cmd.mod, "mod", "", "-mod flag for go build")
+	flags.StringVarP(&cmd.bin, "output", "o", cmd.bin, "set the name of the binary [default: bin/<module name>]")
+	flags.StringVarP(&cmd.environment, "environment", "", "development", "set the environment for the binary")
+	flags.StringVarP(&cmd.tags, "tags", "t", "", "compile with specific build tags")
 
 	plugs := cmd.ScopedPlugins()
 

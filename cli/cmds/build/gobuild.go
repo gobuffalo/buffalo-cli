@@ -21,7 +21,7 @@ func (bc *Cmd) GoCmd(ctx context.Context, root string) (*exec.Cmd, error) {
 		return nil, err
 	}
 
-	bin := bc.Bin
+	bin := bc.bin
 	if len(bin) == 0 {
 		bin = filepath.Join("bin", info.Name)
 	}
@@ -36,11 +36,11 @@ func (bc *Cmd) GoCmd(ctx context.Context, root string) (*exec.Cmd, error) {
 	}
 	buildArgs = append(buildArgs, "-o", bin)
 
-	if len(bc.Mod) != 0 {
-		buildArgs = append(buildArgs, "-mod", bc.Mod)
+	if len(bc.mod) != 0 {
+		buildArgs = append(buildArgs, "-mod", bc.mod)
 	}
 
-	buildArgs = append(buildArgs, bc.BuildFlags...)
+	buildArgs = append(buildArgs, bc.buildFlags...)
 
 	tags, err := bc.buildTags(ctx, root)
 	if err != nil {
@@ -53,13 +53,13 @@ func (bc *Cmd) GoCmd(ctx context.Context, root string) (*exec.Cmd, error) {
 
 	flags := []string{}
 
-	if bc.Static {
+	if bc.static {
 		flags = append(flags, "-linkmode external", "-extldflags \"-static\"")
 	}
 
 	// Add any additional ldflags passed in to the build args
-	if len(bc.LDFlags) > 0 {
-		flags = append(flags, bc.LDFlags)
+	if len(bc.ldFlags) > 0 {
+		flags = append(flags, bc.ldFlags)
 	}
 	if len(flags) > 0 {
 		buildArgs = append(buildArgs, "-ldflags", strings.Join(flags, " "))
@@ -77,8 +77,8 @@ func (bc *Cmd) GoCmd(ctx context.Context, root string) (*exec.Cmd, error) {
 
 func (cmd *Cmd) buildTags(ctx context.Context, root string) ([]string, error) {
 	var tags []string
-	if len(cmd.Tags) > 0 {
-		tags = append(tags, cmd.Tags)
+	if len(cmd.tags) > 0 {
+		tags = append(tags, cmd.tags)
 	}
 
 	for _, p := range cmd.ScopedPlugins() {

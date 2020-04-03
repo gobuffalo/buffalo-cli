@@ -105,26 +105,6 @@ func (b *buildPflagger) BuildFlags() []*pflag.Flag {
 	return b.flags
 }
 
-var _ TemplatesValidator = &templatesValidator{}
-
-type templatesValidator struct {
-	name string
-	root string
-	err  error
-}
-
-func (b *templatesValidator) PluginName() string {
-	if len(b.name) == 0 {
-		return "templatesValidator"
-	}
-	return b.name
-}
-
-func (b *templatesValidator) ValidateTemplates(root string) error {
-	b.root = root
-	return b.err
-}
-
 var _ Packager = &packager{}
 
 type packager struct {

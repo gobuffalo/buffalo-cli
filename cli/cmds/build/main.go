@@ -2,105 +2,50 @@ package build
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/gobuffalo/here"
 	"github.com/gobuffalo/plugins"
-	"github.com/gobuffalo/plugins/plugcmd"
-	"github.com/gobuffalo/plugins/plugfind"
 	"github.com/gobuffalo/plugins/plugio"
 	"github.com/gobuffalo/plugins/plugprint"
 	"github.com/markbates/safe"
 )
 
-func byBuilder(f plugfind.Finder) plugfind.Finder {
-	fn := func(name string, plugs []plugins.Plugin) plugins.Plugin {
-		p := f.Find(name, plugs)
-		if p == nil {
-			return nil
-		}
-		if c, ok := p.(Builder); ok {
-			if c.PluginName() == name {
-				return p
-			}
-		}
-		return nil
+func (cmd *Cmd) Main(ctx context.Context, root string, args []string) error {
+	plugs := cmd.ScopedPlugins()
+	if sub := FindBuilderFromArgs(args, plugs); sub != nil {
+		return sub.Build(ctx, root, args[1:])
 	}
-	return plugfind.FinderFn(fn)
-}
 
-func (bc *Cmd) Main(ctx context.Context, root string, args []string) error {
-	flags := bc.Flags()
+	flags := cmd.Flags()
 	if err := flags.Parse(args); err != nil {
 		return err
 	}
 
-	if len(flags.Args()) == 0 && bc.help {
-		return plugprint.Print(plugio.Stdout(bc.ScopedPlugins()...), bc)
+	if cmd.help {
+		return plugprint.Print(plugio.Stdout(cmd.ScopedPlugins()...), cmd)
 	}
 
-	type builder func(ctx context.Context, root string, args []string) error
+	err := cmd.run(ctx, root, args)
+	return cmd.afterBuild(ctx, root, args, err)
+}
 
-	var build builder = bc.build
-
+func (cmd *Cmd) run(ctx context.Context, root string, args []string) error {
 	info, err := here.Dir(root)
 	if err != nil {
-		return err
+		return plugins.Wrap(cmd, err)
 	}
 
-	plugs := bc.ScopedPlugins()
-
-	if len(flags.Args()) > 0 {
-		name := flags.Args()[0]
-		fn := plugfind.Background()
-		fn = byBuilder(fn)
-		fn = plugcmd.ByNamer(fn)
-		fn = plugcmd.ByAliaser(fn)
-
-		p := fn.Find(name, plugs)
-		if p == nil {
-			return fmt.Errorf("unknown builder %q", name)
-		}
-		b, ok := p.(Builder)
-		if !ok {
-			return fmt.Errorf("unknown builder %q", name)
-		}
-		build = b.Build
-		args = args[1:]
+	if err = cmd.beforeBuild(ctx, root, args); err != nil {
+		return plugins.Wrap(cmd, err)
 	}
 
-	if err = bc.beforeBuild(ctx, root, args); err != nil {
-		return bc.afterBuild(ctx, root, args, err)
+	plugs := cmd.ScopedPlugins()
+
+	if err := cmd.pack(ctx, info, plugs); err != nil {
+		return plugins.Wrap(cmd, err)
 	}
 
-	if !bc.SkipTemplateValidation {
-		for _, p := range plugs {
-			tv, ok := p.(TemplatesValidator)
-			if !ok {
-				continue
-			}
-			err = safe.RunE(func() error {
-				return tv.ValidateTemplates(info.Dir)
-			})
-			if err != nil {
-				return bc.afterBuild(ctx, root, args, err)
-			}
-		}
-	}
-
-	err = safe.RunE(func() error {
-		return bc.pack(ctx, info, plugs)
-	})
-	if err != nil {
-		return bc.afterBuild(ctx, root, args, err)
-	}
-
-	err = safe.RunE(func() error {
-		return build(ctx, root, args)
-	})
-
-	return bc.afterBuild(ctx, root, args, err)
-
+	return cmd.build(ctx, root, args)
 }
 
 func (cmd *Cmd) beforeBuild(ctx context.Context, root string, args []string) error {
