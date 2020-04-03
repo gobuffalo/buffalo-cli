@@ -12,3 +12,13 @@ type Informer interface {
 	plugins.Plugin
 	Info(ctx context.Context, root string, args []string) error
 }
+
+type Namer interface {
+	Informer
+	CmdName() string
+}
+
+type Aliaser interface {
+	Informer
+	CmdAliases() []string
+}
