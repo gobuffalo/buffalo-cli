@@ -19,17 +19,22 @@ var _ plugins.Plugin = &Fixer{}
 var _ plugcmd.Namer = &Fixer{}
 var _ fix.Fixer = &Fixer{}
 
+//Fixer creates the cli file at cmd/buffalo/main.go if it doesn't exist.
 type Fixer struct {
 }
 
+//PluginName for this cli fixer
 func (*Fixer) PluginName() string {
 	return "cli/fixer"
 }
 
+//CmdName for this cli fixer
 func (*Fixer) CmdName() string {
 	return "cli"
 }
 
+//Fix will be invoked when buffalo fix is called, it creates cmd/buffalo/main.go
+//with tmplMain if it doesn't exist.
 func (fixer *Fixer) Fix(ctx context.Context, root string, args []string) error {
 	info, err := here.Dir(root)
 	if err != nil {
@@ -39,6 +44,12 @@ func (fixer *Fixer) Fix(ctx context.Context, root string, args []string) error {
 	x := filepath.Join(root, "cmd", "buffalo")
 	mm := map[string]string{
 		filepath.Join(x, "main.go"): tmplMain,
+	}
+
+	_, err = os.Stat(x)
+	if err == nil {
+		fmt.Println("cmd/buffalo folder already exists")
+		return err
 	}
 
 	for fp, body := range mm {
