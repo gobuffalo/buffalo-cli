@@ -46,9 +46,9 @@ func (fixer *Fixer) Fix(ctx context.Context, root string, args []string) error {
 		filepath.Join(x, "main.go"): tmplMain,
 	}
 
-	_, err = os.Stat(filepath.Join(x, "main.go"))
+	_, err = os.Stat(x)
 	if err == nil {
-		fmt.Println("cmd/buffalo/main.go already exist,s no need to fix it")
+		fmt.Println("cmd/buffalo folder already exists")
 		return err
 	}
 
