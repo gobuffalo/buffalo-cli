@@ -48,17 +48,14 @@ func Test_Fixer_FileExists(t *testing.T) {
 
 	f, err := os.Create(filepath.Join(dir, "go.mod"))
 	r.NoError(err)
-	f.WriteString("module coke")
+	f.WriteString("module pagano")
 	r.NoError(f.Close())
 
 	ctx := context.Background()
 	var args []string
 
 	cliFolder := filepath.Join(dir, "cmd", "buffalo")
-	os.MkdirAll(cliFolder, 0755)
-
-	d1 := []byte(tmplMain)
-	err = ioutil.WriteFile(filepath.Join(cliFolder, "main.go"), d1, 0755)
+	err = os.MkdirAll(cliFolder, 0755)
 	r.NoError(err)
 
 	fixer := &Fixer{}
