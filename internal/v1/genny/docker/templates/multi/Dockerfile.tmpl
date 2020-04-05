@@ -35,6 +35,6 @@ ENV ADDR=0.0.0.0
 
 EXPOSE 3000
 
-# To run migrations, run the image with migrate as argument
-# docker run <image> migrate
-ENTRYPOINT ["/bin/app"]
+# Uncomment to run the migrations before running the binary:
+# CMD /bin/app migrate; /bin/app
+CMD exec /bin/app
