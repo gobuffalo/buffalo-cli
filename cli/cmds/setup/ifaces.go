@@ -34,4 +34,14 @@ type Pflagger interface {
 	SetupFlags() []*pflag.Flag
 }
 
+type Namer interface {
+	Setuper
+	CmdName() string
+}
+
+type Aliaser interface {
+	Setuper
+	CmdAliases() []string
+}
+
 type Stdouter = plugio.Outer
