@@ -1,4 +1,4 @@
-package fizz
+package generate
 
 import (
 	"context"
@@ -19,53 +19,52 @@ import (
 	"github.com/spf13/pflag"
 )
 
-var _ plugcmd.Namer = MigrationGen{}
-var _ generate.Generator = &MigrationGen{}
-var _ plugins.Plugin = MigrationGen{}
-var _ plugprint.Describer = MigrationGen{}
-var _ plugprint.FlagPrinter = &MigrationGen{}
-var _ resource.Migrationer = &MigrationGen{}
-var _ resource.Pflagger = &MigrationGen{}
+var _ generate.Generator = &Migration{}
+var _ plugcmd.Namer = Migration{}
+var _ plugins.Plugin = Migration{}
+var _ plugprint.Describer = Migration{}
+var _ plugprint.FlagPrinter = &Migration{}
+var _ resource.Migrationer = &Migration{}
+var _ resource.Pflagger = &Migration{}
 
-type MigrationGen struct {
-	Env           string
-	MigrationType string
-	Path          string
-	TableName     string
-
-	flags *pflag.FlagSet
+type Migration struct {
+	env           string
+	migrationType string
+	path          string
+	tableName     string
+	flags         *pflag.FlagSet
 }
 
-func (MigrationGen) PluginName() string {
+func (Migration) PluginName() string {
 	return "fizz/migration"
 }
 
-func (MigrationGen) CmdName() string {
+func (Migration) CmdName() string {
 	return "migration"
 }
 
-func (MigrationGen) Description() string {
+func (Migration) Description() string {
 	return "Generate a fizz migration"
 }
 
-func (mg *MigrationGen) Generate(ctx context.Context, root string, args []string) error {
+func (mg *Migration) Generate(ctx context.Context, root string, args []string) error {
 	args = append([]string{"generate", "migration"}, args...)
 	cmd.RootCmd.SetArgs(args)
 	return cmd.RootCmd.Execute()
 }
 
-func (mg *MigrationGen) GenerateResourceMigrations(ctx context.Context, root string, args []string) error {
-	path := mg.Path
+func (mg *Migration) GenerateResourceMigrations(ctx context.Context, root string, args []string) error {
+	path := mg.path
 	if len(path) == 0 {
 		path = filepath.Join(root, "migrations")
 	}
 
-	env := mg.Env
+	env := mg.env
 	if len(env) == 0 {
 		env = "development"
 	}
 
-	mt := mg.MigrationType
+	mt := mg.migrationType
 	if len(mt) == 0 {
 		mt = "fizz"
 	}
@@ -84,7 +83,7 @@ func (mg *MigrationGen) GenerateResourceMigrations(ctx context.Context, root str
 		return err
 	}
 
-	nm := mg.TableName
+	nm := mg.tableName
 	if len(nm) == 0 {
 		nm = args[0]
 	}

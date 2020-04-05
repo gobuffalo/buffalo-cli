@@ -6,8 +6,15 @@ import (
 	"os/exec"
 	"strings"
 
+	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/build"
 	"github.com/gobuffalo/plugins"
+	"github.com/gobuffalo/plugins/plugprint"
 )
+
+var _ build.Versioner = &Versioner{}
+var _ plugins.Plugin = Versioner{}
+var _ plugins.Needer = &Versioner{}
+var _ plugprint.Describer = Versioner{}
 
 // Versioner ...
 type Versioner struct {

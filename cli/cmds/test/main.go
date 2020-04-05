@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/gobuffalo/plugins"
-	"github.com/gobuffalo/plugins/plugfind"
 	"github.com/gobuffalo/plugins/plugio"
 	"github.com/gobuffalo/plugins/plugprint"
 )
@@ -158,20 +157,4 @@ func (tc *Cmd) pluginArgs(ctx context.Context, root string, args []string) ([]st
 		args = append(tgs, args...)
 	}
 	return args, nil
-}
-
-func byTester(f plugfind.Finder) plugfind.Finder {
-	fn := func(name string, plugs []plugins.Plugin) plugins.Plugin {
-		p := f.Find(name, plugs)
-		if p == nil {
-			return nil
-		}
-		if c, ok := p.(Tester); ok {
-			if c.PluginName() == name {
-				return p
-			}
-		}
-		return nil
-	}
-	return plugfind.FinderFn(fn)
 }

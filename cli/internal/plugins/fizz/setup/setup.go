@@ -14,8 +14,7 @@ import (
 var _ plugins.Plugin = &Setup{}
 var _ setup.Migrater = &Setup{}
 
-type Setup struct {
-}
+type Setup struct{}
 
 func (s *Setup) PluginName() string {
 	return "fizz/setup"
