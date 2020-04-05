@@ -7,7 +7,6 @@ import (
 	"github.com/gobuffalo/plugins"
 	"github.com/gobuffalo/plugins/plugio"
 	"github.com/gobuffalo/plugins/plugprint"
-	"github.com/markbates/safe"
 )
 
 func (cmd *Cmd) Main(ctx context.Context, root string, args []string) error {
@@ -18,7 +17,7 @@ func (cmd *Cmd) Main(ctx context.Context, root string, args []string) error {
 
 	flags := cmd.Flags()
 	if err := flags.Parse(args); err != nil {
-		return err
+		return plugins.Wrap(cmd, err)
 	}
 
 	if cmd.help {
@@ -52,11 +51,8 @@ func (cmd *Cmd) beforeBuild(ctx context.Context, root string, args []string) err
 	plugs := cmd.ScopedPlugins()
 	for _, p := range plugs {
 		if bb, ok := p.(BeforeBuilder); ok {
-			err := safe.RunE(func() error {
-				return bb.BeforeBuild(ctx, root, args)
-			})
-			if err != nil {
-				return err
+			if err := bb.BeforeBuild(ctx, root, args); err != nil {
+				return plugins.Wrap(p, err)
 			}
 		}
 	}
@@ -67,11 +63,8 @@ func (cmd *Cmd) afterBuild(ctx context.Context, root string, args []string, err 
 	plugs := cmd.ScopedPlugins()
 	for _, p := range plugs {
 		if bb, ok := p.(AfterBuilder); ok {
-			err := safe.RunE(func() error {
-				return bb.AfterBuild(ctx, root, args, err)
-			})
-			if err != nil {
-				return err
+			if err := bb.AfterBuild(ctx, root, args, err); err != nil {
+				return plugins.Wrap(p, err)
 			}
 		}
 	}

@@ -100,7 +100,7 @@ func (g *Generator) beforeGenerate(ctx context.Context, root string, args []stri
 	for _, p := range plugs {
 		if b, ok := p.(BeforeGenerator); ok {
 			if err := b.BeforeGenerateResource(ctx, root, args); err != nil {
-				return err
+				return plugins.Wrap(p, err)
 			}
 		}
 	}
@@ -143,7 +143,7 @@ func (g *Generator) afterGenerate(ctx context.Context, root string, args []strin
 
 	if err == nil && len(args) > 0 {
 		if err := g.addResource(root, args[0]); err != nil {
-			return err
+			return plugins.Wrap(g, err)
 		}
 	}
 
@@ -161,12 +161,13 @@ func (g *Generator) afterGenerate(ctx context.Context, root string, args []strin
 // Generate implements generate.Generator and is the entry point for `buffalo generate resource`
 func (g *Generator) Generate(ctx context.Context, root string, args []string) error {
 	if len(args) == 0 {
-		return fmt.Errorf("you must specify a name for the resource")
+		err := fmt.Errorf("you must specify a name for the resource")
+		return plugins.Wrap(g, err)
 	}
 
 	flags := g.Flags()
 	if err := flags.Parse(args); err != nil {
-		return err
+		return plugins.Wrap(g, err)
 	}
 
 	args = flags.Args()
@@ -183,7 +184,7 @@ func (g *Generator) Generate(ctx context.Context, root string, args []string) er
 
 func (g *Generator) run(ctx context.Context, root string, args []string) error {
 	if err := g.beforeGenerate(ctx, root, args); err != nil {
-		return err
+		return plugins.Wrap(g, err)
 	}
 
 	type step func(context.Context, string, []string) error

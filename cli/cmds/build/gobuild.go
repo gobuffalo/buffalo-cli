@@ -2,15 +2,14 @@ package build
 
 import (
 	"context"
-	"fmt"
 	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
 
 	"github.com/gobuffalo/here"
+	"github.com/gobuffalo/plugins"
 	"github.com/gobuffalo/plugins/plugio"
-	"github.com/markbates/safe"
 )
 
 func (bc *Cmd) GoCmd(ctx context.Context, root string) (*exec.Cmd, error) {
@@ -18,7 +17,7 @@ func (bc *Cmd) GoCmd(ctx context.Context, root string) (*exec.Cmd, error) {
 
 	info, err := here.Dir(root)
 	if err != nil {
-		return nil, err
+		return nil, plugins.Wrap(bc, err)
 	}
 
 	bin := bc.bin
@@ -44,7 +43,7 @@ func (bc *Cmd) GoCmd(ctx context.Context, root string) (*exec.Cmd, error) {
 
 	tags, err := bc.buildTags(ctx, root)
 	if err != nil {
-		return nil, err
+		return nil, plugins.Wrap(bc, err)
 	}
 
 	if len(tags) > 0 {
@@ -88,7 +87,7 @@ func (cmd *Cmd) buildTags(ctx context.Context, root string) ([]string, error) {
 		}
 		bt, err := t.BuildTags(ctx, root)
 		if err != nil {
-			return nil, err
+			return nil, plugins.Wrap(p, err)
 		}
 		tags = append(tags, bt...)
 	}
@@ -99,17 +98,16 @@ func (cmd *Cmd) buildTags(ctx context.Context, root string) ([]string, error) {
 func (bc *Cmd) build(ctx context.Context, root string, args []string) error {
 	cmd, err := bc.GoCmd(ctx, root)
 	if err != nil {
-		return err
+		return plugins.Wrap(bc, err)
 	}
-	fmt.Println(cmd.Args)
 
 	for _, p := range bc.ScopedPlugins() {
 		if br, ok := p.(Runner); ok {
-			return safe.RunE(func() error {
-				return br.RunBuild(ctx, cmd)
-			})
+			if err := br.RunBuild(ctx, cmd); err != nil {
+				return plugins.Wrap(p, err)
+			}
 		}
 	}
 
-	return cmd.Run()
+	return plugins.Wrap(bc, cmd.Run())
 }
