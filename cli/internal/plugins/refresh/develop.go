@@ -25,11 +25,11 @@ var _ plugins.Plugin = &Developer{}
 var _ plugins.Scoper = &Developer{}
 
 type Developer struct {
-	Debug     bool
-	Config    string
+	config    string
+	debug     bool
+	flags     *pflag.FlagSet
 	help      bool
 	pluginsFn plugins.Feeder
-	flags     *pflag.FlagSet
 }
 
 func (dev *Developer) PluginName() string {
@@ -65,7 +65,7 @@ func (dev *Developer) ScopedPlugins() []plugins.Plugin {
 func (dev *Developer) Develop(ctx context.Context, root string, args []string) error {
 	flags := dev.Flags()
 	if err := flags.Parse(args); err != nil {
-		return err
+		return plugins.Wrap(dev, err)
 	}
 
 	if dev.help {
@@ -74,56 +74,57 @@ func (dev *Developer) Develop(ctx context.Context, root string, args []string) e
 
 	args = flags.Args()
 
-	c, err := dev.config(ctx, root)
+	c, err := dev.buildConfig(ctx, root)
 	if err != nil {
-		return err
+		return plugins.Wrap(dev, err)
 	}
 
 	info, err := here.Dir(root)
 	if err != nil {
-		return err
+		return plugins.Wrap(dev, err)
 	}
 
 	if len(c.BinaryName) == 0 {
 		c.BinaryName = fmt.Sprintf("%s-build", path.Base(info.Module.Path))
 	}
 
-	c.Debug = dev.Debug
+	c.Debug = dev.debug
 
 	r := refresh.NewWithContext(c, ctx)
 	r.CommandFlags = args
 	return r.Start()
 }
 
-func (dev *Developer) config(ctx context.Context, root string) (*refresh.Configuration, error) {
-	if len(dev.Config) == 0 {
+func (dev *Developer) buildConfig(ctx context.Context, root string) (*refresh.Configuration, error) {
+	if len(dev.config) == 0 {
 		if _, err := os.Stat("./.buffalo.dev.yml"); err == nil {
-			dev.Config = "./.buffalo.dev.yml"
+			dev.config = "./.buffalo.dev.yml"
 		}
 	}
 
-	if len(dev.Config) > 0 {
-		_, err := os.Stat(dev.Config)
+	if len(dev.config) > 0 {
+		_, err := os.Stat(dev.config)
 		if err != nil {
-			return nil, err
+			return nil, plugins.Wrap(dev, err)
 		}
 		c := &refresh.Configuration{}
-		if err := c.Load(dev.Config); err != nil {
-			return nil, err
+		if err := c.Load(dev.config); err != nil {
+			return nil, plugins.Wrap(dev, err)
 		}
 		return c, nil
 	}
 
 	dur, err := time.ParseDuration("200ns")
 	if err != nil {
-		return nil, err
+		return nil, plugins.Wrap(dev, err)
 	}
 
 	var bflags []string
 	tags, err := dev.buildTags(ctx, root)
 	if err != nil {
-		return nil, err
+		return nil, plugins.Wrap(dev, err)
 	}
+
 	if len(tags) > 0 {
 		bflags = append(bflags, "-tags", strings.Join(tags, " "))
 	}
@@ -151,7 +152,7 @@ func (dev *Developer) buildTags(ctx context.Context, root string) ([]string, err
 		}
 		bt, err := t.BuildTags(ctx, root)
 		if err != nil {
-			return nil, err
+			return nil, plugins.Wrap(dev, err)
 		}
 		tags = append(tags, bt...)
 	}

@@ -14,7 +14,7 @@ var _ resource.ActionTester = &Generator{}
 var _ resource.Pflagger = &Generator{}
 
 type Generator struct {
-	TestPkg string
+	testPkg string
 	flags   *pflag.FlagSet
 }
 

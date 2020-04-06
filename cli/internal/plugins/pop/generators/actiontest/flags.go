@@ -29,7 +29,7 @@ func (g *Generator) Flags() *pflag.FlagSet {
 
 	flags := pflag.NewFlagSet(g.PluginName(), pflag.ContinueOnError)
 
-	flags.StringVarP(&g.TestPkg, "test-pkg", "t", "", "name of the test package to use [default 'actions']")
+	flags.StringVarP(&g.testPkg, "test-pkg", "t", "", "name of the test package to use [default 'actions']")
 
 	g.flags = flags
 	return g.flags

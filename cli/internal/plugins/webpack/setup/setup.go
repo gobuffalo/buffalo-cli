@@ -58,12 +58,13 @@ func (s *Setup) ScopedPlugins() []plugins.Plugin {
 
 func (s *Setup) Setup(ctx context.Context, root string, args []string) error {
 	if _, err := exec.LookPath("node"); err != nil {
-		return fmt.Errorf("this application requires node, and we could not find it installed on your system please install node and try again")
+		err = fmt.Errorf("this application requires node, and we could not find it installed on your system please install node and try again: %w", err)
+		return plugins.Wrap(s, err)
 	}
 
 	tool, err := scripts.Tool(s, ctx, root)
 	if err != nil {
-		return err
+		return plugins.Wrap(s, err)
 	}
 
 	if _, err := exec.LookPath(tool); err != nil {
@@ -73,7 +74,7 @@ func (s *Setup) Setup(ctx context.Context, root string, args []string) error {
 		}
 		cmd := s.cmd(ctx, "npm", "install", "-g", t)
 		if err := cmd.Run(); err != nil {
-			return err
+			return plugins.Wrap(s, err)
 		}
 	}
 
@@ -81,7 +82,7 @@ func (s *Setup) Setup(ctx context.Context, root string, args []string) error {
 	if _, err := os.Stat(filepath.Join(root, "node_modules")); err != nil {
 		cmd := s.cmd(ctx, tool, "install")
 		if err := cmd.Run(); err != nil {
-			return err
+			return plugins.Wrap(s, err)
 		}
 	}
 

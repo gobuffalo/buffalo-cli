@@ -12,27 +12,23 @@ var _ build.BeforeBuilder = &Builder{}
 var _ build.Builder = &Builder{}
 var _ build.Pflagger = &Builder{}
 var _ plugcmd.Namer = &Builder{}
-var _ plugins.Plugin = &Builder{}
 var _ plugins.Needer = &Builder{}
+var _ plugins.Plugin = &Builder{}
 var _ plugins.Scoper = &Builder{}
 var _ plugprint.Describer = &Builder{}
 var _ plugprint.FlagPrinter = &Builder{}
 
 // Builder is responsible for building webpack
-// and other webpack
 type Builder struct {
-	Environment string
-	// CleanAssets will remove the public/webpack folder build compiling
-	Clean bool
-	// places ./public/webpack into ./bin/webpack.zip.
-	Extract    bool
-	ExtractTo  string // ./bin
-	AssetPaths []string
-	Skip       bool
-	Tool       string // default is npm
-
-	pluginsFn plugins.Feeder
-	flags     *pflag.FlagSet
+	environment string
+	clean       bool   // CleanAssets will remove the public/webpack folder build compiling
+	extract     bool   // places ./public/webpack into ./bin/webpack.zip.
+	extractTo   string // ./bin
+	assetPaths  []string
+	skip        bool
+	tool        string // default is npm
+	pluginsFn   plugins.Feeder
+	flags       *pflag.FlagSet
 }
 
 func (bc *Builder) WithPlugins(f plugins.Feeder) {

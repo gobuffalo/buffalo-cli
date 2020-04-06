@@ -29,3 +29,4 @@ gin-bin
 .vscode/settings.json
 cover.out
 temp
+cli/cmds/build/bin/build

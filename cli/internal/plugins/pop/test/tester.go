@@ -17,8 +17,7 @@ var _ plugins.Plugin = &Tester{}
 var _ test.Argumenter = &Tester{}
 var _ test.BeforeTester = &Tester{}
 
-type Tester struct {
-}
+type Tester struct{}
 
 func (t *Tester) TestArgs(ctx context.Context, root string) ([]string, error) {
 	args := []string{"-p", "1"}
@@ -30,7 +29,7 @@ func (t *Tester) TestArgs(ctx context.Context, root string) ([]string, error) {
 
 	b, err := ioutil.ReadFile(dy)
 	if err != nil {
-		return nil, err
+		return nil, plugins.Wrap(t, err)
 	}
 	if bytes.Contains(b, []byte("sqlite")) {
 		args = append(args, "-tags", "sqlite")
@@ -44,19 +43,19 @@ func (Tester) PluginName() string {
 
 func (t *Tester) BeforeTest(ctx context.Context, root string, args []string) error {
 	if err := pop.AddLookupPaths(root); err != nil {
-		return err
+		return plugins.Wrap(t, err)
 	}
 
 	var err error
 	db, ok := ctx.Value("tx").(*pop.Connection)
 	if !ok {
 		if _, err := os.Stat(filepath.Join(root, "database.yml")); err != nil {
-			return err
+			return plugins.Wrap(t, err)
 		}
 
 		db, err = pop.Connect("test")
 		if err != nil {
-			return err
+			return plugins.Wrap(t, err)
 		}
 	}
 	// drop the test db:
@@ -64,7 +63,7 @@ func (t *Tester) BeforeTest(ctx context.Context, root string, args []string) err
 
 	// create the test db:
 	if err := db.Dialect.CreateDB(); err != nil {
-		return err
+		return plugins.Wrap(t, err)
 	}
 
 	for _, a := range args {
@@ -75,24 +74,21 @@ func (t *Tester) BeforeTest(ctx context.Context, root string, args []string) err
 
 	schema, err := t.findSchema(root)
 	if err != nil {
-		return err
+		return plugins.Wrap(t, err)
 	}
 	if schema == nil {
 		return t.forceMigrations(root, db)
 	}
 
-	if err = db.Dialect.LoadSchema(schema); err != nil {
-		return err
-	}
-	return nil
+	err = db.Dialect.LoadSchema(schema)
+	return plugins.Wrap(t, err)
 }
 
 func (t *Tester) forceMigrations(root string, db *pop.Connection) error {
-
 	ms := filepath.Join(root, "migrations")
 	fm, err := pop.NewFileMigrator(ms, db)
 	if err != nil {
-		return err
+		return plugins.Wrap(t, err)
 	}
 	return fm.Up()
 }

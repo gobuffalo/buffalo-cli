@@ -31,7 +31,7 @@ func Test_Builder_archive(t *testing.T) {
 	os.Chdir(info.Dir)
 
 	bc := &Builder{
-		Extract: true,
+		extract: true,
 	}
 
 	err = bc.archive(ctx, info.Dir, nil)
@@ -62,8 +62,8 @@ func Test_Builder_archive_extract_to(t *testing.T) {
 	os.Chdir(info.Dir)
 
 	bc := &Builder{
-		Extract:   true,
-		ExtractTo: "wolverine",
+		extract:   true,
+		extractTo: "wolverine",
 	}
 
 	err = bc.archive(ctx, info.Dir, nil)

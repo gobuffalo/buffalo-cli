@@ -16,8 +16,8 @@ import (
 	"github.com/spf13/pflag"
 )
 
-var _ plugcmd.Namer = Generator{}
 var _ generate.Generator = &Generator{}
+var _ plugcmd.Namer = Generator{}
 var _ plugins.Plugin = Generator{}
 var _ plugprint.Describer = Generator{}
 var _ plugprint.FlagPrinter = &Generator{}
@@ -25,11 +25,10 @@ var _ resource.Modeler = &Generator{}
 var _ resource.Pflagger = &Generator{}
 
 type Generator struct {
-	ModelPath string
-	ModelPkg  string
-	StructTag string
-
-	flags *pflag.FlagSet
+	modelPath string
+	modelPkg  string
+	structTag string
+	flags     *pflag.FlagSet
 }
 
 func (Generator) PluginName() string {
@@ -48,7 +47,8 @@ func (Generator) Description() string {
 func (mg *Generator) Generate(ctx context.Context, root string, args []string) error {
 	args = append([]string{"generate", "model"}, args...)
 	cmd.RootCmd.SetArgs(args)
-	return cmd.RootCmd.Execute()
+	err := cmd.RootCmd.Execute()
+	return plugins.Wrap(mg, err)
 }
 
 // GenerateResourceModels implements resource.Modeler and is responsible for generating a model
@@ -56,26 +56,26 @@ func (mg *Generator) Generate(ctx context.Context, root string, args []string) e
 func (mg *Generator) GenerateResourceModels(ctx context.Context, root string, args []string) error {
 	flags := mg.Flags()
 	if err := flags.Parse(args); err != nil {
-		return err
+		return plugins.Wrap(mg, err)
 	}
 	args = flags.Args()
 
 	run := genny.WetRunner(context.Background())
 
-	modelPath := mg.ModelPath
+	modelPath := mg.modelPath
 	if len(modelPath) == 0 {
 		modelPath = "models"
 	}
 	modelPath = filepath.Join(root, modelPath)
 
-	structTag := mg.StructTag
+	structTag := mg.structTag
 	if len(structTag) == 0 {
 		structTag = "json"
 	}
 
 	atts, err := attrs.ParseArgs(args[1:]...)
 	if err != nil {
-		return err
+		return plugins.Wrap(mg, err)
 	}
 
 	// Mount models generator
@@ -88,9 +88,10 @@ func (mg *Generator) GenerateResourceModels(ctx context.Context, root string, ar
 		ForceDefaultTimestamps: true,
 	})
 	if err != nil {
-		return err
+		return plugins.Wrap(mg, err)
 	}
 
 	run.With(g)
-	return mg.Generate(ctx, root, args)
+	err = mg.Generate(ctx, root, args)
+	return plugins.Wrap(mg, err)
 }

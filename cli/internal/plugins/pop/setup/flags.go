@@ -3,7 +3,6 @@ package setup
 import (
 	"io"
 
-	"github.com/gobuffalo/buffalo-cli/v2/internal/flagger"
 	"github.com/spf13/pflag"
 )
 
@@ -28,5 +27,10 @@ func (setup *Setup) Flags() *pflag.FlagSet {
 }
 
 func (setup *Setup) SetupFlags() []*pflag.Flag {
-	return flagger.SetToSlice(setup.Flags())
+	var values []*pflag.Flag
+	flags := setup.Flags()
+	flags.VisitAll(func(f *pflag.Flag) {
+		values = append(values, f)
+	})
+	return values
 }

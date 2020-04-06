@@ -58,12 +58,12 @@ func (s *Setup) ScopedPlugins() []plugins.Plugin {
 
 func (s *Setup) Setup(ctx context.Context, root string, args []string) error {
 	if err := pop.LoadConfigFile(); err != nil {
-		return err
+		return plugins.Wrap(s, err)
 	}
 
 	flags := s.Flags()
 	if err := flags.Parse(args); err != nil {
-		return err
+		return plugins.Wrap(s, err)
 	}
 
 	plugs := s.ScopedPlugins()
@@ -77,14 +77,14 @@ func (s *Setup) Setup(ctx context.Context, root string, args []string) error {
 			pop.DropDB(conn)
 		}
 		if err := pop.CreateDB(conn); err != nil {
-			return err
+			return plugins.Wrap(s, err)
 		}
 	}
 
 	for _, p := range plugs {
 		if t, ok := p.(Migrater); ok {
 			if err := t.MigrateDB(ctx, root, args); err != nil {
-				return err
+				return plugins.Wrap(p, err)
 			}
 		}
 	}
@@ -92,7 +92,7 @@ func (s *Setup) Setup(ctx context.Context, root string, args []string) error {
 	for _, p := range plugs {
 		if t, ok := p.(DBSeeder); ok {
 			if err := t.SeedDB(ctx, root, args); err != nil {
-				return err
+				return plugins.Wrap(p, err)
 			}
 		}
 	}

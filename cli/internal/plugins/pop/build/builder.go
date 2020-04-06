@@ -36,7 +36,7 @@ func (bd *Builder) BuildTags(ctx context.Context, root string) ([]string, error)
 
 	b, err := ioutil.ReadFile(dy)
 	if err != nil {
-		return nil, err
+		return nil, plugins.Wrap(bd, err)
 	}
 	if bytes.Contains(b, []byte("sqlite")) {
 		args = append(args, "sqlite")
