@@ -10,13 +10,13 @@ import (
 var _ plugins.Plugin = Generator{}
 var _ plugprint.Describer = Generator{}
 var _ plugprint.FlagPrinter = &Generator{}
-var _ resource.Pflagger = &Generator{}
 var _ resource.Actioner = &Generator{}
+var _ resource.Pflagger = &Generator{}
 
 type Generator struct {
-	ModelName    string
-	ModelsPkg    string
-	ModelsPkgSel string
+	modelName    string
+	modelsPkg    string
+	modelsPkgSel string
 	flags        *pflag.FlagSet
 }
 

@@ -54,24 +54,24 @@ func (b *Builder) Build(ctx context.Context, root string, args []string) error {
 func (b *Builder) Package(ctx context.Context, root string, files []string) error {
 	info, err := here.Dir(root)
 	if err != nil {
-		return err
+		return plugins.Wrap(b, err)
 	}
 
 	decls, err := parser.Parse(info)
 	if err != nil {
-		return err
+		return plugins.Wrap(b, err)
 	}
 	for _, f := range files {
 		d, err := parser.NewInclude(info, f)
 		if err != nil {
-			return err
+			return plugins.Wrap(b, err)
 		}
 		decls = append(decls, d)
 	}
 
 	os.RemoveAll("pkged.go")
 	if err := cmds.Package(info, "pkged.go", decls); err != nil {
-		return err
+		return plugins.Wrap(b, err)
 	}
 
 	return nil

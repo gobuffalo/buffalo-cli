@@ -29,9 +29,9 @@ func (g *Generator) Flags() *pflag.FlagSet {
 
 	flags := pflag.NewFlagSet(g.PluginName(), pflag.ContinueOnError)
 
-	flags.StringVarP(&g.ModelPath, "path", "", "models", "the path the model will be created in")
-	flags.StringVarP(&g.ModelPkg, "pkg", "", "models", "the import part the model will be created in")
-	flags.StringVarP(&g.StructTag, "struct-tag", "", "json", "sets the struct tags for model (xml/json/jsonapi)")
+	flags.StringVarP(&g.modelPath, "path", "", "models", "the path the model will be created in")
+	flags.StringVarP(&g.modelPkg, "pkg", "", "models", "the import part the model will be created in")
+	flags.StringVarP(&g.structTag, "struct-tag", "", "json", "sets the struct tags for model (xml/json/jsonapi)")
 
 	g.flags = flags
 	return g.flags

@@ -28,9 +28,10 @@ func (b *Packager) Package(ctx context.Context, root string, files []string) err
 			fmt.Printf("\t> %s\n", f)
 		}
 	}
-	return jam.Pack(jam.PackOptions{
+	err := jam.Pack(jam.PackOptions{
 		Roots: []string{root},
 	})
+	return plugins.Wrap(b, err)
 }
 
 func (b Packager) PluginName() string {

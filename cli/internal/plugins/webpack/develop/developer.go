@@ -62,14 +62,14 @@ func (d *Developer) CmdName() string {
 func (d *Developer) Develop(ctx context.Context, root string, args []string) error {
 	tool, err := scripts.Tool(d, ctx, root)
 	if err != nil {
-		return err
+		return plugins.Wrap(d, err)
 	}
 
 	// make sure that the node_modules folder is properly "installed"
 	if _, err := os.Stat(filepath.Join(root, "node_modules")); err != nil {
 		cmd := d.cmd(ctx, tool, "install")
 		if err := cmd.Run(); err != nil {
-			return err
+			return plugins.Wrap(d, err)
 		}
 	}
 

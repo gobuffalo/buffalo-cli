@@ -13,8 +13,8 @@ func (dev *Developer) Flags() *pflag.FlagSet {
 
 	flags := pflag.NewFlagSet(dev.PluginName(), pflag.ContinueOnError)
 	flags.BoolVarP(&dev.help, "help", "h", false, "print this help")
-	flags.BoolVarP(&dev.Debug, "debug", "d", false, "turn on delve debugging")
-	flags.StringVar(&dev.Config, "config", "", "use a specific config file")
+	flags.BoolVarP(&dev.debug, "debug", "d", false, "turn on delve debugging")
+	flags.StringVar(&dev.config, "config", "", "use a specific config file")
 	dev.flags = flags
 	return dev.flags
 }

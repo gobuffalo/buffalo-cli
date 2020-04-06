@@ -34,12 +34,13 @@ func (g *Generator) PluginName() string {
 
 func (g *Generator) GenerateResourceTemplates(ctx context.Context, root string, args []string) error {
 	if len(args) == 0 {
-		return fmt.Errorf("you must specify a resource name")
+		err := fmt.Errorf("you must specify a resource name")
+		return plugins.Wrap(g, err)
 	}
 
 	atts, err := attrs.ParseArgs(args[1:]...)
 	if err != nil {
-		return err
+		return plugins.Wrap(g, err)
 	}
 
 	modelName := g.modelName
@@ -110,9 +111,5 @@ func (g *Generator) GenerateResourceTemplates(ctx context.Context, root string, 
 		return nil
 	})
 
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return plugins.Wrap(g, err)
 }

@@ -6,6 +6,6 @@ import (
 
 func Plugins() []plugins.Plugin {
 	return []plugins.Plugin{
-		Cmd{},
+		&Cmd{},
 	}
 }

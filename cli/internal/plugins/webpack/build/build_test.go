@@ -149,7 +149,7 @@ func Test_Builder_Cmd_PackageJSON_Yarn(t *testing.T) {
 	defer os.RemoveAll(info.Dir)
 
 	bc := &Builder{
-		Tool: "yarnpkg",
+		tool: "yarnpkg",
 	}
 	ctx := context.Background()
 	args := []string{}

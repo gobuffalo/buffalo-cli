@@ -9,7 +9,7 @@ import (
 )
 
 var _ plugcmd.Aliaser = Cmd{}
-var _ plugcmd.Commander = Cmd{}
+var _ plugcmd.Commander = &Cmd{}
 var _ plugcmd.Namer = Cmd{}
 var _ plugins.Plugin = Cmd{}
 
@@ -27,7 +27,8 @@ func (Cmd) CmdAliases() []string {
 	return []string{"db", "pop"}
 }
 
-func (Cmd) Main(ctx context.Context, root string, args []string) error {
+func (c Cmd) Main(ctx context.Context, root string, args []string) error {
 	cmd.RootCmd.SetArgs(args)
-	return cmd.RootCmd.Execute()
+	err := cmd.RootCmd.Execute()
+	return plugins.Wrap(c, err)
 }

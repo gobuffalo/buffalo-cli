@@ -6,9 +6,9 @@ import (
 	"os/exec"
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/webpack/internal/scripts"
+	"github.com/gobuffalo/plugins"
 	"github.com/gobuffalo/plugins/plugio"
 	"github.com/gobuffalo/plugins/plugprint"
-	"github.com/markbates/safe"
 )
 
 type packageJSON struct {
@@ -26,7 +26,7 @@ func (a *Builder) BeforeBuild(ctx context.Context, root string, args []string) e
 func (bc *Builder) Build(ctx context.Context, root string, args []string) error {
 	var help bool
 	flags := bc.Flags()
-	flags.StringVarP(&bc.Environment, "environment", "", "development", "set the environment for the binary")
+	flags.StringVarP(&bc.environment, "environment", "", "development", "set the environment for the binary")
 	flags.BoolVarP(&help, "help", "h", false, "print this help")
 	flags.Parse(args)
 
@@ -34,15 +34,17 @@ func (bc *Builder) Build(ctx context.Context, root string, args []string) error 
 		return plugprint.Print(plugio.Stdout(bc.ScopedPlugins()...), bc)
 	}
 
-	if bc.Skip {
+	if bc.skip {
 		return nil
 	}
 
-	os.Setenv("NODE_ENV", bc.Environment)
+	ne := os.Getenv("NODE_ENV")
+	defer os.Setenv("NODE_ENV", ne)
+	os.Setenv("NODE_ENV", bc.environment)
 
 	c, err := bc.cmd(ctx, root, args)
 	if err != nil {
-		return err
+		return plugins.Wrap(bc, err)
 	}
 
 	var fn func() error = c.Run
@@ -55,25 +57,25 @@ func (bc *Builder) Build(ctx context.Context, root string, args []string) error 
 		}
 	}
 
-	if err := safe.RunE(fn); err != nil {
-		return err
+	if err := fn(); err != nil {
+		return plugins.Wrap(bc, err)
 	}
 
 	if err := bc.archive(ctx, root, args); err != nil {
-		return err
+		return plugins.Wrap(bc, err)
 	}
 
 	return nil
 }
 
 func (bc *Builder) cmd(ctx context.Context, root string, args []string) (*exec.Cmd, error) {
-	tool := bc.Tool
+	tool := bc.tool
 
 	var err error
 	if len(tool) == 0 {
 		tool, err = scripts.Tool(bc, ctx, root)
 		if err != nil {
-			return nil, err
+			return nil, plugins.Wrap(bc, err)
 		}
 	}
 

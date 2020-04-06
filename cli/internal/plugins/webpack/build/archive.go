@@ -7,15 +7,17 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/gobuffalo/plugins"
 )
 
 func (a *Builder) archive(ctx context.Context, root string, args []string) error {
-	if !a.Extract {
+	if !a.extract {
 		return nil
 	}
 
-	outputDir := a.ExtractTo
-	if len(a.ExtractTo) == 0 {
+	outputDir := a.extractTo
+	if len(a.extractTo) == 0 {
 		outputDir = "bin"
 	}
 	outputDir = filepath.Join(root, outputDir)
@@ -26,7 +28,7 @@ func (a *Builder) archive(ctx context.Context, root string, args []string) error
 
 	f, err := os.Create(target)
 	if err != nil {
-		return err
+		return plugins.Wrap(a, err)
 	}
 	defer f.Close()
 
@@ -72,9 +74,5 @@ func (a *Builder) archive(ctx context.Context, root string, args []string) error
 		return nil
 	})
 
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return plugins.Wrap(a, err)
 }

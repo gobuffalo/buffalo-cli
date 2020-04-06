@@ -20,11 +20,11 @@ func (a *Builder) Flags() *pflag.FlagSet {
 
 	flags := pflag.NewFlagSet(a.String(), pflag.ContinueOnError)
 	flags.SetOutput(ioutil.Discard)
-	flags.BoolVar(&a.Clean, "clean", false, "will delete public/webpack before calling webpack")
-	flags.BoolVarP(&a.Extract, "extract", "e", false, "extract the webpack and put them in a distinct archive")
-	flags.BoolVarP(&a.Skip, "skip", "k", false, "skip running webpack and building webpack")
+	flags.BoolVar(&a.clean, "clean", false, "will delete public/webpack before calling webpack")
+	flags.BoolVarP(&a.extract, "extract", "e", false, "extract the webpack and put them in a distinct archive")
+	flags.BoolVarP(&a.skip, "skip", "k", false, "skip running webpack and building webpack")
 
-	flags.StringVar(&a.ExtractTo, "extract-to", filepath.Join("bin", "webpack.zip"), "extract the webpack and put them in a distinct archive")
+	flags.StringVar(&a.extractTo, "extract-to", filepath.Join("bin", "webpack.zip"), "extract the webpack and put them in a distinct archive")
 
 	a.flags = flags
 	return a.flags

@@ -24,7 +24,7 @@ func (b Validator) PluginName() string {
 
 func (b *Validator) BeforeBuild(ctx context.Context, root string, args []string) error {
 	root = filepath.Join(root, "templates")
-	return filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -48,4 +48,5 @@ func (b *Validator) BeforeBuild(ctx context.Context, root string, args []string)
 		}
 		return nil
 	})
+	return plugins.Wrap(b, err)
 }
