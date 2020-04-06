@@ -48,5 +48,5 @@ func (t *Templater) BeforeBuild(ctx context.Context, root string, args []string)
 }
 
 func (t Templater) PluginName() string {
-	return "templates"
+	return "golang/templates"
 }

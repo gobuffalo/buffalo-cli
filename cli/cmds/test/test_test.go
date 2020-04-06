@@ -122,7 +122,7 @@ func Test_Cmd_Main_AfterTesters(t *testing.T) {
 func Test_Cmd_Main_AfterTesters_err(t *testing.T) {
 	r := require.New(t)
 
-	b := &beforeTester{err: fmt.Errorf("error")}
+	b := &beforeTester{err: fmt.Errorf("science fiction twin")}
 	a := &afterTester{}
 	plugs := plugins.Plugins{a, b, &bladeRunner{}}
 
@@ -136,5 +136,5 @@ func Test_Cmd_Main_AfterTesters_err(t *testing.T) {
 
 	err := bc.Main(context.Background(), ".", args)
 	r.Error(err)
-	r.Equal(err, a.err)
+	r.Contains(err.Error(), b.err.Error())
 }

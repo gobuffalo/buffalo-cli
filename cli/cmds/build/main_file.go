@@ -63,7 +63,7 @@ func (bc *MainFile) Version(ctx context.Context, root string) (string, error) {
 	m := func() (string, error) {
 		b, err := json.Marshal(versions)
 		if err != nil {
-			return "", err
+			return "", plugins.Wrap(bc, err)
 		}
 		return string(b), nil
 	}
@@ -76,7 +76,7 @@ func (bc *MainFile) Version(ctx context.Context, root string) (string, error) {
 
 		s, err := bv.BuildVersion(ctx, root)
 		if err != nil {
-			return "", err
+			return "", plugins.Wrap(p, err)
 		}
 		if len(s) == 0 {
 			continue
@@ -96,7 +96,7 @@ func (bc *MainFile) generateNewMain(ctx context.Context, info here.Info, version
 
 		i, err := bi.BuildImports(ctx, info.Dir)
 		if err != nil {
-			return err
+			return plugins.Wrap(p, err)
 		}
 		imports = append(imports, i...)
 	}
@@ -132,17 +132,17 @@ func (bc *MainFile) generateNewMain(ctx context.Context, info here.Info, version
 
 	t, err := template.New(mainBuildFile).Parse(mainBuildTmpl)
 	if err != nil {
-		return err
+		return plugins.Wrap(bc, err)
 	}
 
 	f, err := os.Create(filepath.Join(info.Dir, mainBuildFile))
 	if err != nil {
-		return err
+		return plugins.Wrap(bc, err)
 	}
 	defer f.Close()
 
 	if err := t.Execute(io.MultiWriter(append(ws, f)...), bt); err != nil {
-		return err
+		return plugins.Wrap(bc, err)
 	}
 	return nil
 }
@@ -150,21 +150,21 @@ func (bc *MainFile) generateNewMain(ctx context.Context, info here.Info, version
 func (bc *MainFile) BeforeBuild(ctx context.Context, root string, args []string) error {
 	info, err := here.Current()
 	if err != nil {
-		return err
+		return plugins.Wrap(bc, err)
 	}
 
 	err = bc.renameMain(info, "main", "originalMain")
 	if err != nil {
-		return err
+		return plugins.Wrap(bc, err)
 	}
 
 	version, err := bc.Version(ctx, info.Dir)
 	if err != nil {
-		return err
+		return plugins.Wrap(bc, err)
 	}
 
 	if err := bc.generateNewMain(ctx, info, version); err != nil {
-		return err
+		return plugins.Wrap(bc, err)
 	}
 	return nil
 }
@@ -174,26 +174,24 @@ var _ AfterBuilder = &MainFile{}
 func (bc *MainFile) AfterBuild(ctx context.Context, root string, args []string, err error) error {
 	info, err := here.Dir(root)
 	if err != nil {
-		return err
-	}
-	os.RemoveAll(filepath.Join(info.Dir, mainBuildFile))
-	err = bc.renameMain(info, "originalMain", "main")
-	if err != nil {
-		return err
+		return plugins.Wrap(bc, err)
 	}
 
-	return nil
+	os.RemoveAll(filepath.Join(info.Dir, mainBuildFile))
+	err = bc.renameMain(info, "originalMain", "main")
+	return plugins.Wrap(bc, err)
 }
 
 func (bc *MainFile) renameMain(info here.Info, from string, to string) error {
 	if info.Name != "main" {
-		return fmt.Errorf("module %s is not a main", info.Name)
+		err := fmt.Errorf("module %s is not a main", info.Name)
+		return plugins.Wrap(bc, err)
 	}
 
 	fset := token.NewFileSet()
 	pkgs, err := parser.ParseDir(fset, info.Dir, nil, 0)
 	if err != nil {
-		return err
+		return plugins.Wrap(bc, err)
 	}
 
 	for _, p := range pkgs {
@@ -230,18 +228,15 @@ func (bc *MainFile) renameMain(info here.Info, from string, to string) error {
 
 				f, err := os.Create(x)
 				if err != nil {
-					return err
+					return plugins.Wrap(bc, err)
 				}
 				defer f.Close()
 				err = printer.Fprint(f, fset, res)
-				if err != nil {
-					return err
-				}
-				return nil
+				return plugins.Wrap(bc, err)
 			}()
 
 			if err != nil {
-				return err
+				return plugins.Wrap(bc, err)
 			}
 		}
 	}

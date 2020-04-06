@@ -12,7 +12,7 @@ require (
 	github.com/gobuffalo/here v0.6.0
 	github.com/gobuffalo/meta/v2 v2.0.1
 	github.com/gobuffalo/packr/v2 v2.7.1
-	github.com/gobuffalo/plugins v0.0.0-20200403133712-a35657777216
+	github.com/gobuffalo/plugins v0.0.0-20200405155620-289cda9b5190
 	github.com/gobuffalo/plush v3.8.3+incompatible
 	github.com/gobuffalo/pop v4.13.1+incompatible
 	github.com/gobuffalo/pop/v5 v5.0.8

@@ -34,7 +34,7 @@ func (tc *Cmd) run(ctx context.Context, root string, args []string) error {
 
 	cmd, err := tc.Cmd(ctx, root, args)
 	if err != nil {
-		return err
+		return plugins.Wrap(tc, err)
 	}
 
 	for _, p := range tc.ScopedPlugins() {
@@ -51,7 +51,7 @@ func (tc *Cmd) beforeTest(ctx context.Context, root string, args []string) error
 	for _, p := range testers {
 		if bb, ok := p.(BeforeTester); ok {
 			if err := bb.BeforeTest(ctx, root, args); err != nil {
-				return err
+				return plugins.Wrap(bb, err)
 			}
 		}
 	}
@@ -63,7 +63,7 @@ func (tc *Cmd) afterTest(ctx context.Context, root string, args []string, err er
 	for _, p := range testers {
 		if bb, ok := p.(AfterTester); ok {
 			if err := bb.AfterTest(ctx, root, args, err); err != nil {
-				return err
+				return plugins.Wrap(bb, err)
 			}
 		}
 	}
@@ -77,7 +77,7 @@ func (tc *Cmd) Cmd(ctx context.Context, root string, args []string) (*exec.Cmd, 
 
 	args, err := tc.buildArgs(ctx, root, args)
 	if err != nil {
-		return nil, err
+		return nil, plugins.Wrap(tc, err)
 	}
 
 	cargs := []string{
@@ -98,7 +98,7 @@ func (tc *Cmd) Cmd(ctx context.Context, root string, args []string) (*exec.Cmd, 
 func (tc *Cmd) buildArgs(ctx context.Context, root string, args []string) ([]string, error) {
 	args, err := tc.pluginArgs(ctx, root, args)
 	if err != nil {
-		return nil, err
+		return nil, plugins.Wrap(tc, err)
 	}
 
 	args = tc.reducePairedArg("-tags", args)
@@ -151,7 +151,7 @@ func (tc *Cmd) pluginArgs(ctx context.Context, root string, args []string) ([]st
 		}
 		tgs, err := bt.TestArgs(ctx, root)
 		if err != nil {
-			return nil, err
+			return nil, plugins.Wrap(bt, err)
 		}
 		// prepend external build args
 		args = append(tgs, args...)

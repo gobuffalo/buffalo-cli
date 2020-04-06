@@ -34,7 +34,8 @@ func (cmd *Cmd) Main(ctx context.Context, root string, args []string) error {
 	for _, p := range cmd.ScopedPlugins() {
 		if d, ok := p.(Developer); ok {
 			wg.Go(func() error {
-				return d.Develop(ctx, root, args)
+				err := d.Develop(ctx, root, args)
+				return plugins.Wrap(d, err)
 			})
 		}
 	}

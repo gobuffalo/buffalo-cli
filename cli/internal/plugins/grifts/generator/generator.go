@@ -11,9 +11,9 @@ import (
 	"github.com/gobuffalo/plugins/plugprint"
 )
 
-var _ plugcmd.Namer = Generator{}
+var _ generate.Generator = &Generator{}
 var _ plugcmd.Aliaser = Generator{}
-var _ generate.Generator = Generator{}
+var _ plugcmd.Namer = Generator{}
 var _ plugins.Plugin = Generator{}
 var _ plugprint.Describer = Generator{}
 
@@ -35,20 +35,20 @@ func (Generator) Description() string {
 	return "Generate a grift task"
 }
 
-func (Generator) Generate(ctx context.Context, root string, args []string) error {
+func (gen *Generator) Generate(ctx context.Context, root string, args []string) error {
 	run := genny.WetRunner(context.Background())
 
 	opts := &Options{}
 	opts.Args = args
 	g, err := New(opts)
 	if err != nil {
-		return err
+		return plugins.Wrap(gen, err)
 	}
 	run.With(g)
 
 	g, err = gogen.Fmt(root)
 	if err != nil {
-		return err
+		return plugins.Wrap(gen, err)
 	}
 	run.With(g)
 

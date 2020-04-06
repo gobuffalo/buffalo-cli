@@ -12,8 +12,8 @@ import (
 	"github.com/gobuffalo/plugins/plugprint"
 )
 
+var _ generate.Generator = &Generator{}
 var _ plugcmd.Namer = Generator{}
-var _ generate.Generator = Generator{}
 var _ plugins.Plugin = Generator{}
 var _ plugprint.Describer = Generator{}
 
@@ -31,7 +31,7 @@ func (Generator) Description() string {
 	return "Generate a new mailer for Buffalo"
 }
 
-func (Generator) Generate(ctx context.Context, root string, args []string) error {
+func (gen *Generator) Generate(ctx context.Context, root string, args []string) error {
 	run := genny.WetRunner(context.Background())
 
 	opts := &mailgen.Options{
@@ -39,7 +39,7 @@ func (Generator) Generate(ctx context.Context, root string, args []string) error
 	}
 	gg, err := mailgen.New(opts)
 	if err != nil {
-		return err
+		return plugins.Wrap(gen, err)
 	}
 	run.WithGroup(gg)
 
@@ -49,5 +49,5 @@ func (Generator) Generate(ctx context.Context, root string, args []string) error
 	}
 	run.With(g)
 
-	return run.Run()
+	return plugins.Wrap(gen, run.Run())
 }
