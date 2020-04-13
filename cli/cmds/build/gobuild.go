@@ -94,9 +94,8 @@ func (bc *Cmd) build(ctx context.Context, root string) error {
 
 	for _, p := range plugs {
 		if br, ok := p.(GoBuilder); ok {
-			if err := br.GoBuild(ctx, root, cmd); err != nil {
-				return plugins.Wrap(br, err)
-			}
+			err := br.GoBuild(ctx, root, cmd)
+			return plugins.Wrap(br, err)
 		}
 	}
 

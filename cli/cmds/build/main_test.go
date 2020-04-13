@@ -88,49 +88,6 @@ func Test_Cmd_Main_SubCommand_err(t *testing.T) {
 	r.Equal(exp, act)
 }
 
-<<<<<<< HEAD
-=======
-func Test_Cmd_Main_ValidateTemplates(t *testing.T) {
-	r := require.New(t)
-
-	bc := &Cmd{}
-	fn := func(root string) error {
-		return nil
-	}
-
-	p := buildtest.TemplatesValidator(fn)
-	bc.WithPlugins(func() []plugins.Plugin {
-		return []plugins.Plugin{
-			p,
-		}
-	})
-
-	err := bc.Main(context.Background(), ".", nil)
-	r.NoError(err)
-}
-
-func Test_Cmd_Main_ValidateTemplates_err(t *testing.T) {
-	r := require.New(t)
-
-	bc := &Cmd{}
-
-	exp := fmt.Errorf("boom")
-	fn := func(root string) error {
-		return exp
-	}
-
-	p := buildtest.TemplatesValidator(fn)
-	bc.WithPlugins(func() []plugins.Plugin {
-		return []plugins.Plugin{
-			p,
-		}
-	})
-
-	err := bc.Main(context.Background(), ".", nil)
-	r.Equal(exp, err)
-}
-
->>>>>>> breaking the wall
 func Test_Cmd_Main_BeforeBuilders(t *testing.T) {
 
 	table := []struct {
@@ -193,17 +150,11 @@ func Test_Cmd_Main_AfterBuilders(t *testing.T) {
 
 			plugs := plugins.Plugins{buildtest.AfterBuilder(fn)}
 
-<<<<<<< HEAD
-	b := &beforeBuilder{err: fmt.Errorf("science fiction twin")}
-	a := &afterBuilder{}
-	plugs := plugins.Plugins{a, b, &bladeRunner{}}
-=======
 			bc := &Cmd{
 				pluginsFn: func() []plugins.Plugin {
 					return plugs
 				},
 			}
->>>>>>> build stuff
 
 			err := bc.Main(context.Background(), tt.root, tt.exp)
 			r.Equal(tt.err, err)
@@ -211,12 +162,4 @@ func Test_Cmd_Main_AfterBuilders(t *testing.T) {
 		})
 	}
 
-<<<<<<< HEAD
-	var args []string
-
-	err := bc.Main(context.Background(), ".", args)
-	r.Error(err)
-	r.Contains(err.Error(), b.err.Error())
-=======
->>>>>>> build stuff
 }

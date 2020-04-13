@@ -22,110 +22,6 @@ func Test_Cmd_GoBuilder(t *testing.T) {
 		return cli
 	}
 
-<<<<<<< HEAD
-func Test_Cmd_GoCmd_Bin(t *testing.T) {
-	r := require.New(t)
-
-	bc := &Cmd{
-		bin: "cli",
-	}
-
-	ctx := context.Background()
-	cmd, err := bc.GoCmd(ctx, ".")
-	r.NoError(err)
-
-	n := "cli"
-	if runtime.GOOS == "windows" {
-		n = "cli.exe"
-	}
-
-	exp := []string{"go", "build", "-o", n}
-	r.Equal(exp, cmd.Args)
-}
-
-func Test_Cmd_GoCmd_Mod(t *testing.T) {
-	r := require.New(t)
-
-	bc := &Cmd{
-		bin: "cli",
-		mod: "vendor",
-	}
-
-	ctx := context.Background()
-	cmd, err := bc.GoCmd(ctx, ".")
-	r.NoError(err)
-
-	n := "cli"
-	if runtime.GOOS == "windows" {
-		n = "cli.exe"
-	}
-
-	exp := []string{"go", "build", "-o", n, "-mod", "vendor"}
-	r.Equal(exp, cmd.Args)
-}
-
-func Test_Cmd_GoCmd_Tags(t *testing.T) {
-	r := require.New(t)
-
-	bc := &Cmd{
-		bin:  "cli",
-		tags: "a b c",
-	}
-
-	ctx := context.Background()
-	cmd, err := bc.GoCmd(ctx, ".")
-	r.NoError(err)
-
-	n := "cli"
-	if runtime.GOOS == "windows" {
-		n = "cli.exe"
-	}
-
-	exp := []string{"go", "build", "-o", n, "-tags", "a b c"}
-	r.Equal(exp, cmd.Args)
-}
-
-func Test_Cmd_GoCmd_Static(t *testing.T) {
-	r := require.New(t)
-
-	bc := &Cmd{
-		bin:    "cli",
-		static: true,
-	}
-
-	ctx := context.Background()
-	cmd, err := bc.GoCmd(ctx, ".")
-	r.NoError(err)
-
-	n := "cli"
-	if runtime.GOOS == "windows" {
-		n = "cli.exe"
-	}
-
-	exp := []string{"go", "build", "-o", n, "-ldflags", "-linkmode external -extldflags \"-static\""}
-	r.Equal(exp, cmd.Args)
-}
-
-func Test_Cmd_GoCmd_LDFlags(t *testing.T) {
-	r := require.New(t)
-
-	bc := &Cmd{
-		bin:     "cli",
-		ldFlags: "linky",
-	}
-
-	ctx := context.Background()
-	cmd, err := bc.GoCmd(ctx, ".")
-	r.NoError(err)
-
-	n := "cli"
-	if runtime.GOOS == "windows" {
-		n = "cli.exe"
-	}
-
-	exp := []string{"go", "build", "-o", n, "-ldflags", "linky"}
-	r.Equal(exp, cmd.Args)
-=======
 	table := []struct {
 		args []string
 		exp  []string
@@ -177,5 +73,4 @@ func Test_Cmd_GoCmd_LDFlags(t *testing.T) {
 			r.Equal(tt.exp, act)
 		})
 	}
->>>>>>> breaking the wall
 }

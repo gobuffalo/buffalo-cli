@@ -23,7 +23,6 @@ func Test_Cmd_Subcommands(t *testing.T) {
 		buildtest.AfterBuilder(nil),
 		background("bar"),
 		buildtest.Versioner(nil),
-		buildtest.TemplatesValidator(nil),
 		buildtest.Packager(nil),
 		buildtest.GoBuilder(nil),
 	}
@@ -50,7 +49,6 @@ func Test_Cmd_ScopedPlugins(t *testing.T) {
 		background("bar"),
 		buildtest.Versioner(nil),
 		buildtest.Importer(nil),
-		buildtest.TemplatesValidator(nil),
 		buildtest.GoBuilder(nil),
 		buildtest.Packager(nil),
 	}
