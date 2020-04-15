@@ -175,6 +175,7 @@ func (cmd *Cmd) Main(ctx context.Context, root string, args []string) error {
 	if err := mi.ModInit(ctx, root, modName); err != nil {
 		return err
 	}
+
 	c := exec.CommandContext(ctx, "go", "run", "./cmd/newapp")
 	c.Stdout = plugio.Stdout(plugs...)
 	c.Stderr = plugio.Stderr(plugs...)

@@ -15,7 +15,6 @@ import (
 	"github.com/gobuffalo/plugins/plugcmd"
 	"github.com/gobuffalo/plugins/plugio"
 	"github.com/gobuffalo/plugins/plugprint"
-	"github.com/markbates/safe"
 	"github.com/spf13/pflag"
 )
 
@@ -278,14 +277,11 @@ func (g *Generator) generateModels(ctx context.Context, root string, args []stri
 		return nil
 	}
 	for _, p := range g.ScopedPlugins() {
-		ag, ok := p.(Modeler)
-		if !ok {
-			continue
+		if ag, ok := p.(Modeler); ok {
+			if err := ag.GenerateResourceModels(ctx, root, args); err != nil {
+				return plugins.Wrap(p, err)
+			}
 		}
-		return safe.RunE(func() error {
-			fmt.Printf("[Resource] Modeler %s\n", p.PluginName())
-			return ag.GenerateResourceModels(ctx, root, args)
-		})
 	}
 	return nil
 }

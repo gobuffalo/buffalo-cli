@@ -1,16 +1,12 @@
 package mod
 
 import (
-	"bytes"
 	"context"
 	"fmt"
-	"io/ioutil"
 	"os"
-	"os/exec"
 	"path/filepath"
 
 	"github.com/gobuffalo/plugins"
-	"github.com/gobuffalo/plugins/plugio"
 )
 
 var _ plugins.Plugin = &Initer{}
@@ -54,52 +50,30 @@ func (i Initer) PluginName() string {
 }
 
 func (i *Initer) ModInit(ctx context.Context, root string, name string) error {
-	plugs := i.ScopedPlugins()
-
-	c := exec.CommandContext(ctx, "go", "mod", "init", name)
-	c.Stdout = plugio.Stdout(plugs...)
-	c.Stderr = plugio.Stderr(plugs...)
-	c.Stdin = plugio.Stdin(plugs...)
-
-	if err := c.Run(); err != nil {
-		return err
+	mr := filepath.Join(root, "go.mod")
+	f, err := os.Create(mr)
+	if err != nil {
+		return plugins.Wrap(i, err)
 	}
+	defer f.Close()
 
-	c = exec.CommandContext(ctx, "go", "mod", "tidy", "-v")
-	c.Stdout = plugio.Stdout(plugs...)
-	c.Stderr = plugio.Stderr(plugs...)
-	c.Stdin = plugio.Stdin(plugs...)
+	f.WriteString(fmt.Sprintf("module %s\n", name))
+
+	plugs := i.ScopedPlugins()
 
 	if len(plugs) == 0 {
 		return nil
 	}
 
-	mr := filepath.Join(root, "go.mod")
-	b, err := ioutil.ReadFile(mr)
-	if err != nil {
-		return err
-	}
-
-	bb := bytes.NewBuffer(b)
-
 	for _, p := range plugs {
 		switch t := p.(type) {
 		case Replacer:
 			m := t.ModReplace(root)
-			fmt.Println(">>>TODO cli/internal/plugins/golang/mod/init.go:84: m ", m)
 			for k, v := range m {
 				s := fmt.Sprintf("\nreplace %s => %s", k, v)
-				bb.WriteString(s)
+				f.WriteString(s)
 			}
 		}
 	}
-	fmt.Println(bb.String())
-
-	f, err := os.Open(mr)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	f.Write(bb.Bytes())
 	return nil
 }
