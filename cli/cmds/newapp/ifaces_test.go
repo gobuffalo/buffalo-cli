@@ -2,14 +2,12 @@ package newapp
 
 import (
 	"context"
-
-	"github.com/gobuffalo/plugins"
+	"os/exec"
 )
 
 var _ AfterNewapper = afternewapper(nil)
 var _ Newapper = newapper(nil)
-var _ plugins.Plugin = afternewapper(nil)
-var _ plugins.Plugin = newapper(nil)
+var _ NewCommandRunner = cmdRunner(nil)
 
 type newapper func(ctx context.Context, root string, args []string) error
 
@@ -24,9 +22,19 @@ func (fn newapper) Newapp(ctx context.Context, root string, args []string) error
 type afternewapper func(ctx context.Context, root string, args []string, err error) error
 
 func (fn afternewapper) PluginName() string {
-	return "afternewapper"
+	return "after-newapper"
 }
 
 func (fn afternewapper) AfterNewapp(ctx context.Context, root string, args []string, err error) error {
 	return fn(ctx, root, args, err)
+}
+
+type cmdRunner func(ctx context.Context, root string, cmd *exec.Cmd) error
+
+func (fn cmdRunner) PluginName() string {
+	return "cmd-runner"
+}
+
+func (fn cmdRunner) RunNewCommand(ctx context.Context, root string, cmd *exec.Cmd) error {
+	return fn(ctx, root, cmd)
 }

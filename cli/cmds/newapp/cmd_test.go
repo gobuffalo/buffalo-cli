@@ -3,8 +3,8 @@ package newapp
 import (
 	"bytes"
 	"context"
-	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"testing"
 
@@ -39,28 +39,35 @@ func Test_Cmd_Main(t *testing.T) {
 
 	info, err := here.Current()
 	r.NoError(err)
-	fmt.Println(">>>TODO cli/cmds/newapp/cmd_test.go:43: info ", info)
 
 	dir := filepath.Join(info.Root, "tmp")
 	os.RemoveAll(dir)
 	defer os.RemoveAll(dir)
-	fmt.Println(">>>TODO cli/cmds/newapp/cmd_test.go:48: dir ", dir)
 
 	cmd := &Cmd{}
+	var act []string
+	fn := func(ctx context.Context, root string, cmd *exec.Cmd) error {
+		act = cmd.Args
+		return nil
+	}
+	cmd.WithPlugins(func() []plugins.Plugin {
+		return []plugins.Plugin{
+			cmdRunner(fn),
+		}
+	})
 
 	pkg := "github.com/markbates/coke"
 	name := "coke"
 	err = cmd.Main(context.Background(), dir, []string{pkg})
 	r.NoError(err)
 
+	exp := []string{"go", "run", "./cmd/newapp"}
+	r.Equal(exp, act)
+
 	dir = filepath.Join(dir, name)
 	mp := filepath.Join(dir, "go.mod")
 	_, err = os.Stat(mp)
 	r.NoError(err)
-
-	info, err = here.Dir(dir)
-	r.NoError(err)
-	r.Equal(pkg, info.Module.Path)
 
 	f, err := os.Open(filepath.Join(dir, "cmd", "newapp", "main.go"))
 	r.NoError(err)

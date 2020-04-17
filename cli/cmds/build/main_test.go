@@ -60,9 +60,9 @@ func Test_Cmd_Main_SubCommand(t *testing.T) {
 		}
 	})
 
-	args := []string{p.PluginName(), "a", "b", "c"}
+	args := []string{"builder", "a", "b", "c"}
 
-	err := bc.Main(context.Background(), "", args)
+	err := bc.Main(context.Background(), ".", args)
 	r.NoError(err)
 	r.Equal(args[1:], act)
 }
@@ -157,7 +157,9 @@ func Test_Cmd_Main_AfterBuilders(t *testing.T) {
 			}
 
 			err := bc.Main(context.Background(), tt.root, tt.exp)
-			r.Equal(tt.err, err)
+			if err != nil {
+				r.Contains(err.Error(), tt.err.Error())
+			}
 			r.Equal(tt.exp, act)
 		})
 	}
