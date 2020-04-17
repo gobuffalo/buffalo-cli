@@ -31,7 +31,7 @@ type Cmd struct {
 	flags     *pflag.FlagSet
 	help      bool
 	force     bool
-	preset    string
+	presets   []string
 	usePlugs  map[string]string
 }
 
@@ -110,16 +110,17 @@ func (cmd *Cmd) Main(ctx context.Context, root string, args []string) error {
 	if cmd.usePlugs == nil {
 		cmd.usePlugs = map[string]string{}
 	}
+	if len(cmd.presets) == 0 {
+		cmd.presets = append(cmd.presets, "web")
+	}
 
-	if len(cmd.preset) > 0 {
-		pres := presets.Presets()
-		for _, p := range pres {
-			if path.Base(p) != cmd.preset {
-				continue
-			}
-			cmd.usePlugs[cmd.preset] = p
-			break
+	pres := presets.Presets()
+	for _, p := range cmd.presets {
+		if v, ok := pres[p]; ok {
+			cmd.usePlugs[p] = v
+			continue
 		}
+		cmd.usePlugs[path.Base(p)] = p
 	}
 
 	tmpl, err := template.New("").Parse(cliMain)
@@ -186,9 +187,8 @@ import (
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/newapp"
 	"github.com/gobuffalo/plugins"
-	{{range $k,$v := .Plugs -}}
-	"{{$v}}"
-	{{- end}}
+{{range $k,$v := .Plugs }}
+	{{$k}} "{{$v}}"{{end}}
 )
 
 func main() {
@@ -199,9 +199,8 @@ func main() {
 	}
 
 	var plugs []plugins.Plugin
-	{{range $k,$v := .Plugs -}}
-	plugs = append(plugs, {{$k}}.Plugins()...)
-	{{- end}}
+{{range $k,$v := .Plugs }}
+	plugs = append(plugs, {{$k}}.Plugins()...){{end}}
 
 	if err := newapp.Execute(plugs, ctx, pwd, os.Args[1:]); err != nil {
 		log.Fatal(err)
