@@ -30,7 +30,7 @@ func (cmd *Cmd) Flags() *pflag.FlagSet {
 		names = append(names, path.Base(p))
 	}
 
-	flags.StringVarP(&cmd.preset, "preset", "p", "webapp", fmt.Sprintf("preset list of plugins to use %s", names))
+	flags.StringSliceVarP(&cmd.presets, "preset", "p", []string{}, fmt.Sprintf("preset list of plugins to use %s [default web]", names))
 
 	cmd.flags = flags
 	return cmd.flags

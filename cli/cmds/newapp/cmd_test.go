@@ -3,9 +3,11 @@ package newapp
 import (
 	"bytes"
 	"context"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/gobuffalo/here"
@@ -58,7 +60,7 @@ func Test_Cmd_Main(t *testing.T) {
 
 	pkg := "github.com/markbates/coke"
 	name := "coke"
-	err = cmd.Main(context.Background(), dir, []string{pkg})
+	err = cmd.Main(context.Background(), dir, []string{"-p", "json", "-p", "github.com/other/preset", pkg})
 	r.NoError(err)
 
 	exp := []string{"go", "run", "./cmd/newapp"}
@@ -69,7 +71,44 @@ func Test_Cmd_Main(t *testing.T) {
 	_, err = os.Stat(mp)
 	r.NoError(err)
 
-	f, err := os.Open(filepath.Join(dir, "cmd", "newapp", "main.go"))
+	b, err := ioutil.ReadFile(filepath.Join(dir, "cmd", "newapp", "main.go"))
 	r.NoError(err)
-	r.NotNil(f)
+
+	ba := string(b)
+	ba = strings.TrimSpace(ba)
+	be := strings.TrimSpace(newappExp)
+	r.Equal(be, ba)
 }
+
+const newappExp = `
+package main
+
+import (
+	"context"
+	"log"
+	"os"
+
+	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/newapp"
+	"github.com/gobuffalo/plugins"
+
+	json "github.com/gobuffalo/buffalo-cli/v2/cli/cmds/newapp/presets/jsonapp"
+	preset "github.com/other/preset"
+)
+
+func main() {
+	ctx := context.Background()
+	pwd, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var plugs []plugins.Plugin
+
+	plugs = append(plugs, json.Plugins()...)
+	plugs = append(plugs, preset.Plugins()...)
+
+	if err := newapp.Execute(plugs, ctx, pwd, os.Args[1:]); err != nil {
+		log.Fatal(err)
+	}
+}
+`
