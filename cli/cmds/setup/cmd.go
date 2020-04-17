@@ -18,7 +18,7 @@ type Cmd struct {
 	help      bool
 }
 
-func (cmd Cmd) PluginName() string {
+func (Cmd) PluginName() string {
 	return "setup"
 }
 

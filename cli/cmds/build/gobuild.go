@@ -12,8 +12,8 @@ import (
 	"github.com/gobuffalo/plugins/plugio"
 )
 
-func (bc *Cmd) GoCmd(ctx context.Context, root string) (*exec.Cmd, error) {
-	buildArgs := []string{"build"}
+func (bc *Cmd) buildArgs(ctx context.Context, root string) ([]string, error) {
+	args := []string{"build"}
 
 	info, err := here.Dir(root)
 	if err != nil {
@@ -33,25 +33,15 @@ func (bc *Cmd) GoCmd(ctx context.Context, root string) (*exec.Cmd, error) {
 	} else {
 		bin = strings.TrimSuffix(bin, ".exe")
 	}
-	buildArgs = append(buildArgs, "-o", bin)
+	args = AppendArg(args, "-o", bin)
 
 	if len(bc.mod) != 0 {
-		buildArgs = append(buildArgs, "-mod", bc.mod)
+		args = AppendArg(args, "-mod", bc.mod)
 	}
 
-	buildArgs = append(buildArgs, bc.buildFlags...)
-
-	tags, err := bc.buildTags(ctx, root)
-	if err != nil {
-		return nil, plugins.Wrap(bc, err)
-	}
-
-	if len(tags) > 0 {
-		buildArgs = append(buildArgs, "-tags", strings.Join(tags, " "))
-	}
+	args = append(args, bc.buildFlags...)
 
 	flags := []string{}
-
 	if bc.static {
 		flags = append(flags, "-linkmode external", "-extldflags \"-static\"")
 	}
@@ -61,53 +51,53 @@ func (bc *Cmd) GoCmd(ctx context.Context, root string) (*exec.Cmd, error) {
 		flags = append(flags, bc.ldFlags)
 	}
 	if len(flags) > 0 {
-		buildArgs = append(buildArgs, "-ldflags", strings.Join(flags, " "))
+		args = AppendArg(args, "-ldflags", flags...)
 	}
 
-	cmd := exec.CommandContext(ctx, "go", buildArgs...)
+	if len(bc.tags) > 0 {
+		args = AppendArg(args, "-tags", bc.tags)
+	}
 
-	plugs := bc.ScopedPlugins()
-	cmd.Stdout = plugio.Stdout(plugs...)
-	cmd.Stderr = plugio.Stderr(plugs...)
-	cmd.Stdin = plugio.Stdin(plugs...)
+	for _, p := range bc.ScopedPlugins() {
+		if bt, ok := p.(BuildArger); ok {
+			ags, err := bt.GoBuildArgs(ctx, root, args)
+			if err != nil {
+				return nil, err
+			}
 
-	return cmd, nil
+			switch len(ags) {
+			case 0:
+				continue
+			case 1:
+				args = AppendArg(args, ags[0])
+			default:
+				args = AppendArg(args, ags[0], ags[1:]...)
+			}
+
+		}
+	}
+
+	return args, nil
 }
 
-func (cmd *Cmd) buildTags(ctx context.Context, root string) ([]string, error) {
-	var tags []string
-	if len(cmd.tags) > 0 {
-		tags = append(tags, cmd.tags)
-	}
-
-	for _, p := range cmd.ScopedPlugins() {
-		t, ok := p.(Tagger)
-		if !ok {
-			continue
-		}
-		bt, err := t.BuildTags(ctx, root)
-		if err != nil {
-			return nil, plugins.Wrap(p, err)
-		}
-		tags = append(tags, bt...)
-	}
-
-	return tags, nil
-}
-
-func (bc *Cmd) build(ctx context.Context, root string, args []string) error {
-	cmd, err := bc.GoCmd(ctx, root)
+func (bc *Cmd) build(ctx context.Context, root string) error {
+	buildArgs, err := bc.buildArgs(ctx, root)
 	if err != nil {
 		return plugins.Wrap(bc, err)
 	}
 
-	for _, p := range bc.ScopedPlugins() {
-		if br, ok := p.(Runner); ok {
-			if err := br.RunBuild(ctx, cmd); err != nil {
-				return plugins.Wrap(p, err)
-			}
+	plugs := bc.ScopedPlugins()
+	cmd := exec.CommandContext(ctx, "go", buildArgs...)
+	cmd.Stdin = plugio.Stdin(plugs...)
+	cmd.Stdout = plugio.Stdout(plugs...)
+	cmd.Stderr = plugio.Stderr(plugs...)
+
+	for _, p := range plugs {
+		if br, ok := p.(GoBuilder); ok {
+			err := br.GoBuild(ctx, root, cmd)
+			return plugins.Wrap(br, err)
 		}
 	}
 
-	return plugins.Wrap(bc, cmd.Run())
+	return cmd.Run()
 }

@@ -11,7 +11,7 @@ import (
 
 type Developer interface {
 	plugins.Plugin
-	// Develop will be called asyncronously with other implementations.
+	// Develop will be called asynchronously with other implementations.
 	// The context.Context should be listened to for cancellation.
 	Develop(ctx context.Context, root string, args []string) error
 }

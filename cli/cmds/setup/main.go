@@ -69,6 +69,5 @@ func (cmd *Cmd) afterSetup(ctx context.Context, root string, args []string, err 
 			}
 		}
 	}
-
 	return err
 }

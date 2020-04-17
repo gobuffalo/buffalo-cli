@@ -4,6 +4,7 @@ import (
 	"flag"
 	"testing"
 
+	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/build/buildtest"
 	"github.com/gobuffalo/plugins"
 	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/require"
@@ -45,15 +46,14 @@ func Test_Cmd_Flags(t *testing.T) {
 
 	r.True(count > 0)
 
-	plugs = append(plugs, &buildFlagger{
-		flags: []*flag.Flag{
-			{
-				Name:     "my-flag",
-				DefValue: "unset",
-				Value:    flagValue(""),
-			},
+	sflags := []*flag.Flag{
+		{
+			Name:     "my-flag",
+			DefValue: "unset",
+			Value:    flagValue(""),
 		},
-	})
+	}
+	plugs = append(plugs, buildtest.Flagger(sflags))
 
 	bc = &Cmd{}
 	bc.WithPlugins(func() []plugins.Plugin {
@@ -69,15 +69,14 @@ func Test_Cmd_Flags(t *testing.T) {
 
 	count = len(values)
 
-	plugs = append(plugs, &buildPflagger{
-		flags: []*pflag.Flag{
-			{
-				Name:     "your-flag",
-				DefValue: "unset",
-				Value:    flagValue(""),
-			},
+	pflags := []*pflag.Flag{
+		{
+			Name:     "your-flag",
+			DefValue: "unset",
+			Value:    flagValue(""),
 		},
-	})
+	}
+	plugs = append(plugs, buildtest.Pflagger(pflags))
 
 	bc = &Cmd{}
 	bc.WithPlugins(func() []plugins.Plugin {

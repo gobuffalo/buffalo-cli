@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/build/buildtest"
 	"github.com/gobuffalo/plugins"
 	"github.com/stretchr/testify/require"
 )
@@ -11,17 +12,20 @@ import (
 func Test_Cmd_Package(t *testing.T) {
 	r := require.New(t)
 
-	pkg := &packager{
-		files: []string{"A"},
+	exp := []string{"foo.go", "bar.go"}
+	pf := func(ctx context.Context, root string) ([]string, error) {
+		return exp, nil
 	}
-	pf := &packFiler{
-		files: []string{"B"},
+
+	var act []string
+	pr := func(ctx context.Context, root string, files []string) error {
+		act = files
+		return nil
 	}
 
 	plugs := plugins.Plugins{
-		pkg,
-		pf,
-		&bladeRunner{},
+		buildtest.Packager(pr),
+		buildtest.PackFiler(pf),
 	}
 
 	bc := &Cmd{}
@@ -32,6 +36,5 @@ func Test_Cmd_Package(t *testing.T) {
 	err := bc.Main(context.Background(), ".", nil)
 	r.NoError(err)
 
-	r.Len(pkg.files, 2)
-	r.Equal([]string{"A", "B"}, pkg.files)
+	r.Equal(exp, act)
 }

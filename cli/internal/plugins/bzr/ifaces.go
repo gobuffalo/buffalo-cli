@@ -11,17 +11,6 @@ import (
 // It is expected that that plugins in this package will hand over
 // control of the exec.Cmd to the first plugin that implements this
 // interface.
-type CommandRunner interface {
-	RunBzrCommand(ctx context.Context, root string, cmd *exec.Cmd) error
-}
-
-//cmdRunnerFn ...
-type cmdRunnerFn func(ctx context.Context, root string, cmd *exec.Cmd) error
-
-func (fn cmdRunnerFn) RunBzrCommand(ctx context.Context, root string, cmd *exec.Cmd) error {
-	return fn(ctx, root, cmd)
-}
-
-func (cmdRunnerFn) PluginName() string {
-	return "cmdRunnerFn"
+type Runner interface {
+	RunBzr(ctx context.Context, root string, cmd *exec.Cmd) error
 }

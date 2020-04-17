@@ -2,6 +2,7 @@ package bzr
 
 import (
 	"context"
+	"os/exec"
 	"testing"
 
 	"github.com/gobuffalo/plugins"
@@ -19,20 +20,27 @@ func Test_Bzr_Generalities(t *testing.T) {
 func Test_Bzr_BuildVersion(t *testing.T) {
 
 	r := require.New(t)
-	vr := &commandRunner{
-		stdout: "123",
+
+	var act []string
+	fn := func(ctx context.Context, root string, cmd *exec.Cmd) error {
+		act = cmd.Args
+		if cmd.Stdout == nil {
+			r.FailNow("expected stdout not to be nil")
+		}
+		cmd.Stdout.Write([]byte("42"))
+		return nil
 	}
 
 	v := &Versioner{
 		pluginsFn: func() []plugins.Plugin {
-			return []plugins.Plugin{vr}
+			return []plugins.Plugin{
+				runner(fn),
+			}
 		},
 	}
 
 	s, err := v.BuildVersion(context.Background(), "")
 	r.NoError(err)
-	r.Equal(vr.stdout, s)
-	r.NotNil(vr.cmd)
-
-	r.Equal([]string{"bzr", "revno"}, vr.cmd.Args)
+	r.Equal("42", s)
+	r.Equal([]string{"bzr", "revno"}, act)
 }

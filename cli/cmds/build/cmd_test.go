@@ -1,8 +1,10 @@
 package build
 
 import (
+	"context"
 	"testing"
 
+	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/build/buildtest"
 	"github.com/gobuffalo/plugins"
 	"github.com/stretchr/testify/require"
 )
@@ -10,16 +12,19 @@ import (
 func Test_Cmd_Subcommands(t *testing.T) {
 	r := require.New(t)
 
-	b := &builder{}
+	fn := func(ctx context.Context, root string, args []string) error {
+		return nil
+	}
+	b := buildtest.Builder(fn)
 	all := plugins.Plugins{
 		background("foo"),
-		&beforeBuilder{},
-		b,
-		&afterBuilder{},
+		buildtest.BeforeBuilder(nil),
+		buildtest.Builder(nil),
+		buildtest.AfterBuilder(nil),
 		background("bar"),
-		&buildVersioner{},
-		&packager{},
-		&bladeRunner{},
+		buildtest.Versioner(nil),
+		buildtest.Packager(nil),
+		buildtest.GoBuilder(nil),
 	}
 
 	bc := &Cmd{
@@ -30,7 +35,7 @@ func Test_Cmd_Subcommands(t *testing.T) {
 
 	plugs := bc.SubCommands()
 	r.Len(plugs, 1)
-	r.Equal(b, plugs[0])
+	r.Equal(b.PluginName(), plugs[0].PluginName())
 }
 
 func Test_Cmd_ScopedPlugins(t *testing.T) {
@@ -38,14 +43,14 @@ func Test_Cmd_ScopedPlugins(t *testing.T) {
 
 	all := plugins.Plugins{
 		background("foo"),
-		&builder{},
-		&beforeBuilder{},
-		&afterBuilder{},
+		buildtest.Builder(nil),
+		buildtest.BeforeBuilder(nil),
+		buildtest.AfterBuilder(nil),
 		background("bar"),
-		&buildVersioner{},
-		&buildImporter{},
-		&bladeRunner{},
-		&packager{},
+		buildtest.Versioner(nil),
+		buildtest.Importer(nil),
+		buildtest.GoBuilder(nil),
+		buildtest.Packager(nil),
 	}
 
 	bc := &Cmd{

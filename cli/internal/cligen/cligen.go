@@ -1,4 +1,4 @@
-package clifix
+package cligen
 
 import (
 	"context"
@@ -9,33 +9,14 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/fix"
 	"github.com/gobuffalo/here"
-	"github.com/gobuffalo/plugins"
-	"github.com/gobuffalo/plugins/plugcmd"
 )
 
-var _ plugins.Plugin = &Fixer{}
-var _ plugcmd.Namer = &Fixer{}
-var _ fix.Fixer = &Fixer{}
-
-//Fixer creates the cli file at cmd/buffalo/main.go if it doesn't exist.
-type Fixer struct {
+type Generator struct {
+	Plugins map[string]string
 }
 
-//PluginName for this cli fixer
-func (*Fixer) PluginName() string {
-	return "cli/fixer"
-}
-
-//CmdName for this cli fixer
-func (*Fixer) CmdName() string {
-	return "cli"
-}
-
-//Fix will be invoked when buffalo fix is called, it creates cmd/buffalo/main.go
-//with tmplMain if it doesn't exist.
-func (fixer *Fixer) Fix(ctx context.Context, root string, args []string) error {
+func (g *Generator) Generate(ctx context.Context, root string, args []string) error {
 	info, err := here.Dir(root)
 	if err != nil {
 		return err
@@ -44,12 +25,6 @@ func (fixer *Fixer) Fix(ctx context.Context, root string, args []string) error {
 	x := filepath.Join(root, "cmd", "buffalo")
 	mm := map[string]string{
 		filepath.Join(x, "main.go"): tmplMain,
-	}
-
-	_, err = os.Stat(x)
-	if err == nil {
-		fmt.Println("cmd/buffalo folder already exists")
-		return err
 	}
 
 	for fp, body := range mm {
@@ -72,12 +47,18 @@ func (fixer *Fixer) Fix(ctx context.Context, root string, args []string) error {
 			return err
 		}
 
+		if g.Plugins == nil {
+			g.Plugins = map[string]string{}
+		}
+
 		err = tmpl.Execute(f, struct {
 			Name       string
 			ImportPath string
+			Plugs      map[string]string
 		}{
 			ImportPath: info.Module.Path,
 			Name:       path.Base(info.Module.Path),
+			Plugs:      g.Plugins,
 		})
 
 		if err != nil {
@@ -88,7 +69,6 @@ func (fixer *Fixer) Fix(ctx context.Context, root string, args []string) error {
 			return err
 		}
 	}
-
 	return nil
 }
 

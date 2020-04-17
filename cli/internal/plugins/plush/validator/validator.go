@@ -10,7 +10,7 @@ import (
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/build"
 	"github.com/gobuffalo/plugins"
-	"github.com/gobuffalo/plush"
+	"github.com/gobuffalo/plush/v4"
 )
 
 var _ build.BeforeBuilder = &Validator{}

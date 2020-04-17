@@ -57,14 +57,24 @@ type Importer interface {
 	BuildImports(ctx context.Context, root string) ([]string, error)
 }
 
-type Runner interface {
+type GoBuilder interface {
 	plugins.Plugin
-	RunBuild(ctx context.Context, cmd *exec.Cmd) error
+	// GoBuild will be called to build, and execute, the
+	// presented context and args.
+	// The first plugin to receive this call will be the
+	// only to answer it.
+	GoBuild(ctx context.Context, root string, cmd *exec.Cmd) error
 }
 
-type Tagger interface {
+type BuildArger interface {
 	plugins.Plugin
-	BuildTags(ctx context.Context, root string) ([]string, error)
+	// GoBuildArgs receives the current list
+	// and returns either the same list, or
+	// a modified version of the arguments.
+	// Implementations are responsible for ensuring
+	// that the arguments returned are "valid"
+	// arguments for the `go build` command.
+	GoBuildArgs(ctx context.Context, root string, args []string) ([]string, error)
 }
 
 type Namer interface {
@@ -78,3 +88,5 @@ type Aliaser interface {
 }
 
 type Stdouter = plugio.Outer
+type Stdiner = plugio.Inner
+type Stderrer = plugio.Errer

@@ -3,11 +3,13 @@ package build
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"os"
 	"path"
 	"path/filepath"
 	"testing"
 
+	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/build/buildtest"
 	"github.com/gobuffalo/plugins"
 	"github.com/stretchr/testify/require"
 )
@@ -23,16 +25,19 @@ func Test_MainFile_Version(t *testing.T) {
 	r.NoError(err)
 	r.Contains(s, `"time":`)
 
+	fn := func(ctx context.Context, root string) (string, error) {
+		return "v1", nil
+	}
+
+	p := buildtest.Versioner(fn)
 	bc.pluginsFn = func() []plugins.Plugin {
-		return plugins.Plugins{
-			&buildVersioner{version: "v1"},
-		}
+		return plugins.Plugins{p}
 	}
 
 	s, err = bc.Version(ctx, "")
 	r.NoError(err)
 	r.Contains(s, `"time":`)
-	r.Contains(s, `"buildVersioner":"v1"`)
+	r.Contains(s, fmt.Sprintf(`"%s":"v1"`, p.PluginName()))
 }
 
 func Test_MainFile_generateNewMain(t *testing.T) {
@@ -41,12 +46,13 @@ func Test_MainFile_generateNewMain(t *testing.T) {
 	ref := newRef(t, "")
 	defer os.RemoveAll(filepath.Join(ref.Dir, mainBuildFile))
 
+	fn := func(ctx context.Context, root string) ([]string, error) {
+		return []string{
+			path.Join(ref.ImportPath, "actions"),
+		}, nil
+	}
 	plugs := plugins.Plugins{
-		&buildImporter{
-			imports: []string{
-				path.Join(ref.ImportPath, "actions"),
-			},
-		},
+		buildtest.Importer(fn),
 	}
 	bc := &MainFile{
 		pluginsFn: func() []plugins.Plugin {
@@ -73,12 +79,13 @@ func Test_MainFile_generateNewMain_noCli(t *testing.T) {
 	ref := newRef(t, "")
 	defer os.RemoveAll(filepath.Join(ref.Dir, mainBuildFile))
 
+	fn := func(ctx context.Context, root string) ([]string, error) {
+		return []string{
+			path.Join(ref.ImportPath, "actions"),
+		}, nil
+	}
 	plugs := plugins.Plugins{
-		&buildImporter{
-			imports: []string{
-				path.Join(ref.ImportPath, "actions"),
-			},
-		},
+		buildtest.Importer(fn),
 	}
 	bc := &MainFile{
 		pluginsFn: func() []plugins.Plugin {

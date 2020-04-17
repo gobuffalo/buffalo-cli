@@ -1,4 +1,4 @@
-package golang
+package templates
 
 import (
 	"context"
@@ -13,12 +13,12 @@ import (
 	"github.com/gobuffalo/plugins"
 )
 
-var _ plugins.Plugin = Templater{}
-var _ build.BeforeBuilder = &Templater{}
+var _ plugins.Plugin = Validator{}
+var _ build.BeforeBuilder = &Validator{}
 
-type Templater struct{}
+type Validator struct{}
 
-func (t *Templater) BeforeBuild(ctx context.Context, root string, args []string) error {
+func (t *Validator) BeforeBuild(ctx context.Context, root string, args []string) error {
 	root = filepath.Join(root, "templates")
 	return filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -47,6 +47,6 @@ func (t *Templater) BeforeBuild(ctx context.Context, root string, args []string)
 	})
 }
 
-func (t Templater) PluginName() string {
+func (t Validator) PluginName() string {
 	return "golang/templates"
 }

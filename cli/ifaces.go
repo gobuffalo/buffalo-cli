@@ -12,3 +12,8 @@ type Needer = plugins.Needer
 type StderrNeeder = plugio.ErrNeeder
 type StdinNeeder = plugio.InNeeder
 type StdoutNeeder = plugio.OutNeeder
+
+// AvailabilityChecker
+type AvailabilityChecker interface {
+	PluginAvailable(root string) bool
+}
