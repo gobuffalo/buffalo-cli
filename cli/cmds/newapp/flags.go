@@ -21,7 +21,7 @@ func (cmd *Cmd) Flags() *pflag.FlagSet {
 		return cmd.flags
 	}
 	flags := pflag.NewFlagSet(cmd.PluginName(), pflag.ContinueOnError)
-	flags.BoolVarP(&cmd.help, "help", "h", false, "print this help")
+	flags.ParseErrorsWhitelist.UnknownFlags = true
 	flags.BoolVarP(&cmd.force, "force", "f", false, "delete the existing application first")
 
 	pres := presets.Presets()

@@ -3,6 +3,7 @@ package webpack
 import (
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/webpack/build"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/webpack/develop"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/webpack/newapp"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/webpack/setup"
 	"github.com/gobuffalo/plugins"
 )
@@ -12,6 +13,7 @@ import (
 func Plugins() []plugins.Plugin {
 	return []plugins.Plugin{
 		&build.Builder{},
+		&newapp.Generator{},
 		&develop.Developer{},
 		&setup.Setup{},
 	}

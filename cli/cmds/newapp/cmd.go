@@ -16,7 +16,6 @@ import (
 	"github.com/gobuffalo/plugins"
 	"github.com/gobuffalo/plugins/plugcmd"
 	"github.com/gobuffalo/plugins/plugio"
-	"github.com/gobuffalo/plugins/plugprint"
 	"github.com/spf13/pflag"
 )
 
@@ -72,25 +71,37 @@ func (cmd *Cmd) ScopedPlugins() []plugins.Plugin {
 
 func (cmd *Cmd) Main(ctx context.Context, root string, args []string) error {
 	flags := cmd.Flags()
+	flags.BoolVarP(&cmd.help, "help", "h", false, "print this help")
 	if err := flags.Parse(args); err != nil {
 		return plugins.Wrap(cmd, err)
 	}
 
+	var modName string
 	plugs := cmd.ScopedPlugins()
-
 	if cmd.help {
-		return plugprint.Print(plugio.Stdout(plugs...), cmd)
+		modName = "clitmp"
+		defer os.RemoveAll(filepath.Join(root, modName))
 	}
 
-	args = flags.Args()
+	if len(modName) == 0 {
+		modName = flags.Args()[0]
+	}
 
 	if len(args) == 0 {
 		return plugins.Wrap(cmd, fmt.Errorf("missing application name"))
 	}
 
-	modName := args[0]
+	sargs := make([]string, 1, len(args))
+	sargs[0] = modName
+	for _, a := range args {
+		if a == modName {
+			continue
+		}
+		sargs = append(sargs, a)
+	}
+	args = sargs
+
 	dirName := path.Base(modName)
-	args = args[1:]
 
 	root = filepath.Join(root, dirName)
 	if cmd.force {
@@ -141,6 +152,7 @@ func (cmd *Cmd) Main(ctx context.Context, root string, args []string) error {
 
 	err = tmpl.Execute(w, map[string]interface{}{
 		"Plugs": cmd.usePlugs,
+		"Args":  fmt.Sprintf("%#v", args),
 	})
 	if err != nil {
 		return plugins.Wrap(cmd, err)
@@ -156,6 +168,7 @@ func (cmd *Cmd) Main(ctx context.Context, root string, args []string) error {
 	os.Chdir(root)
 
 	c := exec.CommandContext(ctx, "go", "run", "./cmd/newapp")
+	c.Args = append(c.Args, args...)
 	c.Stdout = plugio.Stdout(plugs...)
 	c.Stderr = plugio.Stderr(plugs...)
 	c.Stdin = plugio.Stdin(plugs...)
@@ -202,7 +215,8 @@ func main() {
 {{range $k,$v := .Plugs }}
 	plugs = append(plugs, {{$k}}.Plugins()...){{end}}
 
-	if err := newapp.Execute(plugs, ctx, pwd, os.Args[1:]); err != nil {
+	args := {{.Args}}
+	if err := newapp.Execute(plugs, ctx, pwd, args); err != nil {
 		log.Fatal(err)
 	}
 }

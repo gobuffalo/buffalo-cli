@@ -1,14 +1,9 @@
 package webapp
 
 import (
-	"os"
-	"path/filepath"
-
 	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/newapp/presets/coreapp"
-	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/bzr"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/fizz"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/flect"
-	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/git"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/golang"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/grifts"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/i18n"
@@ -39,19 +34,6 @@ func Plugins() []plugins.Plugin {
 	plugs = append(plugs, pop.Plugins()...)
 	plugs = append(plugs, refresh.Plugins()...)
 	plugs = append(plugs, soda.Plugins()...)
-
-	root, _ := os.Getwd()
-	if _, err := os.Stat(filepath.Join(root, "package.json")); err == nil {
-		plugs = append(plugs, webpack.Plugins()...)
-	}
-
-	if _, err := os.Stat(filepath.Join(root, ".git")); err == nil {
-		plugs = append(plugs, git.Plugins()...)
-	}
-
-	if _, err := os.Stat(filepath.Join(root, ".bzr")); err == nil {
-		plugs = append(plugs, bzr.Plugins()...)
-	}
-
+	plugs = append(plugs, webpack.Plugins()...)
 	return plugs
 }
