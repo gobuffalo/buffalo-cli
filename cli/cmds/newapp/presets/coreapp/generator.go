@@ -2,7 +2,6 @@ package coreapp
 
 import (
 	"context"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -25,15 +24,13 @@ func (g *Generator) PluginName() string {
 	return "core/generator"
 }
 
-func (g *Generator) Newapp(ctx context.Context, root string, args []string) error {
+func (g *Generator) Newapp(ctx context.Context, root string, name string, args []string) error {
 	td := pkger.Include("github.com/gobuffalo/buffalo-cli/v2:/cli/cmds/newapp/presets/coreapp/_templates")
 
 	her, err := here.Dir(root)
 	if err != nil {
 		return err
 	}
-
-	fmt.Println(">>>TODO cli/cmds/newapp/presets/coreapp/generator.go:36: her ", her)
 
 	err = pkger.Walk(td, func(path string, info os.FileInfo, err error) error {
 		if err != nil {

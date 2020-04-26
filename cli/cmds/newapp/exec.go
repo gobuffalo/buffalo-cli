@@ -54,7 +54,7 @@ func (e *Executer) ScopedPlugins() []plugins.Plugin {
 	return plugs
 }
 
-func (e *Executer) Execute(ctx context.Context, root string, args []string) error {
+func (e *Executer) Execute(ctx context.Context, root string, name string, args []string) error {
 	flags := e.Flags()
 	if err := flags.Parse(args); err != nil {
 		return err
@@ -80,14 +80,14 @@ func (e *Executer) Execute(ctx context.Context, root string, args []string) erro
 	var err error
 	for _, p := range during {
 		fmt.Println(">>>TODO DURING ", p.PluginName())
-		if err = p.Newapp(ctx, root, args); err != nil {
+		if err = p.Newapp(ctx, root, name, args); err != nil {
 			break
 		}
 	}
 
 	for _, p := range after {
 		fmt.Println(">>>TODO AFTER ", p.PluginName())
-		if err := p.AfterNewapp(ctx, root, args, err); err != nil {
+		if err := p.AfterNewapp(ctx, root, name, args, err); err != nil {
 			return err
 		}
 	}
@@ -127,10 +127,10 @@ func (ex *Executer) Flags() *pflag.FlagSet {
 	return ex.flags
 }
 
-func Execute(plugs []plugins.Plugin, ctx context.Context, root string, args []string) error {
+func Execute(plugs []plugins.Plugin, ctx context.Context, root string, name string, args []string) error {
 	e := &Executer{}
 	e.WithPlugins(func() []plugins.Plugin {
 		return plugs
 	})
-	return e.Execute(ctx, root, args)
+	return e.Execute(ctx, root, name, args)
 }

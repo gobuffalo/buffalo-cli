@@ -3,7 +3,6 @@ package newapp
 import (
 	"fmt"
 	"io"
-	"path"
 
 	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/newapp/presets"
 	"github.com/spf13/pflag"
@@ -26,8 +25,8 @@ func (cmd *Cmd) Flags() *pflag.FlagSet {
 
 	pres := presets.Presets()
 	var names []string
-	for _, p := range pres {
-		names = append(names, path.Base(p))
+	for k := range pres {
+		names = append(names, k)
 	}
 
 	flags.StringSliceVarP(&cmd.presets, "preset", "p", []string{}, fmt.Sprintf("preset list of plugins to use %s [default web]", names))

@@ -35,5 +35,6 @@ func Plugins() []plugins.Plugin {
 	plugs = append(plugs, refresh.Plugins()...)
 	plugs = append(plugs, soda.Plugins()...)
 	plugs = append(plugs, webpack.Plugins()...)
+
 	return plugs
 }
