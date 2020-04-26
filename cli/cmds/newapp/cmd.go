@@ -16,7 +16,6 @@ import (
 	"github.com/gobuffalo/plugins"
 	"github.com/gobuffalo/plugins/plugcmd"
 	"github.com/gobuffalo/plugins/plugio"
-	"github.com/gobuffalo/plugins/plugprint"
 	"github.com/spf13/pflag"
 )
 
@@ -72,25 +71,27 @@ func (cmd *Cmd) ScopedPlugins() []plugins.Plugin {
 
 func (cmd *Cmd) Main(ctx context.Context, root string, args []string) error {
 	flags := cmd.Flags()
+	flags.BoolVarP(&cmd.help, "help", "h", false, "print this help")
 	if err := flags.Parse(args); err != nil {
 		return plugins.Wrap(cmd, err)
 	}
 
+	var modName string
 	plugs := cmd.ScopedPlugins()
-
 	if cmd.help {
-		return plugprint.Print(plugio.Stdout(plugs...), cmd)
+		modName = "clitmp"
+		defer os.RemoveAll(filepath.Join(root, modName))
 	}
 
-	args = flags.Args()
+	if len(modName) == 0 {
+		modName = flags.Args()[0]
+	}
 
 	if len(args) == 0 {
 		return plugins.Wrap(cmd, fmt.Errorf("missing application name"))
 	}
 
-	modName := args[0]
 	dirName := path.Base(modName)
-	args = args[1:]
 
 	root = filepath.Join(root, dirName)
 	if cmd.force {
@@ -156,6 +157,7 @@ func (cmd *Cmd) Main(ctx context.Context, root string, args []string) error {
 	os.Chdir(root)
 
 	c := exec.CommandContext(ctx, "go", "run", "./cmd/newapp")
+	c.Args = append(c.Args, args...)
 	c.Stdout = plugio.Stdout(plugs...)
 	c.Stderr = plugio.Stderr(plugs...)
 	c.Stdin = plugio.Stdin(plugs...)

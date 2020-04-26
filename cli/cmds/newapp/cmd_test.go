@@ -1,7 +1,6 @@
 package newapp
 
 import (
-	"bytes"
 	"context"
 	"io/ioutil"
 	"os"
@@ -12,29 +11,8 @@ import (
 
 	"github.com/gobuffalo/here"
 	"github.com/gobuffalo/plugins"
-	"github.com/gobuffalo/plugins/plugio"
 	"github.com/stretchr/testify/require"
 )
-
-func Test_Cmd_Help(t *testing.T) {
-	r := require.New(t)
-
-	bb := &bytes.Buffer{}
-	stdout := plugio.NewOuter(bb)
-
-	cmd := &Cmd{}
-	cmd.WithPlugins(func() []plugins.Plugin {
-		return []plugins.Plugin{
-			stdout,
-		}
-	})
-
-	err := cmd.Main(context.Background(), "", []string{"-h"})
-	r.NoError(err)
-
-	body := bb.String()
-	r.Contains(body, `$ new`)
-}
 
 func Test_Cmd_Main(t *testing.T) {
 	r := require.New(t)
@@ -60,10 +38,13 @@ func Test_Cmd_Main(t *testing.T) {
 
 	pkg := "github.com/markbates/coke"
 	name := "coke"
-	err = cmd.Main(context.Background(), dir, []string{"-p", "json", "-p", "github.com/other/preset", pkg})
+	orig := []string{"-p", "json", "-p", "github.com/other/preset", pkg}
+
+	err = cmd.Main(context.Background(), dir, orig)
 	r.NoError(err)
 
 	exp := []string{"go", "run", "./cmd/newapp"}
+	exp = append(exp, orig...)
 	r.Equal(exp, act)
 
 	dir = filepath.Join(dir, name)

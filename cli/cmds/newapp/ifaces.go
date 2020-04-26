@@ -2,10 +2,12 @@ package newapp
 
 import (
 	"context"
+	"flag"
 	"os/exec"
 
 	"github.com/gobuffalo/plugins"
 	"github.com/gobuffalo/plugins/plugio"
+	"github.com/spf13/pflag"
 )
 
 type Stdouter = plugio.Outer
@@ -29,4 +31,14 @@ type NewCommandRunner interface {
 	// The first plugin to receive this call will be the
 	// only to answer it.
 	RunNewCommand(ctx context.Context, root string, cmd *exec.Cmd) error
+}
+
+type Flagger interface {
+	plugins.Plugin
+	NewappFlags() []*flag.Flag
+}
+
+type Pflagger interface {
+	plugins.Plugin
+	NewappFlags() []*pflag.Flag
 }
