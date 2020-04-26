@@ -44,7 +44,8 @@ func Test_Cmd_Main(t *testing.T) {
 	r.NoError(err)
 
 	exp := []string{"go", "run", "./cmd/newapp"}
-	exp = append(exp, orig...)
+	exp = append(exp, pkg)
+	exp = append(exp, orig[:len(orig)-1]...)
 	r.Equal(exp, act)
 
 	dir = filepath.Join(dir, name)
@@ -88,7 +89,8 @@ func main() {
 	plugs = append(plugs, json.Plugins()...)
 	plugs = append(plugs, preset.Plugins()...)
 
-	if err := newapp.Execute(plugs, ctx, pwd, os.Args[1:]); err != nil {
+	args := []string{"github.com/markbates/coke", "-p", "json", "-p", "github.com/other/preset"}
+	if err := newapp.Execute(plugs, ctx, pwd, args); err != nil {
 		log.Fatal(err)
 	}
 }
