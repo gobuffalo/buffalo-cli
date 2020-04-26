@@ -91,8 +91,7 @@ func (cmd *Cmd) Main(ctx context.Context, root string, args []string) error {
 		return plugins.Wrap(cmd, fmt.Errorf("missing application name"))
 	}
 
-	sargs := make([]string, 1, len(args))
-	sargs[0] = modName
+	sargs := make([]string, 0, len(args))
 	for _, a := range args {
 		if a == modName {
 			continue
@@ -153,6 +152,7 @@ func (cmd *Cmd) Main(ctx context.Context, root string, args []string) error {
 	err = tmpl.Execute(w, map[string]interface{}{
 		"Plugs": cmd.usePlugs,
 		"Args":  fmt.Sprintf("%#v", args),
+		"Name":  modName,
 	})
 	if err != nil {
 		return plugins.Wrap(cmd, err)
@@ -216,7 +216,7 @@ func main() {
 	plugs = append(plugs, {{$k}}.Plugins()...){{end}}
 
 	args := {{.Args}}
-	if err := newapp.Execute(plugs, ctx, pwd, args); err != nil {
+	if err := newapp.Execute(plugs, ctx, pwd, "{{.Name}}", args); err != nil {
 		log.Fatal(err)
 	}
 }

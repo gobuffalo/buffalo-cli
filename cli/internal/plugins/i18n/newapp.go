@@ -19,7 +19,7 @@ func (na *Newapp) PluginName() string {
 	return "i18n/newapp"
 }
 
-func (na *Newapp) Newapp(ctx context.Context, root string, args []string) error {
+func (na *Newapp) Newapp(ctx context.Context, root string, name string, args []string) error {
 	f, err := os.Create(filepath.Join(root, "inflections.json"))
 	if err != nil {
 		return err

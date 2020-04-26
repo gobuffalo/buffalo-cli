@@ -44,7 +44,6 @@ func Test_Cmd_Main(t *testing.T) {
 	r.NoError(err)
 
 	exp := []string{"go", "run", "./cmd/newapp"}
-	exp = append(exp, pkg)
 	exp = append(exp, orig[:len(orig)-1]...)
 	r.Equal(exp, act)
 
@@ -89,8 +88,8 @@ func main() {
 	plugs = append(plugs, json.Plugins()...)
 	plugs = append(plugs, preset.Plugins()...)
 
-	args := []string{"github.com/markbates/coke", "-p", "json", "-p", "github.com/other/preset"}
-	if err := newapp.Execute(plugs, ctx, pwd, args); err != nil {
+	args := []string{"-p", "json", "-p", "github.com/other/preset"}
+	if err := newapp.Execute(plugs, ctx, pwd, "github.com/markbates/coke", args); err != nil {
 		log.Fatal(err)
 	}
 }
