@@ -1,4 +1,4 @@
-app_root: ./cmd/{{ .Name }}
+app_root: .
 ignored_folders:
 - vendor
 - log
