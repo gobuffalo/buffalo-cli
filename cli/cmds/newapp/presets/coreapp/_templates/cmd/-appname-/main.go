@@ -3,7 +3,7 @@ package main
 import (
   "log"
 
-  "{{ .ImportPath }}/actions"
+  "{{ .Name }}/actions"
 )
 
 // main is the starting point for your Buffalo application.
