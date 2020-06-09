@@ -85,7 +85,7 @@ import (
 )
 
 func main() {
-	fmt.Print("~~~~ Using coke/cmd/buffalo ~~~\n\n")
+	fmt.Print("~~~~ Using {{.Name}}/cmd/buffalo ~~~\n\n")
 
 	ctx := context.Background()
 	pwd, err := os.Getwd()

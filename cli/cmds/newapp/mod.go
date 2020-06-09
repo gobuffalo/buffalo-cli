@@ -27,7 +27,7 @@ func (cmd *Cmd) modInit(ctx context.Context, root string, name string) error {
 		return plugins.Wrap(cmd, err)
 	}
 
-	rel, err := filepath.Rel(fp, root)
+	rel, err := filepath.Rel(root, fp)
 	if err != nil {
 		return plugins.Wrap(cmd, err)
 	}
