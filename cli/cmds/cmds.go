@@ -12,6 +12,7 @@ import (
 	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/test"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/version"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/refresh"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/soda"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/webpack"
 	"github.com/gobuffalo/buffalo-cli/v2/meta"
 	"github.com/gobuffalo/plugins"
@@ -56,6 +57,7 @@ func insidePlugins() []plugins.Plugin {
 
 	plugs = append(plugs, webpack.Plugins()...)
 	plugs = append(plugs, refresh.Plugins()...)
+	plugs = append(plugs, soda.Plugins()...)
 
 	return plugs
 }
