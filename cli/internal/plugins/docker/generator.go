@@ -20,11 +20,6 @@ var _ newapp.Newapper = &Generator{}
 type Generator struct {
 	style string
 	flags *pflag.FlagSet
-
-	BuffaloVersion string
-	Tool           string
-	WebPack        bool
-	Name           string
 }
 
 func (Generator) PluginName() string {
@@ -58,12 +53,19 @@ func (g Generator) Newapp(ctx context.Context, root string, name string, args []
 		return err
 	}
 
-	g.WebPack = g.hasWebpack(root)
-	g.Tool = g.tool(root)
-	g.BuffaloVersion = version
-	g.Name = info.Name
+	data := struct {
+		BuffaloVersion string
+		Tool           string
+		WebPack        bool
+		Name           string
+	}{
+		BuffaloVersion: version,
+		Tool:           g.tool(root),
+		WebPack:        g.hasWebpack(root),
+		Name:           info.Name,
+	}
 
-	err = tmpl.Execute(f, g)
+	err = tmpl.Execute(f, data)
 	if err != nil {
 		return err
 	}
