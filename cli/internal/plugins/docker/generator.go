@@ -28,7 +28,7 @@ type Generator struct {
 }
 
 func (Generator) PluginName() string {
-	return "docker/docker"
+	return "docker"
 }
 
 func (Generator) Description() string {

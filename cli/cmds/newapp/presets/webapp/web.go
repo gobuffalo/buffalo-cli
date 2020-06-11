@@ -2,6 +2,7 @@ package webapp
 
 import (
 	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/newapp/presets/coreapp"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/ci"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/docker"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/fizz"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/flect"
@@ -37,6 +38,7 @@ func Plugins() []plugins.Plugin {
 	plugs = append(plugs, soda.Plugins()...)
 	plugs = append(plugs, webpack.Plugins()...)
 	plugs = append(plugs, docker.Plugins()...)
+	plugs = append(plugs, ci.Plugins()...)
 
 	return plugs
 }
