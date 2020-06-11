@@ -1,0 +1,50 @@
+name: Tests
+on: 
+  push:
+    branches:
+      - master
+  pull_request:
+    
+jobs:
+  Test:
+    name: Tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:10.8
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+        # will assign a random free host port
+        - 5432/tcp
+        # needed because the postgres container does not provide a healthcheck
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+
+    - name: Set up Go 1.14
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.14
+      id: go
+    - uses: actions/checkout@v2
+    - uses: actions/cache@v1
+      with:
+        path: ~/go/pkg/mod
+        key: {{"${{ runner.os }}"}}-go-{{"${{ hashFiles('go.sum') }}"}}
+        restore-keys: |
+          {{"${{ runner.os }}"}}-go
+
+    - name: Buffalo Tests
+      env:
+        GOPROXY: "https://proxy.golang.org"
+        GO111MODULE: "on"
+        TEST_DATABASE_URL: "postgres://postgres:postgres@127.0.0.1:{{"${{ job.services.postgres.ports[5432] }}"}}/{{.Name}}_test?sslmode=disable"
+      run: |
+        wget https://github.com/gobuffalo/buffalo/releases/download/v0.16.8/buffalo_0.16.8_Linux_x86_64.tar.gz
+        tar -xvzf buffalo_0.16.8_Linux_x86_64.tar.gz
+        sudo mv buffalo /usr/local/bin/buffalo
+
+        buffalo version
+        buffalo test -v ./...
