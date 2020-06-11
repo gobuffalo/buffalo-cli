@@ -6,6 +6,7 @@ go 1.13
 
 require (
 	github.com/gobuffalo/attrs v1.0.0
+	github.com/gobuffalo/buffalo v0.16.10 // indirect
 	github.com/gobuffalo/fizz v1.9.8
 	github.com/gobuffalo/flect v0.2.1
 	github.com/gobuffalo/genny/v2 v2.0.6
