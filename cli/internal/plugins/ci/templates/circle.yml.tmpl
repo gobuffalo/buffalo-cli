@@ -3,12 +3,10 @@ jobs:
   build:
     docker:
       - image: circleci/golang:1.14
-      {{ if eq .opts.DBType "postgres" -}}
       - image: circleci/postgres:9.6-alpine
         environment:
           POSTGRES_USER: postgres
-          POSTGRES_DB: {{.opts.App.Name.File}}_test
-      {{- end }}
+          POSTGRES_DB: {{.Name}}_test
 
     environment:
       TEST_RESULTS: /tmp/test-results
