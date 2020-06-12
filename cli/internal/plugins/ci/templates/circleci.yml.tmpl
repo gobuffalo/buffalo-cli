@@ -3,10 +3,12 @@ jobs:
   build:
     docker:
       - image: circleci/golang:1.14
+      {{- if eq .Database "postgres" }}  
       - image: circleci/postgres:9.6-alpine
         environment:
           POSTGRES_USER: postgres
           POSTGRES_DB: {{.Name}}_test
+      {{- end}}
 
     environment:
       TEST_RESULTS: /tmp/test-results
@@ -21,7 +23,7 @@ jobs:
 
       - run: go get github.com/jstemmer/go-junit-report
 
-      - run: go get github.com/gobuffalo/buffalo/buffalo
+      - run: go get github.com/gobuffalo/buffalo-cli/v2/cmd/buffalo@latest
       - run: go mod download
 
       - run:

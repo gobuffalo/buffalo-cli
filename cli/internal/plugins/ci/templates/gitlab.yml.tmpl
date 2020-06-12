@@ -1,0 +1,38 @@
+before_script:
+{{- if eq .Database "postgres" }}
+  - apt-get update && apt-get install -y postgresql-client
+{{- else if eq .Database "mysql" }}
+  - apt-get update && apt-get install -y mysql-client
+{{- end }}
+  - ln -s /builds /go/src/$(echo "{{.Name}}" | cut -d "/" -f1)
+  - cd /go/src/{{.Name}}
+  - mkdir -p public/assets
+  - go get -u github.com/gobuffalo/buffalo/buffalo
+  - go mod download
+  - export PATH="$PATH:$GOPATH/bin"
+
+stages:
+  - test
+
+test:
+  <<: *test-vars
+  
+  image: golang:1.14
+  stage: test
+  variables:
+    GO_ENV: "test"
+{{- if eq .Database "postgres" }}
+    POSTGRES_DB: "{{.Name}}_test"
+{{- else if eq .Database "mysql" }}
+    MYSQL_DATABASE: "{{.Name}}_test"
+    MYSQL_ROOT_PASSWORD: "root"
+{{- end }}
+    TEST_DATABASE_URL: ""
+  services:
+{{- if eq .Database "mysql" }}
+    - mysql:5
+{{- else if eq .Database "postgres" }}
+    - postgres:latest
+{{- end }}
+  script:
+    - buffalo test

@@ -26,16 +26,10 @@ func (Generator) Description() string {
 }
 
 func (g Generator) Newapp(ctx context.Context, root string, name string, args []string) error {
-	err := os.MkdirAll(filepath.Join(root, ".github", "workflows"), 0777)
+	f, err := g.buildFiles(root)
 	if err != nil {
 		return err
 	}
-
-	f, err := os.Create(filepath.Join(root, ".github", "workflows", "test.yml"))
-	if err != nil {
-		return err
-	}
-	defer f.Close()
 
 	tmpl, err := g.buildTemplate()
 	if err != nil {
@@ -43,9 +37,13 @@ func (g Generator) Newapp(ctx context.Context, root string, name string, args []
 	}
 
 	data := struct {
-		Name string
+		Name           string
+		Database       string
+		BuffaloVersion string
 	}{
-		Name: name,
+		Name:           name,
+		Database:       "postgres",
+		BuffaloVersion: "",
 	}
 
 	err = tmpl.Execute(f, data)
@@ -61,6 +59,7 @@ func (g Generator) buildTemplate() (*template.Template, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer file.Close()
 
 	t, err := ioutil.ReadAll(file)
 	if err != nil {
@@ -75,13 +74,53 @@ func (g Generator) buildTemplate() (*template.Template, error) {
 	return template, nil
 }
 
+func (g Generator) buildFiles(root string) (*os.File, error) {
+	var f *os.File
+	var err error
+
+	switch g.provider {
+	case "travis":
+		f, err = os.Create(filepath.Join(root, ".travis.yml"))
+		if err != nil {
+			return nil, err
+		}
+	case "gitlab":
+		f, err = os.Create(filepath.Join(root, ".gitlab-ci.yml"))
+		if err != nil {
+			return nil, err
+		}
+	case "circleci":
+		err = os.MkdirAll(filepath.Join(root, ".circleci"), 0777)
+		if err != nil {
+			return nil, err
+		}
+
+		f, err = os.Create(filepath.Join(root, ".circleci", "config.yml"))
+		if err != nil {
+			return nil, err
+		}
+	default:
+		err = os.MkdirAll(filepath.Join(root, ".github", "workflows"), 0777)
+		if err != nil {
+			return nil, err
+		}
+
+		f, err = os.Create(filepath.Join(root, ".github", "workflows", "test.yml"))
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return f, nil
+}
+
 func (g Generator) templateFile() (pkging.File, error) {
 	td := pkger.Include("github.com/gobuffalo/buffalo-cli/v2:/cli/internal/plugins/ci/templates")
 
-	file := "github.yml.tmpl"
-	// if g.style == "standard" {
-	// 	file = "Dockerfile.standard"
-	// }
+	file := g.provider + ".yml.tmpl"
+	if g.provider == "" {
+		file = "github.yml.tmpl"
+	}
 
 	return pkger.Open(filepath.Join(td, file))
 }

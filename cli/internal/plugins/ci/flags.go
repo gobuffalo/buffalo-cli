@@ -8,11 +8,11 @@ import (
 	"github.com/spf13/pflag"
 )
 
-func (g Generator) NewappFlags() []*pflag.Flag {
+func (g *Generator) NewappFlags() []*pflag.Flag {
 	return flagger.SetToSlice(g.Flags())
 }
 
-func (g Generator) Flags() *pflag.FlagSet {
+func (g *Generator) Flags() *pflag.FlagSet {
 	if g.flags != nil {
 		return g.flags
 	}
@@ -25,7 +25,7 @@ func (g Generator) Flags() *pflag.FlagSet {
 	return g.flags
 }
 
-func (g Generator) PrintFlags(w io.Writer) error {
+func (g *Generator) PrintFlags(w io.Writer) error {
 	flags := g.Flags()
 	flags.SetOutput(w)
 	flags.PrintDefaults()

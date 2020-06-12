@@ -20,13 +20,71 @@ func Test_Generator(t *testing.T) {
 	generator := &Generator{}
 	ctx := context.Background()
 
-	err = generator.Newapp(ctx, dir, "app", []string{})
-	r.NoError(err)
+	tcases := []struct {
+		provider string
+		filepath string
+		contents []string
+	}{
+		{
+			provider: "",
+			filepath: filepath.Join(dir, ".github/workflows/test.yml"),
+			contents: []string{
+				"name: Tests",
+				"${{ runner.os }}-go",
+				`TEST_DATABASE_URL: "postgres://postgres:postgres@127.0.0.1:${{ job.services.postgres.ports[5432] }}/app_test?sslmode=disable"`,
+			},
+		},
+		{
+			provider: "github",
+			filepath: filepath.Join(dir, ".github/workflows/test.yml"),
+			contents: []string{
+				"name: Tests",
+				"${{ runner.os }}-go",
+				`TEST_DATABASE_URL: "postgres://postgres:postgres@127.0.0.1:${{ job.services.postgres.ports[5432] }}/app_test?sslmode=disable"`,
+			},
+		},
 
-	b, err := ioutil.ReadFile(filepath.Join(dir, ".github/workflows/test.yml"))
-	r.NoError(err)
+		{
+			provider: "travis",
+			filepath: filepath.Join(dir, ".travis.yml"),
+			contents: []string{
+				"language: go",
+				"- psql -c 'create database app_test;' -U postgres",
+			},
+		},
 
-	r.Contains(string(b), "name: Tests")
-	r.Contains(string(b), "${{ runner.os }}-go")
-	r.Contains(string(b), `TEST_DATABASE_URL: "postgres://postgres:postgres@127.0.0.1:${{ job.services.postgres.ports[5432] }}/app_test?sslmode=disable"`)
+		{
+			provider: "gitlab",
+			filepath: filepath.Join(dir, ".gitlab-ci.yml"),
+			contents: []string{
+				"- apt-get update && apt-get install -y postgresql-client",
+				"before_script:",
+			},
+		},
+
+		{
+			provider: "circleci",
+			filepath: filepath.Join(dir, ".circleci", "config.yml"),
+			contents: []string{
+				"version: 2",
+				"jobs:",
+				"- image: circleci/postgres:9.6-alpine",
+			},
+		},
+	}
+
+	for index, tcase := range tcases {
+		generator.provider = tcase.provider
+
+		err = generator.Newapp(ctx, dir, "app", []string{})
+		r.NoError(err)
+
+		b, err := ioutil.ReadFile(tcase.filepath)
+		r.NoError(err)
+
+		for _, content := range tcase.contents {
+			r.Contains(string(b), content, "Should contain %v - %v", content, index)
+		}
+	}
+
 }
