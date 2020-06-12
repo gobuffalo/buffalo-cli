@@ -2,6 +2,7 @@ package ci
 
 import (
 	"context"
+	"errors"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -42,7 +43,7 @@ func (g Generator) Newapp(ctx context.Context, root string, name string, args []
 		BuffaloVersion string
 	}{
 		Name:           name,
-		Database:       "postgres",
+		Database:       g.dbProvider(args),
 		BuffaloVersion: "",
 	}
 
@@ -99,7 +100,7 @@ func (g Generator) buildFiles(root string) (*os.File, error) {
 		if err != nil {
 			return nil, err
 		}
-	default:
+	case "", "github":
 		err = os.MkdirAll(filepath.Join(root, ".github", "workflows"), 0777)
 		if err != nil {
 			return nil, err
@@ -109,6 +110,10 @@ func (g Generator) buildFiles(root string) (*os.File, error) {
 		if err != nil {
 			return nil, err
 		}
+	}
+
+	if f == nil {
+		return f, errors.New("unknown CI provider")
 	}
 
 	return f, nil
@@ -123,4 +128,16 @@ func (g Generator) templateFile() (pkging.File, error) {
 	}
 
 	return pkger.Open(filepath.Join(td, file))
+}
+
+func (g Generator) dbProvider(args []string) string {
+
+	var dbType string
+
+	flg := pflag.NewFlagSet(g.PluginName(), pflag.ContinueOnError)
+	flg.SetOutput(ioutil.Discard)
+	flg.StringVarP(&dbType, "db-type", "", "postgres", "")
+	flg.Parse(args)
+
+	return dbType
 }

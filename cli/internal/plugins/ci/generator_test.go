@@ -87,4 +87,28 @@ func Test_Generator(t *testing.T) {
 		}
 	}
 
+	generator.provider = "ZZZ"
+	err = generator.Newapp(ctx, dir, "app", []string{})
+	r.Error(err)
+
+}
+
+func Test_DatabaseType(t *testing.T) {
+	r := require.New(t)
+
+	dir, err := ioutil.TempDir("", "tmp")
+	r.NoError(err)
+	defer os.RemoveAll(dir)
+
+	generator := &Generator{}
+	ctx := context.Background()
+
+	generator.provider = "github"
+	err = generator.Newapp(ctx, dir, "app", []string{"--db-type=mysql"})
+	r.NoError(err)
+
+	b, err := ioutil.ReadFile(filepath.Join(dir, ".github/workflows/test.yml"))
+	r.NoError(err)
+
+	r.NotContains(string(b), "image: postgres:10.8")
 }
