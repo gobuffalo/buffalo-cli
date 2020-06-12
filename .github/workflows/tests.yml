@@ -32,7 +32,7 @@ jobs:
         fetch-depth: 1
     - name: Setup System
       run: |
-        sudo apt-get install libsqlite3-dev sqlite3 --fix-missing
+        sudo apt-get install libsqlite3-dev sqlite3 --fix-missing -y
     - name: Test
       run: |
         go mod tidy -v
