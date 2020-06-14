@@ -91,7 +91,7 @@ func (bc *Cmd) build(ctx context.Context, root string) error {
 		return plugins.Wrap(bc, err)
 	}
 
-	buildArgs = append(buildArgs, "./"+filepath.Join("cmd", strings.ToLower(rinfo.Name)))
+	buildArgs = append(buildArgs, "."+string(filepath.Separator)+filepath.Join("cmd", strings.ToLower(rinfo.Name)))
 
 	plugs := bc.ScopedPlugins()
 	cmd := exec.CommandContext(ctx, "go", buildArgs...)
