@@ -3,6 +3,7 @@ package jsonapp
 import (
 	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/newapp/presets/coreapp"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/clifix"
+	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/docker"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/fizz"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/flect"
 	"github.com/gobuffalo/buffalo-cli/v2/cli/internal/plugins/golang"
@@ -27,6 +28,7 @@ func Plugins() []plugins.Plugin {
 	plugs = append(plugs, pop.Plugins()...)
 	plugs = append(plugs, refresh.Plugins()...)
 	plugs = append(plugs, soda.Plugins()...)
+	plugs = append(plugs, docker.Plugins()...)
 
 	return plugs
 }
