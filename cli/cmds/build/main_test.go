@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io/ioutil"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
@@ -12,6 +14,33 @@ import (
 	"github.com/gobuffalo/buffalo-cli/v2/cli/cmds/build/buildtest"
 	"github.com/gobuffalo/plugins"
 	"github.com/stretchr/testify/require"
+)
+
+var (
+	mainFileBeforeBuilder = func(ctx context.Context, root string, args []string) error {
+		err := os.MkdirAll(filepath.Join(root, "cmd", "build"), 0777)
+		if err != nil {
+			return err
+		}
+
+		main := []byte(`package main
+			func main() {
+				
+			}
+		`)
+
+		err = ioutil.WriteFile(filepath.Join(root, "cmd", "build", "main.go"), main, 0777)
+		return err
+	}
+
+	cleanupAfterBuilder = func(ctx context.Context, root string, args []string, oerr error) error {
+		err := os.RemoveAll(filepath.Join(root, "cmd"))
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}
 )
 
 func Test_Cmd_Main(t *testing.T) {
@@ -23,7 +52,7 @@ func Test_Cmd_Main(t *testing.T) {
 	if runtime.GOOS == "windows" {
 		bn += ".exe"
 	}
-	exp := []string{"go", "build", "-o", bn}
+	exp := []string{"go", "build", "-o", bn, "./cmd/build"}
 
 	var act []string
 	fn := func(ctx context.Context, root string, cmd *exec.Cmd) error {
@@ -110,7 +139,11 @@ func Test_Cmd_Main_BeforeBuilders(t *testing.T) {
 				return tt.err
 			}
 
-			plugs := plugins.Plugins{buildtest.BeforeBuilder(fn)}
+			plugs := plugins.Plugins{
+				buildtest.BeforeBuilder(fn),
+				buildtest.BeforeBuilder(mainFileBeforeBuilder),
+				buildtest.AfterBuilder(cleanupAfterBuilder),
+			}
 
 			bc := &Cmd{
 				pluginsFn: func() []plugins.Plugin {
@@ -148,7 +181,11 @@ func Test_Cmd_Main_AfterBuilders(t *testing.T) {
 				return tt.err
 			}
 
-			plugs := plugins.Plugins{buildtest.AfterBuilder(fn)}
+			plugs := plugins.Plugins{
+				buildtest.BeforeBuilder(mainFileBeforeBuilder),
+				buildtest.AfterBuilder(cleanupAfterBuilder),
+				buildtest.AfterBuilder(fn),
+			}
 
 			bc := &Cmd{
 				pluginsFn: func() []plugins.Plugin {

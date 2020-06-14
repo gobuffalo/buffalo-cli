@@ -148,7 +148,7 @@ func (bc *MainFile) generateNewMain(ctx context.Context, info here.Info, version
 }
 
 func (bc *MainFile) BeforeBuild(ctx context.Context, root string, args []string) error {
-	info, err := here.Current()
+	info, err := bc.binaryFolderInfo(root)
 	if err != nil {
 		return plugins.Wrap(bc, err)
 	}
@@ -172,7 +172,7 @@ func (bc *MainFile) BeforeBuild(ctx context.Context, root string, args []string)
 var _ AfterBuilder = &MainFile{}
 
 func (bc *MainFile) AfterBuild(ctx context.Context, root string, args []string, err error) error {
-	info, err := here.Dir(root)
+	info, err := bc.binaryFolderInfo(root)
 	if err != nil {
 		return plugins.Wrap(bc, err)
 	}
@@ -182,8 +182,18 @@ func (bc *MainFile) AfterBuild(ctx context.Context, root string, args []string, 
 	return plugins.Wrap(bc, err)
 }
 
+func (bc *MainFile) binaryFolderInfo(root string) (here.Info, error) {
+	rinfo, err := here.Dir(root)
+	if err != nil {
+		return here.Info{}, err
+	}
+
+	info, err := here.Dir(filepath.Join("cmd", strings.ToLower(rinfo.Name)))
+	return info, err
+}
+
 func (bc *MainFile) renameMain(info here.Info, from string, to string) error {
-	if info.Name != "main" {
+	if !info.Module.Main {
 		err := fmt.Errorf("module %s is not a main", info.Name)
 		return plugins.Wrap(bc, err)
 	}
