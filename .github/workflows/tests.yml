@@ -32,6 +32,7 @@ jobs:
         fetch-depth: 1
     - name: Setup System
       run: |
+        sudo apt-get update -y
         sudo apt-get install libsqlite3-dev sqlite3
     - name: Test
       run: |
