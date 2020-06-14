@@ -22,7 +22,10 @@ func Test_Cmd_GoBuilder(t *testing.T) {
 		return cli
 	}
 
-	mainFolder := "." + string(filepath.Separator) + filepath.Join("cmd", "build")
+	mainFolder := filepath.Join("cmd", "build")
+	if runtime.GOOS != "windows" {
+		mainFolder = "./" + mainFolder
+	}
 
 	table := []struct {
 		args []string
