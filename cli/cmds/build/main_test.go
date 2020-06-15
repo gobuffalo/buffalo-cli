@@ -146,8 +146,8 @@ func Test_Cmd_Main_BeforeBuilders(t *testing.T) {
 			}
 
 			plugs := plugins.Plugins{
-				buildtest.BeforeBuilder(fn),
 				buildtest.BeforeBuilder(mainFileBeforeBuilder),
+				buildtest.BeforeBuilder(fn),
 				buildtest.AfterBuilder(cleanupAfterBuilder),
 			}
 
