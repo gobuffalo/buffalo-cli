@@ -47,12 +47,18 @@ func Test_Cmd_Main(t *testing.T) {
 	r := require.New(t)
 
 	bc := &Cmd{}
-
 	bn := filepath.Join("bin", "build")
+
 	if runtime.GOOS == "windows" {
 		bn += ".exe"
 	}
-	exp := []string{"go", "build", "-o", bn, "./cmd/build"}
+
+	mainFolder := filepath.Join("cmd", "build")
+	if runtime.GOOS != "windows" {
+		mainFolder = "./" + mainFolder
+	}
+
+	exp := []string{"go", "build", "-o", bn, mainFolder}
 
 	var act []string
 	fn := func(ctx context.Context, root string, cmd *exec.Cmd) error {
