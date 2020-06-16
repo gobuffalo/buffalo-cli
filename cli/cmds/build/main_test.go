@@ -55,7 +55,7 @@ func Test_Cmd_Main(t *testing.T) {
 
 	mainFolder := filepath.Join("cmd", "build")
 	if runtime.GOOS == "windows" {
-		mainFolder = "\\" + mainFolder
+		mainFolder = ".\\" + mainFolder
 	} else {
 		mainFolder = "./" + mainFolder
 	}
