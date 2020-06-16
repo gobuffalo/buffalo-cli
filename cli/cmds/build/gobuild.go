@@ -91,13 +91,7 @@ func (bc *Cmd) build(ctx context.Context, root string) error {
 		return plugins.Wrap(bc, err)
 	}
 
-	folder := filepath.Join("cmd", strings.ToLower(rinfo.Name))
-	if runtime.GOOS == "windows" {
-		folder = ".\\" + folder
-	} else {
-		folder = "./" + folder
-	}
-
+	folder := "." + string(filepath.Separator) + filepath.Join("cmd", strings.ToLower(rinfo.Name))
 	buildArgs = append(buildArgs, folder)
 
 	plugs := bc.ScopedPlugins()
