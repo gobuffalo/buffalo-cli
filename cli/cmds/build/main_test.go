@@ -30,12 +30,32 @@ var (
 		`)
 
 		err = ioutil.WriteFile(filepath.Join(root, "cmd", "build", "main.go"), main, 0777)
+		if err != nil {
+			return err
+		}
+
+		err = ioutil.WriteFile(filepath.Join(root, "build.go"), []byte(`package build`), 0777)
+		if err != nil {
+			return err
+		}
+
+		err = ioutil.WriteFile(filepath.Join(root, "go.mod"), []byte(`module build`), 0777)
 		return err
 	}
 
 	cleanupAfterBuilder = func(ctx context.Context, root string, args []string, oerr error) error {
 		err := os.RemoveAll(filepath.Join(root, "cmd"))
 		if err != nil {
+			return err
+		}
+
+		err = os.Remove(filepath.Join(root, "go.mod"))
+		if err != nil && !os.IsNotExist(err) {
+			return err
+		}
+
+		err = os.Remove(filepath.Join(root, "go.sum"))
+		if err != nil && !os.IsNotExist(err) {
 			return err
 		}
 
