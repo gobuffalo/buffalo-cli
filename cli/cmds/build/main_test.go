@@ -34,11 +34,6 @@ var (
 			return err
 		}
 
-		err = ioutil.WriteFile(filepath.Join(root, "build.go"), []byte(`package build`), 0777)
-		if err != nil {
-			return err
-		}
-
 		err = ioutil.WriteFile(filepath.Join(root, "go.mod"), []byte(`module build`), 0777)
 		return err
 	}
