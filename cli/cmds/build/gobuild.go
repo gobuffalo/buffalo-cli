@@ -93,9 +93,9 @@ func (bc *Cmd) build(ctx context.Context, root string) error {
 
 	folder := filepath.Join("cmd", strings.ToLower(rinfo.Name))
 	if runtime.GOOS == "windows" {
-		mainFolder = "\\" + mainFolder
+		folder = "\\" + folder
 	} else {
-		mainFolder = "./" + mainFolder
+		folder = "./" + folder
 	}
 
 	buildArgs = append(buildArgs, folder)
