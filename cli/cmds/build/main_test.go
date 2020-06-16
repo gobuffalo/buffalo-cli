@@ -98,8 +98,8 @@ func Test_Cmd_Main_SubCommand(t *testing.T) {
 	})
 
 	args := []string{"builder", "a", "b", "c"}
-
 	err := bc.Main(context.Background(), ".", args)
+
 	r.NoError(err)
 	r.Equal(args[1:], act)
 }
@@ -126,7 +126,6 @@ func Test_Cmd_Main_SubCommand_err(t *testing.T) {
 }
 
 func Test_Cmd_Main_BeforeBuilders(t *testing.T) {
-
 	table := []struct {
 		name string
 		root string
@@ -168,7 +167,6 @@ func Test_Cmd_Main_BeforeBuilders(t *testing.T) {
 }
 
 func Test_Cmd_Main_AfterBuilders(t *testing.T) {
-
 	table := []struct {
 		name string
 		root string
