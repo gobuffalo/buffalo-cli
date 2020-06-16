@@ -93,7 +93,7 @@ func (bc *Cmd) build(ctx context.Context, root string) error {
 
 	folder := filepath.Join("cmd", strings.ToLower(rinfo.Name))
 	if runtime.GOOS == "windows" {
-		folder = "\\" + folder
+		folder = ".\\" + folder
 	} else {
 		folder = "./" + folder
 	}
