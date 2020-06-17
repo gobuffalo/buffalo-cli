@@ -43,7 +43,7 @@ func (g Generator) Newapp(ctx context.Context, root string, name string, args []
 		return err
 	}
 
-	version, err := g.imageTag()
+	version, err := g.imageTag(root)
 	if err != nil {
 		return err
 	}
@@ -90,7 +90,7 @@ func (g Generator) tool(root string) string {
 	return "yarn"
 }
 
-func (Generator) imageTag() (string, error) {
+func (Generator) imageTag(root string) (string, error) {
 	info, err := here.Package("github.com/gobuffalo/buffalo")
 	if err != nil {
 		return "", err

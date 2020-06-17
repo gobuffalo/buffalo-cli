@@ -14,10 +14,15 @@ func Test_Generator(t *testing.T) {
 	r := require.New(t)
 	generator := &Generator{}
 
-	root := os.TempDir()
-	ctx := context.Background()
+	wd, err := os.Getwd()
+	r.NoError(err)
 
-	err := generator.Newapp(ctx, root, "app name", []string{})
+	defer os.Chdir(wd)
+
+	root := os.TempDir()
+	os.Chdir(root)
+
+	err = generator.Newapp(context.Background(), root, "app name", []string{})
 	r.NoError(err)
 
 	b, err := ioutil.ReadFile(filepath.Join(root, "Dockerfile"))
@@ -27,7 +32,7 @@ func Test_Generator(t *testing.T) {
 	r.Contains(string(b), "FROM alpine")
 
 	generator.style = "standard"
-	err = generator.Newapp(ctx, root, "app name", []string{})
+	err = generator.Newapp(context.Background(), root, "app name", []string{})
 
 	b, err = ioutil.ReadFile(filepath.Join(root, "Dockerfile"))
 	r.NoError(err)
