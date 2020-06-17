@@ -24,6 +24,8 @@ func Test_Cmd_Package(t *testing.T) {
 	}
 
 	plugs := plugins.Plugins{
+		buildtest.BeforeBuilder(mainFileBeforeBuilder),
+		buildtest.AfterBuilder(cleanupAfterBuilder),
 		buildtest.Packager(pr),
 		buildtest.PackFiler(pf),
 	}

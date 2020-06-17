@@ -86,6 +86,14 @@ func (bc *Cmd) build(ctx context.Context, root string) error {
 		return plugins.Wrap(bc, err)
 	}
 
+	rinfo, err := here.Dir(root)
+	if err != nil {
+		return plugins.Wrap(bc, err)
+	}
+
+	folder := "." + string(filepath.Separator) + filepath.Join("cmd", strings.ToLower(rinfo.Name))
+	buildArgs = append(buildArgs, folder)
+
 	plugs := bc.ScopedPlugins()
 	cmd := exec.CommandContext(ctx, "go", buildArgs...)
 	cmd.Stdin = plugio.Stdin(plugs...)

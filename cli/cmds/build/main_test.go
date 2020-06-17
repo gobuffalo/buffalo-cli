@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io/ioutil"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
@@ -14,16 +16,61 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+var (
+	mainFileBeforeBuilder = func(ctx context.Context, root string, args []string) error {
+		err := os.MkdirAll(filepath.Join(root, "cmd", "build"), 0777)
+		if err != nil {
+			return err
+		}
+
+		main := []byte(`package main
+			func main() {
+				
+			}
+		`)
+
+		err = ioutil.WriteFile(filepath.Join(root, "cmd", "build", "main.go"), main, 0777)
+		if err != nil {
+			return err
+		}
+
+		err = ioutil.WriteFile(filepath.Join(root, "go.mod"), []byte(`module build`), 0777)
+		return err
+	}
+
+	cleanupAfterBuilder = func(ctx context.Context, root string, args []string, oerr error) error {
+		err := os.RemoveAll(filepath.Join(root, "cmd"))
+		if err != nil {
+			return err
+		}
+
+		err = os.Remove(filepath.Join(root, "go.mod"))
+		if err != nil && !os.IsNotExist(err) {
+			return err
+		}
+
+		err = os.Remove(filepath.Join(root, "go.sum"))
+		if err != nil && !os.IsNotExist(err) {
+			return err
+		}
+
+		return nil
+	}
+)
+
 func Test_Cmd_Main(t *testing.T) {
 	r := require.New(t)
 
 	bc := &Cmd{}
-
 	bn := filepath.Join("bin", "build")
+
 	if runtime.GOOS == "windows" {
 		bn += ".exe"
 	}
-	exp := []string{"go", "build", "-o", bn}
+
+	mainFolder := "." + string(filepath.Separator) + filepath.Join("cmd", "build")
+
+	exp := []string{"go", "build", "-o", bn, mainFolder}
 
 	var act []string
 	fn := func(ctx context.Context, root string, cmd *exec.Cmd) error {
@@ -61,8 +108,8 @@ func Test_Cmd_Main_SubCommand(t *testing.T) {
 	})
 
 	args := []string{"builder", "a", "b", "c"}
-
 	err := bc.Main(context.Background(), ".", args)
+
 	r.NoError(err)
 	r.Equal(args[1:], act)
 }
@@ -89,7 +136,6 @@ func Test_Cmd_Main_SubCommand_err(t *testing.T) {
 }
 
 func Test_Cmd_Main_BeforeBuilders(t *testing.T) {
-
 	table := []struct {
 		name string
 		root string
@@ -110,7 +156,11 @@ func Test_Cmd_Main_BeforeBuilders(t *testing.T) {
 				return tt.err
 			}
 
-			plugs := plugins.Plugins{buildtest.BeforeBuilder(fn)}
+			plugs := plugins.Plugins{
+				buildtest.BeforeBuilder(mainFileBeforeBuilder),
+				buildtest.BeforeBuilder(fn),
+				buildtest.AfterBuilder(cleanupAfterBuilder),
+			}
 
 			bc := &Cmd{
 				pluginsFn: func() []plugins.Plugin {
@@ -127,7 +177,6 @@ func Test_Cmd_Main_BeforeBuilders(t *testing.T) {
 }
 
 func Test_Cmd_Main_AfterBuilders(t *testing.T) {
-
 	table := []struct {
 		name string
 		root string
@@ -148,7 +197,11 @@ func Test_Cmd_Main_AfterBuilders(t *testing.T) {
 				return tt.err
 			}
 
-			plugs := plugins.Plugins{buildtest.AfterBuilder(fn)}
+			plugs := plugins.Plugins{
+				buildtest.BeforeBuilder(mainFileBeforeBuilder),
+				buildtest.AfterBuilder(cleanupAfterBuilder),
+				buildtest.AfterBuilder(fn),
+			}
 
 			bc := &Cmd{
 				pluginsFn: func() []plugins.Plugin {
