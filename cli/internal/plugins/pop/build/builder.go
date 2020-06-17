@@ -33,8 +33,9 @@ func (Builder) PluginName() string {
 func (bd *Builder) GoBuildArgs(ctx context.Context, root string, args []string) ([]string, error) {
 	tags, err := bd.RefreshTags(ctx, root)
 	if err != nil || len(tags) == 0 {
-		return args, err
+		return []string{}, err
 	}
+
 	if len(tags) == 0 {
 		return nil, nil
 	}
