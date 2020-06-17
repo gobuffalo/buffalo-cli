@@ -19,8 +19,17 @@ func Test_Generator(t *testing.T) {
 
 	defer os.Chdir(wd)
 
-	root := os.TempDir()
+	root, err := ioutil.TempDir("", "")
+	r.NoError(err)
+
 	os.Chdir(root)
+
+	ioutil.WriteFile("go.mod", []byte(`
+		module app
+		require (
+			github.com/gobuffalo/buffalo v0.16.10
+		)
+	`), 0777)
 
 	err = generator.Newapp(context.Background(), root, "app name", []string{})
 	r.NoError(err)

@@ -1,0 +1,8 @@
+FROM golang:latest
+
+WORKDIR /buffalo-cli
+ADD . .
+
+RUN go test -v ./...
+
+
