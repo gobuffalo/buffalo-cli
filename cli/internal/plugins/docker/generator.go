@@ -23,7 +23,7 @@ type Generator struct {
 }
 
 func (Generator) PluginName() string {
-	return "docker/docker"
+	return "docker"
 }
 
 func (Generator) Description() string {
@@ -124,9 +124,9 @@ func (g Generator) buildTemplate() (*template.Template, error) {
 func (g Generator) templateFile() (pkging.File, error) {
 	td := pkger.Include("github.com/gobuffalo/buffalo-cli/v2:/cli/internal/plugins/docker/templates")
 
-	file := "Dockerfile.multistage"
+	file := "Dockerfile.multistage.tmpl"
 	if g.style == "standard" {
-		file = "Dockerfile.standard"
+		file = "Dockerfile.standard.tmpl"
 	}
 
 	return pkger.Open(filepath.Join(td, file))

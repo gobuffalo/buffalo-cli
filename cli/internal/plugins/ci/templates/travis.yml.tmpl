@@ -1,0 +1,28 @@
+language: go
+
+go:
+  - "1.14.x"
+
+env:
+  - GO_ENV=test
+  - GO111MODULE=on
+
+{{ if eq .Database "postgres" -}}
+services:
+  - postgresql
+{{- end }}
+
+before_script:
+{{- if eq .Database "postgres" }}
+  - psql -c 'create database {{.Name}}_test;' -U postgres
+{{- end }}
+  - mkdir -p $TRAVIS_BUILD_DIR/public/assets
+
+go_import_path: {{.Name}}
+
+install:
+  - go get github.com/gobuffalo/buffalo-cli/v2/cmd/buffalo@latest    
+  - go mod download
+
+script: |
+  buffalo test -v ./...

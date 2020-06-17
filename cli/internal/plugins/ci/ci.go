@@ -1,4 +1,4 @@
-package docker
+package ci
 
 import "github.com/gobuffalo/plugins"
 

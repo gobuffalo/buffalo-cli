@@ -1,4 +1,4 @@
-package docker
+package ci
 
 import (
 	"io"
@@ -19,7 +19,7 @@ func (g *Generator) Flags() *pflag.FlagSet {
 
 	flg := pflag.NewFlagSet(g.PluginName(), pflag.ContinueOnError)
 	flg.SetOutput(ioutil.Discard)
-	flg.StringVarP(&g.style, "style", "", "multi", "specify the type of Docker file to generate [multi, standard]")
+	flg.StringVarP(&g.provider, "provider", "", "github", "specify the ci provider generate config file [travis, gitlab, circleci, github]")
 
 	g.flags = flg
 	return g.flags
