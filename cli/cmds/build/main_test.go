@@ -30,12 +30,32 @@ var (
 		`)
 
 		err = ioutil.WriteFile(filepath.Join(root, "cmd", "build", "main.go"), main, 0777)
+		if err != nil {
+			return err
+		}
+
+		err = ioutil.WriteFile(filepath.Join(root, "go.mod"), []byte(`module build`), 0777)
 		return err
 	}
 
 	cleanupAfterBuilder = func(ctx context.Context, root string, args []string, oerr error) error {
 		err := os.RemoveAll(filepath.Join(root, "cmd"))
 		if err != nil {
+			return err
+		}
+
+		err = os.RemoveAll(filepath.Join(root, "bin"))
+		if err != nil {
+			return err
+		}
+
+		err = os.Remove(filepath.Join(root, "go.mod"))
+		if err != nil && !os.IsNotExist(err) {
+			return err
+		}
+
+		err = os.Remove(filepath.Join(root, "go.sum"))
+		if err != nil && !os.IsNotExist(err) {
 			return err
 		}
 
@@ -47,12 +67,15 @@ func Test_Cmd_Main(t *testing.T) {
 	r := require.New(t)
 
 	bc := &Cmd{}
-
 	bn := filepath.Join("bin", "build")
+
 	if runtime.GOOS == "windows" {
 		bn += ".exe"
 	}
-	exp := []string{"go", "build", "-o", bn, "./cmd/build"}
+
+	mainFolder := "." + string(filepath.Separator) + filepath.Join("cmd", "build")
+
+	exp := []string{"go", "build", "-o", bn, mainFolder}
 
 	var act []string
 	fn := func(ctx context.Context, root string, cmd *exec.Cmd) error {
@@ -90,8 +113,8 @@ func Test_Cmd_Main_SubCommand(t *testing.T) {
 	})
 
 	args := []string{"builder", "a", "b", "c"}
-
 	err := bc.Main(context.Background(), ".", args)
+
 	r.NoError(err)
 	r.Equal(args[1:], act)
 }
@@ -118,7 +141,6 @@ func Test_Cmd_Main_SubCommand_err(t *testing.T) {
 }
 
 func Test_Cmd_Main_BeforeBuilders(t *testing.T) {
-
 	table := []struct {
 		name string
 		root string
@@ -140,8 +162,8 @@ func Test_Cmd_Main_BeforeBuilders(t *testing.T) {
 			}
 
 			plugs := plugins.Plugins{
-				buildtest.BeforeBuilder(fn),
 				buildtest.BeforeBuilder(mainFileBeforeBuilder),
+				buildtest.BeforeBuilder(fn),
 				buildtest.AfterBuilder(cleanupAfterBuilder),
 			}
 
@@ -160,7 +182,6 @@ func Test_Cmd_Main_BeforeBuilders(t *testing.T) {
 }
 
 func Test_Cmd_Main_AfterBuilders(t *testing.T) {
-
 	table := []struct {
 		name string
 		root string

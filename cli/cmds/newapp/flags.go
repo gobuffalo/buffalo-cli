@@ -19,6 +19,7 @@ func (cmd *Cmd) Flags() *pflag.FlagSet {
 	if cmd.flags != nil {
 		return cmd.flags
 	}
+
 	flags := pflag.NewFlagSet(cmd.PluginName(), pflag.ContinueOnError)
 	flags.ParseErrorsWhitelist.UnknownFlags = true
 	flags.BoolVarP(&cmd.force, "force", "f", false, "delete the existing application first")

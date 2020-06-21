@@ -11,9 +11,17 @@ jobs:
         os: [macos-latest, windows-latest, ubuntu-latest]
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
       with:
         fetch-depth: 1
+
+    - uses: actions/cache@v2
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
     - name: Test
       run: |
         go mod tidy -v
@@ -27,12 +35,22 @@ jobs:
         go-version: [1.13.x, 1.14.x]
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
       with:
         fetch-depth: 1
+
+    - uses: actions/cache@v2
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
     - name: Setup System
       run: |
+        sudo apt-get update -y
         sudo apt-get install libsqlite3-dev sqlite3
+      
     - name: Test
       run: |
         go mod tidy -v
