@@ -2,7 +2,7 @@ package cligen
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	"html/template"
 	"os"
 	"path"
@@ -10,6 +10,11 @@ import (
 	"strings"
 
 	"github.com/gobuffalo/here"
+)
+
+var (
+	// ErrCLIMainExists is returned if the CLI main exists.
+	ErrCLIMainExists = errors.New("cmd/buffalo/main.go already exists")
 )
 
 type Generator struct {
@@ -23,52 +28,49 @@ func (g *Generator) Generate(ctx context.Context, root string, args []string) er
 	}
 
 	x := filepath.Join(root, "cmd", "buffalo")
-	mm := map[string]string{
-		filepath.Join(x, "main.go"): tmplMain,
+	fp := filepath.Join(x, "main.go")
+
+	if err := os.MkdirAll(filepath.Dir(fp), 0755); err != nil {
+		return err
 	}
 
-	for fp, body := range mm {
-		if err := os.MkdirAll(filepath.Dir(fp), 0755); err != nil {
-			return err
-		}
-
-		if _, err := os.Stat(fp); err == nil {
-			return fmt.Errorf("%s already exists", fp)
-		}
-
-		f, err := os.Create(fp)
-		if err != nil {
-			return err
-		}
-
-		body = strings.TrimSpace(body)
-		tmpl, err := template.New(fp).Parse(body)
-		if err != nil {
-			return err
-		}
-
-		if g.Plugins == nil {
-			g.Plugins = map[string]string{}
-		}
-
-		err = tmpl.Execute(f, struct {
-			Name       string
-			ImportPath string
-			Plugs      map[string]string
-		}{
-			ImportPath: info.Module.Path,
-			Name:       path.Base(info.Module.Path),
-			Plugs:      g.Plugins,
-		})
-
-		if err != nil {
-			return err
-		}
-
-		if err := f.Close(); err != nil {
-			return err
-		}
+	if _, err := os.Stat(fp); err == nil {
+		return ErrCLIMainExists
 	}
+
+	f, err := os.Create(fp)
+	if err != nil {
+		return err
+	}
+
+	body := strings.TrimSpace(tmplMain)
+	tmpl, err := template.New(fp).Parse(body)
+	if err != nil {
+		return err
+	}
+
+	if g.Plugins == nil {
+		g.Plugins = map[string]string{}
+	}
+
+	err = tmpl.Execute(f, struct {
+		Name       string
+		ImportPath string
+		Plugs      map[string]string
+	}{
+		ImportPath: info.Module.Path,
+		Name:       path.Base(info.Module.Path),
+		Plugs:      g.Plugins,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	if err := f.Close(); err != nil {
+		return err
+	}
+
 	return nil
 }
 
