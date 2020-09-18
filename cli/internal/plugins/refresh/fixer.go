@@ -21,7 +21,6 @@ func (*Fixer) PluginName() string {
 // Fix changes .buffalo.dev.yml to build cmd/[name] if it exists, otherwise
 // it creates the file in the root of the project.
 func (f *Fixer) Fix(ctx context.Context, root string, args []string) error {
-
 	info, err := here.Dir(root)
 	if err != nil {
 		return plugins.Wrap(f, err)
@@ -49,5 +48,6 @@ func (f *Fixer) Fix(ctx context.Context, root string, args []string) error {
 	}
 
 	c.BuildTargetPath = "." + string(filepath.Separator) + relative
+
 	return c.Dump(configPath)
 }
