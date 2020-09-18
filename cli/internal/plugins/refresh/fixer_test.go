@@ -42,7 +42,9 @@ func Test_Fixer(t *testing.T) {
 	r.NoError(fx.Fix(context.Background(), root, []string{}))
 
 	r.NoError(c.Load(configPath))
-	r.Equal(c.BuildTargetPath, "./cmd/coke")
+
+	expectedBuildPath := "." + string(filepath.Separator) + filepath.Join("cmd", "coke")
+	r.Equal(c.BuildTargetPath, expectedBuildPath)
 	r.Equal(c.BuildDelay, time.Duration(400))
 }
 
