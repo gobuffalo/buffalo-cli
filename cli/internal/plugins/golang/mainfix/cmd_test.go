@@ -37,7 +37,7 @@ func Test_Cmd_Fix(t *testing.T) {
 	err = fixer.Fix(ctx, dir, args)
 	r.NoError(err)
 
-	mainFolder := filepath.Join(dir, "cmd", "coke")
+	mainFolder := filepath.Join(dir, "cmd", "main")
 
 	_, err = os.Stat(mainFolder)
 	r.NoError(err)
@@ -74,8 +74,8 @@ func Test_Cmd_Exists(t *testing.T) {
 	f.WriteString("module coke")
 	r.NoError(f.Close())
 
-	r.NoError(os.MkdirAll(filepath.Join(dir, "cmd", "coke"), 0755))
-	f, err = os.Create(filepath.Join(dir, "cmd", "coke", "main.go"))
+	r.NoError(os.MkdirAll(filepath.Join(dir, "cmd", "main"), 0755))
+	f, err = os.Create(filepath.Join(dir, "cmd", "main", "main.go"))
 	r.NoError(err)
 	f.WriteString(`package main
 	func main() {
