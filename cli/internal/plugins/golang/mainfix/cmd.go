@@ -3,7 +3,10 @@ package mainfix
 import (
 	"context"
 	"os"
+	"path"
 	"path/filepath"
+
+	"github.com/gobuffalo/here"
 )
 
 // Cmd takes care of moving existing main.go into
@@ -15,7 +18,12 @@ func (*Cmd) PluginName() string {
 }
 
 func (fixer *Cmd) Fix(ctx context.Context, root string, args []string) error {
-	fp := filepath.Join(root, "cmd", "main")
+	info, err := here.Dir(root)
+	if err != nil {
+		return err
+	}
+
+	fp := filepath.Join(root, "cmd", path.Base(info.Module.Path))
 	if _, err := os.Stat(filepath.Join(fp, "main.go")); err == nil {
 		return nil
 	}
