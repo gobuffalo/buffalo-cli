@@ -65,6 +65,10 @@ func Test_Fixer_NoFile(t *testing.T) {
 	configPath := filepath.Join(root, ".buffalo.dev.yml")
 	c := &refresh.Configuration{}
 	r.NoError(c.Load(configPath))
-	r.Equal(c.BuildTargetPath, "./cmd/coke")
+
+	relative, err := filepath.Rel(root, filepath.Join(root, "cmd", "coke"))
+
+	r.NoError(err)
+	r.Equal(c.BuildTargetPath, "."+string(filepath.Separator)+relative)
 	r.Equal(c.BuildDelay, time.Duration(200))
 }
