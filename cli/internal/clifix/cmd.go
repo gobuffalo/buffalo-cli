@@ -13,8 +13,9 @@ var _ plugins.Plugin = &Cmd{}
 var _ plugcmd.Namer = &Cmd{}
 var _ fix.Fixer = &Cmd{}
 
-type Cmd struct {
-}
+// Cmd is a Fixer in charge of generating cmd/buffalo/main.go
+// so the buffalo CLI can be configured.
+type Cmd struct{}
 
 func (*Cmd) PluginName() string {
 	return "cli/fixer"
@@ -24,7 +25,14 @@ func (*Cmd) CmdName() string {
 	return "cli"
 }
 
+// Fix attempts to generate cmd/buffalo/main.go if it does not exist
+// otherwise nothing happens.
 func (fixer *Cmd) Fix(ctx context.Context, root string, args []string) error {
 	g := &cligen.Generator{}
-	return g.Generate(ctx, root, args)
+	err := g.Generate(ctx, root, args)
+	if err == cligen.ErrCLIMainExists {
+		return nil
+	}
+
+	return err
 }

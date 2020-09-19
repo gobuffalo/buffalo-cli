@@ -44,6 +44,11 @@ var (
 			return err
 		}
 
+		err = os.RemoveAll(filepath.Join(root, "bin"))
+		if err != nil {
+			return err
+		}
+
 		err = os.Remove(filepath.Join(root, "go.mod"))
 		if err != nil && !os.IsNotExist(err) {
 			return err
